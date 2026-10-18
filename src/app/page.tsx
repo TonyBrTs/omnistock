@@ -5,12 +5,16 @@ import { AppLayout } from '@/components/AppLayout';
 import { MetricCards } from '@/components/MetricCards';
 import { SupermarketInventoryTable } from '@/components/SupermarketInventoryTable';
 import { ReceiveBatchModal } from '@/components/ReceiveBatchModal';
+import { POSSimulatorModal } from '@/components/POSSimulatorModal';
+import { KardexAuditModal } from '@/components/KardexAuditModal';
 import { StoreMetricCard, SupermarketProductRow } from '@/types/supermarket';
 
 export default function SupermarketDashboardPage() {
   const [products, setProducts] = useState<SupermarketProductRow[]>([]);
   const [toastMessage, setToastMessage] = useState<string | null>(null);
   const [isReceiveModalOpen, setIsReceiveModalOpen] = useState(false);
+  const [isPOSModalOpen, setIsPOSModalOpen] = useState(false);
+  const [isKardexModalOpen, setIsKardexModalOpen] = useState(false);
   const [loading, setLoading] = useState(true);
 
   // Carga inicial desde el backend API
@@ -61,7 +65,7 @@ export default function SupermarketDashboardPage() {
       title: 'Riesgo / Caducados (FEFO)',
       subtitle: 'Alertas del motor de caducidad',
       value: loading ? '...' : `${expiredCount} Lotes`,
-      badgeText: expiredCount > 0 ? 'Bloqueados POS' : 'Al Día',
+      badgeText: expiredCount > 0 ? `${expiredCount} Bloqueados POS` : 'Al Día',
       variant: expiredCount > 0 ? 'danger' : 'good',
       icon: 'expiry-alert',
     },
@@ -121,6 +125,8 @@ export default function SupermarketDashboardPage() {
     <AppLayout
       storeBranchName="Sucursal #04 · Hipermercado Centro"
       onQuickReceiveStock={() => setIsReceiveModalOpen(true)}
+      onOpenPOSSimulator={() => setIsPOSModalOpen(true)}
+      onOpenKardex={() => setIsKardexModalOpen(true)}
     >
       {/* Notificación de Confirmación de Operaciones */}
       {toastMessage && (
@@ -148,7 +154,7 @@ export default function SupermarketDashboardPage() {
         onActionSelect={handleTableAction}
       />
 
-      {/* Modal de Entrada de Lotes (Recepción de Proveedores) */}
+      {/* Modal 1: Entrada de Lotes (Recepción de Proveedores) */}
       <ReceiveBatchModal
         isOpen={isReceiveModalOpen}
         onClose={() => setIsReceiveModalOpen(false)}
@@ -157,6 +163,23 @@ export default function SupermarketDashboardPage() {
           setToastMessage(msg);
           fetchProducts();
         }}
+      />
+
+      {/* Modal 2: Simulador de Caja POS con Bloqueo de Vencidos */}
+      <POSSimulatorModal
+        isOpen={isPOSModalOpen}
+        onClose={() => setIsPOSModalOpen(false)}
+        products={products}
+        onSaleCompleted={(msg) => {
+          setToastMessage(msg);
+          fetchProducts();
+        }}
+      />
+
+      {/* Modal 3: Auditoría de Kardex / Ledger Inmutable */}
+      <KardexAuditModal
+        isOpen={isKardexModalOpen}
+        onClose={() => setIsKardexModalOpen(false)}
       />
     </AppLayout>
   );
