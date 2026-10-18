@@ -9,6 +9,8 @@ interface AppLayoutProps {
   onOpenKardex?: () => void;
   onOpenPriceTags?: () => void;
   onOpenAuditReport?: () => void;
+  onOpenColdChain?: () => void;
+  onOpenShrinkage?: () => void;
   children: React.ReactNode;
 }
 
@@ -30,6 +32,8 @@ export const AppLayout: React.FC<AppLayoutProps> = ({
   onOpenKardex,
   onOpenPriceTags,
   onOpenAuditReport,
+  onOpenColdChain,
+  onOpenShrinkage,
   children,
 }) => {
   const [collapsed, setCollapsed] = useState(false);
@@ -40,6 +44,7 @@ export const AppLayout: React.FC<AppLayoutProps> = ({
       links: [
         { id: 'stock-fefo', label: 'Catálogo & Lotes FEFO', active: true, badge: 'En Vivo' },
         { id: 'receptions', label: 'Recepción Proveedor', onClick: onQuickReceiveStock },
+        { id: 'shrinkage', label: 'Bajas & Mermas', badge: 'Merma', onClick: onOpenShrinkage },
       ],
     },
     {
@@ -53,6 +58,7 @@ export const AppLayout: React.FC<AppLayoutProps> = ({
       groupTitle: 'BI & AUDITORÍA',
       links: [
         { id: 'kardex', label: 'Kardex de Movimientos', badge: 'Ledger', onClick: onOpenKardex },
+        { id: 'cold-chain', label: 'Cadena de Frío IoT', badge: 'IoT', onClick: onOpenColdChain },
         { id: 'valuation', label: 'Auditoría & Valuación', badge: 'CSV', onClick: onOpenAuditReport },
       ],
     },
@@ -148,7 +154,7 @@ export const AppLayout: React.FC<AppLayoutProps> = ({
             {!collapsed && (
               <div className="overflow-hidden">
                 <p className="text-xs font-semibold text-white truncate">12 Cajas POS En Línea</p>
-                <p className="text-[11px] text-slate-400 truncate">Motor FEFO Activo</p>
+                <p className="text-[11px] text-slate-400 truncate">4 Sensores IoT Conectados</p>
               </div>
             )}
           </div>
@@ -173,7 +179,27 @@ export const AppLayout: React.FC<AppLayoutProps> = ({
             </p>
           </div>
 
-          <div className="flex flex-wrap items-center gap-2.5">
+          <div className="flex flex-wrap items-center gap-2">
+            {onOpenColdChain && (
+              <button
+                type="button"
+                onClick={onOpenColdChain}
+                className="px-3 py-2 rounded-xl bg-blue-50 hover:bg-blue-100 text-blue-700 text-xs font-semibold tracking-wide border border-blue-200 transition-colors flex items-center gap-1.5"
+              >
+                <span>❄️ IoT Frío</span>
+              </button>
+            )}
+
+            {onOpenShrinkage && (
+              <button
+                type="button"
+                onClick={onOpenShrinkage}
+                className="px-3 py-2 rounded-xl bg-red-50 hover:bg-red-100 text-red-700 text-xs font-semibold tracking-wide border border-red-200 transition-colors flex items-center gap-1.5"
+              >
+                <span>🗑️ Merma</span>
+              </button>
+            )}
+
             {onOpenPriceTags && (
               <button
                 type="button"
@@ -190,7 +216,7 @@ export const AppLayout: React.FC<AppLayoutProps> = ({
                 onClick={onOpenAuditReport}
                 className="px-3 py-2 rounded-xl bg-emerald-50 hover:bg-emerald-100 text-[#008767] text-xs font-semibold tracking-wide border border-emerald-200 transition-colors flex items-center gap-1.5"
               >
-                <span>📊 Valuación / CSV</span>
+                <span>📊 Valuación</span>
               </button>
             )}
 
@@ -198,7 +224,7 @@ export const AppLayout: React.FC<AppLayoutProps> = ({
               <button
                 type="button"
                 onClick={onOpenPOSSimulator}
-                className="px-3.5 py-2 rounded-xl bg-blue-50 hover:bg-blue-100 text-blue-700 text-xs font-semibold tracking-wide border border-blue-200 transition-colors flex items-center gap-1.5"
+                className="px-3.5 py-2 rounded-xl bg-indigo-50 hover:bg-indigo-100 text-indigo-700 text-xs font-semibold tracking-wide border border-indigo-200 transition-colors flex items-center gap-1.5"
               >
                 <span>🛒 Cobro POS</span>
               </button>
@@ -225,11 +251,11 @@ export const AppLayout: React.FC<AppLayoutProps> = ({
             )}
 
             {/* Usuario Jefe de Almacén */}
-            <div className="flex items-center gap-2.5 pl-2 border-l border-[#E2E8F0]">
+            <div className="flex items-center gap-2 pl-2 border-l border-[#E2E8F0]">
               <div className="w-8 h-8 rounded-xl bg-[#0D5C75] text-white flex items-center justify-center text-xs font-bold">
                 JA
               </div>
-              <div className="hidden xl:block leading-tight">
+              <div className="hidden 2xl:block leading-tight">
                 <p className="text-xs font-semibold text-[#0F172A]">Jefe de Almacén</p>
                 <p className="text-[10px] text-[#64748B]">Sucursal #04 Centro</p>
               </div>

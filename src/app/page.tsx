@@ -9,6 +9,8 @@ import { POSSimulatorModal } from '@/components/POSSimulatorModal';
 import { KardexAuditModal } from '@/components/KardexAuditModal';
 import { PriceTagGeneratorModal } from '@/components/PriceTagGeneratorModal';
 import { AuditReportModal } from '@/components/AuditReportModal';
+import { ColdChainMonitorModal } from '@/components/ColdChainMonitorModal';
+import { ShrinkageFormModal } from '@/components/ShrinkageFormModal';
 import { StoreMetricCard, SupermarketProductRow } from '@/types/supermarket';
 
 export default function SupermarketDashboardPage() {
@@ -19,6 +21,8 @@ export default function SupermarketDashboardPage() {
   const [isKardexModalOpen, setIsKardexModalOpen] = useState(false);
   const [isPriceTagsModalOpen, setIsPriceTagsModalOpen] = useState(false);
   const [isAuditModalOpen, setIsAuditModalOpen] = useState(false);
+  const [isColdChainModalOpen, setIsColdChainModalOpen] = useState(false);
+  const [isShrinkageModalOpen, setIsShrinkageModalOpen] = useState(false);
   const [loading, setLoading] = useState(true);
 
   // Carga inicial desde el backend API
@@ -77,7 +81,7 @@ export default function SupermarketDashboardPage() {
       id: 'm-cold',
       title: 'Cadena de Frío (Cámaras 1-4)',
       subtitle: 'Sensores IoT en rango óptimo',
-      value: '3.2 °C',
+      value: '3.1 °C',
       badgeText: 'Estable 24h',
       variant: 'info',
       icon: 'cold-chain',
@@ -114,10 +118,7 @@ export default function SupermarketDashboardPage() {
         setToastMessage(`Error de comunicación: ${err.message}`);
       }
     } else if (action === 'MARK_MERMA') {
-      setProducts((prev) => prev.filter((item) => item.id !== product.id));
-      setToastMessage(
-        `Merma Registrada: Lote ${product.batchNumber} (${product.name}) retirado de piso y bloqueado en POS.`
-      );
+      setIsShrinkageModalOpen(true);
     } else if (action === 'ADJUST_STOCK') {
       setToastMessage(
         `Conteo cíclico auditado para ${product.name} en ${product.aisleLocation}.`
@@ -133,6 +134,8 @@ export default function SupermarketDashboardPage() {
       onOpenKardex={() => setIsKardexModalOpen(true)}
       onOpenPriceTags={() => setIsPriceTagsModalOpen(true)}
       onOpenAuditReport={() => setIsAuditModalOpen(true)}
+      onOpenColdChain={() => setIsColdChainModalOpen(true)}
+      onOpenShrinkage={() => setIsShrinkageModalOpen(true)}
     >
       {/* Notificación de Confirmación de Operaciones */}
       {toastMessage && (
@@ -199,6 +202,23 @@ export default function SupermarketDashboardPage() {
       <AuditReportModal
         isOpen={isAuditModalOpen}
         onClose={() => setIsAuditModalOpen(false)}
+      />
+
+      {/* Modal 6: Telemetría de Sensores de Cadena de Frío IoT */}
+      <ColdChainMonitorModal
+        isOpen={isColdChainModalOpen}
+        onClose={() => setIsColdChainModalOpen(false)}
+      />
+
+      {/* Modal 7: Acta de Baja por Merma / Caducidad */}
+      <ShrinkageFormModal
+        isOpen={isShrinkageModalOpen}
+        onClose={() => setIsShrinkageModalOpen(false)}
+        products={products}
+        onShrinkageRecorded={(msg) => {
+          setToastMessage(msg);
+          fetchProducts();
+        }}
       />
     </AppLayout>
   );
