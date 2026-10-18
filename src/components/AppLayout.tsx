@@ -7,6 +7,8 @@ interface AppLayoutProps {
   onQuickReceiveStock?: () => void;
   onOpenPOSSimulator?: () => void;
   onOpenKardex?: () => void;
+  onOpenPriceTags?: () => void;
+  onOpenAuditReport?: () => void;
   children: React.ReactNode;
 }
 
@@ -26,6 +28,8 @@ export const AppLayout: React.FC<AppLayoutProps> = ({
   onQuickReceiveStock,
   onOpenPOSSimulator,
   onOpenKardex,
+  onOpenPriceTags,
+  onOpenAuditReport,
   children,
 }) => {
   const [collapsed, setCollapsed] = useState(false);
@@ -42,12 +46,14 @@ export const AppLayout: React.FC<AppLayoutProps> = ({
       groupTitle: 'POS & OPERACIÓN DE PISO',
       links: [
         { id: 'pos-sync', label: 'Simulador Caja POS', badge: 'FEFO', onClick: onOpenPOSSimulator },
+        { id: 'price-tags', label: 'Cenefas y Etiquetas', badge: 'Góndola', onClick: onOpenPriceTags },
       ],
     },
     {
       groupTitle: 'BI & AUDITORÍA',
       links: [
         { id: 'kardex', label: 'Kardex de Movimientos', badge: 'Ledger', onClick: onOpenKardex },
+        { id: 'valuation', label: 'Auditoría & Valuación', badge: 'CSV', onClick: onOpenAuditReport },
       ],
     },
   ];
@@ -167,14 +173,34 @@ export const AppLayout: React.FC<AppLayoutProps> = ({
             </p>
           </div>
 
-          <div className="flex flex-wrap items-center gap-3">
+          <div className="flex flex-wrap items-center gap-2.5">
+            {onOpenPriceTags && (
+              <button
+                type="button"
+                onClick={onOpenPriceTags}
+                className="px-3 py-2 rounded-xl bg-slate-100 hover:bg-slate-200 text-slate-700 text-xs font-semibold tracking-wide border border-slate-200 transition-colors flex items-center gap-1.5"
+              >
+                <span>🏷️ Cenefas</span>
+              </button>
+            )}
+
+            {onOpenAuditReport && (
+              <button
+                type="button"
+                onClick={onOpenAuditReport}
+                className="px-3 py-2 rounded-xl bg-emerald-50 hover:bg-emerald-100 text-[#008767] text-xs font-semibold tracking-wide border border-emerald-200 transition-colors flex items-center gap-1.5"
+              >
+                <span>📊 Valuación / CSV</span>
+              </button>
+            )}
+
             {onOpenPOSSimulator && (
               <button
                 type="button"
                 onClick={onOpenPOSSimulator}
-                className="px-3.5 py-2 rounded-xl bg-blue-50 hover:bg-blue-100 text-blue-700 text-xs font-semibold tracking-wide border border-blue-200 transition-colors flex items-center gap-2"
+                className="px-3.5 py-2 rounded-xl bg-blue-50 hover:bg-blue-100 text-blue-700 text-xs font-semibold tracking-wide border border-blue-200 transition-colors flex items-center gap-1.5"
               >
-                <span>🛒 Probar Venta POS</span>
+                <span>🛒 Cobro POS</span>
               </button>
             )}
 
@@ -182,9 +208,9 @@ export const AppLayout: React.FC<AppLayoutProps> = ({
               <button
                 type="button"
                 onClick={onOpenKardex}
-                className="px-3.5 py-2 rounded-xl bg-slate-100 hover:bg-slate-200 text-slate-700 text-xs font-semibold tracking-wide border border-slate-200 transition-colors flex items-center gap-2"
+                className="px-3 py-2 rounded-xl bg-slate-100 hover:bg-slate-200 text-slate-700 text-xs font-semibold tracking-wide border border-slate-200 transition-colors flex items-center gap-1.5"
               >
-                <span>📜 Ver Kardex</span>
+                <span>📜 Kardex</span>
               </button>
             )}
 
@@ -192,20 +218,20 @@ export const AppLayout: React.FC<AppLayoutProps> = ({
               <button
                 type="button"
                 onClick={onQuickReceiveStock}
-                className="px-4 py-2 rounded-xl bg-[#008767] hover:bg-[#006e54] text-white text-xs font-semibold tracking-wide shadow-sm transition-colors flex items-center gap-2"
+                className="px-3.5 py-2 rounded-xl bg-[#008767] hover:bg-[#006e54] text-white text-xs font-semibold tracking-wide shadow-sm transition-colors flex items-center gap-1.5"
               >
-                <span>+ Recepción de Lote</span>
+                <span>+ Recibir Lote</span>
               </button>
             )}
 
             {/* Usuario Jefe de Almacén */}
             <div className="flex items-center gap-2.5 pl-2 border-l border-[#E2E8F0]">
-              <div className="w-9 h-9 rounded-xl bg-[#0D5C75] text-white flex items-center justify-center text-xs font-bold">
+              <div className="w-8 h-8 rounded-xl bg-[#0D5C75] text-white flex items-center justify-center text-xs font-bold">
                 JA
               </div>
-              <div className="hidden md:block leading-tight">
+              <div className="hidden xl:block leading-tight">
                 <p className="text-xs font-semibold text-[#0F172A]">Jefe de Almacén</p>
-                <p className="text-[11px] text-[#64748B]">Sucursal #04 Centro</p>
+                <p className="text-[10px] text-[#64748B]">Sucursal #04 Centro</p>
               </div>
             </div>
           </div>

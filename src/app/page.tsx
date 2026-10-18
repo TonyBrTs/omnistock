@@ -7,6 +7,8 @@ import { SupermarketInventoryTable } from '@/components/SupermarketInventoryTabl
 import { ReceiveBatchModal } from '@/components/ReceiveBatchModal';
 import { POSSimulatorModal } from '@/components/POSSimulatorModal';
 import { KardexAuditModal } from '@/components/KardexAuditModal';
+import { PriceTagGeneratorModal } from '@/components/PriceTagGeneratorModal';
+import { AuditReportModal } from '@/components/AuditReportModal';
 import { StoreMetricCard, SupermarketProductRow } from '@/types/supermarket';
 
 export default function SupermarketDashboardPage() {
@@ -15,6 +17,8 @@ export default function SupermarketDashboardPage() {
   const [isReceiveModalOpen, setIsReceiveModalOpen] = useState(false);
   const [isPOSModalOpen, setIsPOSModalOpen] = useState(false);
   const [isKardexModalOpen, setIsKardexModalOpen] = useState(false);
+  const [isPriceTagsModalOpen, setIsPriceTagsModalOpen] = useState(false);
+  const [isAuditModalOpen, setIsAuditModalOpen] = useState(false);
   const [loading, setLoading] = useState(true);
 
   // Carga inicial desde el backend API
@@ -127,6 +131,8 @@ export default function SupermarketDashboardPage() {
       onQuickReceiveStock={() => setIsReceiveModalOpen(true)}
       onOpenPOSSimulator={() => setIsPOSModalOpen(true)}
       onOpenKardex={() => setIsKardexModalOpen(true)}
+      onOpenPriceTags={() => setIsPriceTagsModalOpen(true)}
+      onOpenAuditReport={() => setIsAuditModalOpen(true)}
     >
       {/* Notificación de Confirmación de Operaciones */}
       {toastMessage && (
@@ -180,6 +186,19 @@ export default function SupermarketDashboardPage() {
       <KardexAuditModal
         isOpen={isKardexModalOpen}
         onClose={() => setIsKardexModalOpen(false)}
+      />
+
+      {/* Modal 4: Generador de Cenefas y Etiquetas de Precio para Góndola */}
+      <PriceTagGeneratorModal
+        isOpen={isPriceTagsModalOpen}
+        onClose={() => setIsPriceTagsModalOpen(false)}
+        products={products}
+      />
+
+      {/* Modal 5: Reporte de Valuación Contable y Descarga CSV */}
+      <AuditReportModal
+        isOpen={isAuditModalOpen}
+        onClose={() => setIsAuditModalOpen(false)}
       />
     </AppLayout>
   );

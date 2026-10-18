@@ -1,0 +1,125 @@
+'use client';
+
+import React from 'react';
+import { SupermarketProductRow } from '@/types/supermarket';
+
+interface PriceTagGeneratorModalProps {
+  isOpen: boolean;
+  onClose: () => void;
+  products: SupermarketProductRow[];
+}
+
+export const PriceTagGeneratorModal: React.FC<PriceTagGeneratorModalProps> = ({
+  isOpen,
+  onClose,
+  products,
+}) => {
+  if (!isOpen) return null;
+
+  const handlePrint = () => {
+    window.print();
+  };
+
+  return (
+    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/40 backdrop-blur-xs p-4">
+      <div className="bg-[#FFFFFF] border border-[#E2E8F0] rounded-2xl w-full max-w-4xl shadow-xl overflow-hidden flex flex-col max-h-[90vh] animate-in fade-in zoom-in-95 duration-200">
+        {/* Cabecera del Modal */}
+        <div className="px-6 py-4 border-b border-[#E2E8F0] flex items-center justify-between no-print">
+          <div>
+            <h2 className="text-base font-bold text-[#0F172A]">
+              Generador de Cenefas y Etiquetas de Precio para Góndola
+            </h2>
+            <p className="text-xs text-[#64748B]">
+              Formato estándar para estantes y vitrinas con código de barras EAN-13, lote activo y fecha de vigencia.
+            </p>
+          </div>
+          <div className="flex items-center gap-2">
+            <button
+              onClick={handlePrint}
+              className="px-4 py-2 rounded-xl bg-[#008767] hover:bg-[#006e54] text-white text-xs font-semibold shadow-sm transition-colors flex items-center gap-2"
+            >
+              <span>🖨️ Imprimir Cenefas</span>
+            </button>
+            <button
+              onClick={onClose}
+              className="p-2 rounded-xl text-[#64748B] hover:text-[#0F172A] hover:bg-slate-100"
+            >
+              ✕
+            </button>
+          </div>
+        </div>
+
+        {/* Rejilla de Cenefas de Góndola */}
+        <div className="flex-1 overflow-y-auto p-6 bg-slate-50">
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+            {products.map((product) => (
+              <div
+                key={product.id}
+                className="bg-white border-2 border-dashed border-slate-300 rounded-xl p-4 shadow-xs flex flex-col justify-between h-48 print:border-black print:shadow-none"
+              >
+                <div>
+                  <div className="flex items-start justify-between">
+                    <div>
+                      <span className="text-[10px] font-bold tracking-wider uppercase text-slate-500">
+                        {product.department} · {product.brand}
+                      </span>
+                      <h3 className="text-sm font-extrabold text-[#0F172A] line-clamp-2 leading-tight mt-0.5">
+                        {product.name}
+                      </h3>
+                    </div>
+                    <span className="text-[10px] font-mono px-2 py-0.5 bg-slate-100 border border-slate-200 rounded text-slate-700 shrink-0">
+                      {product.aisleLocation}
+                    </span>
+                  </div>
+
+                  <div className="mt-2 flex items-center gap-2 text-[11px] text-[#64748B]">
+                    <span>Presentación: <strong className="text-slate-800">{product.packEquivalence}</strong></span>
+                    {product.pluCode && (
+                      <span className="px-1.5 py-0.2 bg-emerald-50 text-emerald-800 font-bold rounded">
+                        PLU {product.pluCode}
+                      </span>
+                    )}
+                  </div>
+                </div>
+
+                <div className="pt-2 border-t border-slate-200 flex items-end justify-between">
+                  <div>
+                    {/* Representación visual de código de barras simulado */}
+                    <div className="h-6 w-36 bg-[repeating-linear-gradient(90deg,#000,#000_2px,transparent_2px,transparent_4px)] rounded-xs" />
+                    <span className="text-[10px] font-mono text-slate-600 block mt-0.5">
+                      {product.barcodeEan13}
+                    </span>
+                    <span className="text-[9px] text-slate-400 block font-mono">
+                      Lote FEFO: {product.batchNumber} (Vence: {product.expirationDate})
+                    </span>
+                  </div>
+
+                  <div className="text-right">
+                    <span className="text-[10px] text-slate-500 block">PRECIO PÚBLICO (IVA INC.)</span>
+                    <span className="text-2xl font-black text-[#008767] tracking-tight">
+                      ${product.salePrice.toFixed(2)}
+                    </span>
+                    <span className="text-[10px] text-slate-500 block">
+                      x {product.baseUom}
+                    </span>
+                  </div>
+                </div>
+              </div>
+            ))}
+          </div>
+        </div>
+
+        {/* Pie del Modal */}
+        <div className="px-6 py-3 border-t border-[#E2E8F0] bg-[#FFFFFF] flex justify-between items-center text-xs text-[#64748B] no-print">
+          <span>{products.length} etiquetas listas para imprimir en formato 100x50mm</span>
+          <button
+            onClick={onClose}
+            className="px-4 py-1.5 rounded-xl bg-slate-200 hover:bg-slate-300 text-[#0F172A] font-semibold"
+          >
+            Cerrar
+          </button>
+        </div>
+      </div>
+    </div>
+  );
+};
