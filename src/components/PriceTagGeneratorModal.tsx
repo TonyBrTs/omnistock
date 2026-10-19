@@ -2,6 +2,7 @@
 
 import React from 'react';
 import { SupermarketProductRow } from '@/types/supermarket';
+import { Printer } from 'lucide-react';
 
 interface PriceTagGeneratorModalProps {
   isOpen: boolean;
@@ -23,33 +24,34 @@ export const PriceTagGeneratorModal: React.FC<PriceTagGeneratorModalProps> = ({
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/40 backdrop-blur-xs p-4">
       <div className="bg-[#FFFFFF] border border-[#E2E8F0] rounded-2xl w-full max-w-4xl shadow-xl overflow-hidden flex flex-col max-h-[90vh] animate-in fade-in zoom-in-95 duration-200">
-        {/* Cabecera del Modal */}
+        {/* Cabecera */}
         <div className="px-6 py-4 border-b border-[#E2E8F0] flex items-center justify-between no-print">
           <div>
             <h2 className="text-base font-bold text-[#0F172A]">
-              Generador de Cenefas y Etiquetas de Precio para Góndola
+              Etiquetas de Precios para los Estantes
             </h2>
             <p className="text-xs text-[#64748B]">
-              Formato estándar para estantes y vitrinas con código de barras EAN-13, lote activo y fecha de vigencia.
+              Imprime las tarjetas con el precio y código de barras para pegarlas frente al producto.
             </p>
           </div>
           <div className="flex items-center gap-2">
             <button
               onClick={handlePrint}
-              className="px-4 py-2 rounded-xl bg-[#008767] hover:bg-[#006e54] text-white text-xs font-semibold shadow-sm transition-colors flex items-center gap-2"
+              className="cursor-pointer px-4 py-2 rounded-xl bg-[#008767] hover:bg-[#006e54] text-white text-xs font-bold shadow-sm transition-all flex items-center gap-2 active:scale-95"
             >
-              <span>🖨️ Imprimir Cenefas</span>
+              <Printer className="w-4 h-4" />
+              <span>Mandar a Imprimir</span>
             </button>
             <button
               onClick={onClose}
-              className="p-2 rounded-xl text-[#64748B] hover:text-[#0F172A] hover:bg-slate-100"
+              className="cursor-pointer p-2 rounded-xl text-[#64748B] hover:text-[#0F172A] hover:bg-slate-100"
             >
               ✕
             </button>
           </div>
         </div>
 
-        {/* Rejilla de Cenefas de Góndola */}
+        {/* Rejilla de Etiquetas */}
         <div className="flex-1 overflow-y-auto p-6 bg-slate-50">
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             {products.map((product) => (
@@ -76,7 +78,7 @@ export const PriceTagGeneratorModal: React.FC<PriceTagGeneratorModalProps> = ({
                     <span>Presentación: <strong className="text-slate-800">{product.packEquivalence}</strong></span>
                     {product.pluCode && (
                       <span className="px-1.5 py-0.2 bg-emerald-50 text-emerald-800 font-bold rounded">
-                        PLU {product.pluCode}
+                        Código Báscula: {product.pluCode}
                       </span>
                     )}
                   </div>
@@ -84,23 +86,23 @@ export const PriceTagGeneratorModal: React.FC<PriceTagGeneratorModalProps> = ({
 
                 <div className="pt-2 border-t border-slate-200 flex items-end justify-between">
                   <div>
-                    {/* Representación visual de código de barras simulado */}
+                    {/* Código de barras simulado */}
                     <div className="h-6 w-36 bg-[repeating-linear-gradient(90deg,#000,#000_2px,transparent_2px,transparent_4px)] rounded-xs" />
                     <span className="text-[10px] font-mono text-slate-600 block mt-0.5">
                       {product.barcodeEan13}
                     </span>
                     <span className="text-[9px] text-slate-400 block font-mono">
-                      Lote FEFO: {product.batchNumber} (Vence: {product.expirationDate})
+                      Lote: {product.batchNumber} (Vence: {product.expirationDate})
                     </span>
                   </div>
 
                   <div className="text-right">
-                    <span className="text-[10px] text-slate-500 block">PRECIO PÚBLICO (IVA INC.)</span>
+                    <span className="text-[10px] text-slate-500 block">PRECIO CON IVA</span>
                     <span className="text-2xl font-black text-[#008767] tracking-tight">
                       ${product.salePrice.toFixed(2)}
                     </span>
                     <span className="text-[10px] text-slate-500 block">
-                      x {product.baseUom}
+                      por {product.baseUom}
                     </span>
                   </div>
                 </div>
@@ -109,12 +111,12 @@ export const PriceTagGeneratorModal: React.FC<PriceTagGeneratorModalProps> = ({
           </div>
         </div>
 
-        {/* Pie del Modal */}
+        {/* Pie */}
         <div className="px-6 py-3 border-t border-[#E2E8F0] bg-[#FFFFFF] flex justify-between items-center text-xs text-[#64748B] no-print">
-          <span>{products.length} etiquetas listas para imprimir en formato 100x50mm</span>
+          <span>{products.length} etiquetas listas para imprimir</span>
           <button
             onClick={onClose}
-            className="px-4 py-1.5 rounded-xl bg-slate-200 hover:bg-slate-300 text-[#0F172A] font-semibold"
+            className="cursor-pointer px-4 py-1.5 rounded-xl bg-slate-200 hover:bg-slate-300 text-[#0F172A] font-bold"
           >
             Cerrar
           </button>

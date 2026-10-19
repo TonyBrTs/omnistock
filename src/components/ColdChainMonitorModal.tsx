@@ -1,6 +1,7 @@
 'use client';
 
 import React, { useEffect, useState } from 'react';
+import { RefreshCw } from 'lucide-react';
 
 interface ColdRoomSensor {
   chamberId: string;
@@ -56,10 +57,10 @@ export const ColdChainMonitorModal: React.FC<ColdChainMonitorModalProps> = ({ is
             </div>
             <div>
               <h2 className="text-base font-bold text-[#0F172A]">
-                Monitor de Cadena de Frío IoT (Cámaras 1 a 4)
+                ¿Cómo van los Refrigeradores y Congeladores?
               </h2>
               <p className="text-xs text-[#64748B]">
-                Telemetría en tiempo real para prevención de merma por variación térmica.
+                Revisa que la leche, carnes y helados no se vayan a descongelar o calentar.
               </p>
             </div>
           </div>
@@ -67,20 +68,21 @@ export const ColdChainMonitorModal: React.FC<ColdChainMonitorModalProps> = ({ is
             <button
               onClick={fetchSensorData}
               disabled={loading}
-              className="px-3 py-1.5 rounded-xl bg-slate-100 hover:bg-slate-200 text-slate-700 text-xs font-semibold"
+              className="cursor-pointer px-3 py-1.5 rounded-xl bg-slate-100 hover:bg-slate-200 text-slate-700 text-xs font-bold flex items-center gap-1 active:scale-95"
             >
-              🔄 Refrescar
+              <RefreshCw className="w-3 h-3" />
+              <span>Actualizar</span>
             </button>
             <button
               onClick={onClose}
-              className="p-2 rounded-xl text-[#64748B] hover:text-[#0F172A] hover:bg-slate-100"
+              className="cursor-pointer p-2 rounded-xl text-[#64748B] hover:text-[#0F172A] hover:bg-slate-100"
             >
               ✕
             </button>
           </div>
         </div>
 
-        {/* Contenido de Sensores */}
+        {/* Tarjetas de los 4 Refris */}
         <div className="flex-1 overflow-y-auto p-6 space-y-4">
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             {chambers.map((chamber) => {
@@ -102,7 +104,7 @@ export const ColdChainMonitorModal: React.FC<ColdChainMonitorModalProps> = ({ is
                     <div>
                       <h3 className="text-sm font-bold text-[#0F172A]">{chamber.name}</h3>
                       <p className="text-[11px] text-[#64748B] mt-0.5">
-                        Rango óptimo: <strong className="text-slate-800">{chamber.targetTempRange}</strong>
+                        Temperatura ideal: <strong className="text-slate-800">{chamber.targetTempRange}</strong>
                       </p>
                     </div>
                     <span
@@ -114,7 +116,7 @@ export const ColdChainMonitorModal: React.FC<ColdChainMonitorModalProps> = ({ is
                           : 'bg-[#DCFCE7] text-[#166534]'
                       }`}
                     >
-                      {chamber.status === 'OPTIMAL' ? 'ÓPTIMO' : chamber.status === 'WARNING' ? 'ALERTA TÉRMICA' : 'CRÍTICO'}
+                      {chamber.status === 'OPTIMAL' ? 'BIEN FRÍO' : chamber.status === 'WARNING' ? 'ALGO CALIENTE' : 'PELIGRO'}
                     </span>
                   </div>
 
@@ -129,16 +131,16 @@ export const ColdChainMonitorModal: React.FC<ColdChainMonitorModalProps> = ({ is
                     </div>
 
                     <div className="text-right text-xs">
-                      <span className="text-slate-500 block text-[10px]">Compresor:</span>
+                      <span className="text-slate-500 block text-[10px]">Motor:</span>
                       <span className="font-semibold text-slate-800">
                         {chamber.compressorState === 'ACTIVE'
-                          ? '🟢 Activo'
+                          ? '🟢 Enfriando'
                           : chamber.compressorState === 'DEFROST'
-                          ? '🟡 Descongelamiento'
-                          : '⚪ En Espera'}
+                          ? '🟡 Deshielo'
+                          : '⚪ Apagado / Descanso'}
                       </span>
                       <span className="text-[10px] text-slate-400 block mt-0.5">
-                        {chamber.linkedProductsCount} lotes vinculados
+                        Guarda {chamber.linkedProductsCount} productos
                       </span>
                     </div>
                   </div>
@@ -148,18 +150,17 @@ export const ColdChainMonitorModal: React.FC<ColdChainMonitorModalProps> = ({ is
           </div>
 
           <div className="p-4 rounded-xl bg-slate-50 border border-slate-200 text-xs text-slate-600 space-y-1">
-            <p className="font-semibold text-[#0F172A]">Protocolo de Acción Automatizado:</p>
-            <p>• Si una cámara permanece &gt; 15 min fuera de rango térmico, el sistema envía notificación a supervisión y marca los lotes como <em>Inspección Requerida</em>.</p>
-            <p>• Los productos sensibles (Leches, Embutidos, Mariscos) se bloquean preventivamente en caja POS ante alertas críticas.</p>
+            <p className="font-bold text-[#0F172A]">¿Qué pasa si un refri se calienta?</p>
+            <p>• Si la temperatura sube por más de 15 minutos, el sistema te avisa para revisar si la puerta quedó abierta o falló la luz.</p>
           </div>
         </div>
 
         {/* Pie */}
         <div className="px-6 py-3 border-t border-[#E2E8F0] bg-[#F4F6F9]/40 flex justify-between items-center text-xs text-[#64748B]">
-          <span>Última lectura de telemetría: {lastUpdated || 'Cargando...'}</span>
+          <span>Última revisión: {lastUpdated || 'Cargando...'}</span>
           <button
             onClick={onClose}
-            className="px-4 py-1.5 rounded-xl bg-slate-200 hover:bg-slate-300 text-[#0F172A] font-semibold"
+            className="cursor-pointer px-4 py-1.5 rounded-xl bg-slate-200 hover:bg-slate-300 text-[#0F172A] font-bold"
           >
             Cerrar
           </button>

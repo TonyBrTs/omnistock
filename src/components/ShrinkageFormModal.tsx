@@ -21,7 +21,7 @@ export const ShrinkageFormModal: React.FC<ShrinkageFormModalProps> = ({
     'FECHA_CADUCADA' | 'RUPTURA_EMPAQUE' | 'PERDIDA_CADENA_FRIO' | 'DANIO_MANIPULACION' | 'RETIRO_SANITARIO'
   >('FECHA_CADUCADA');
   const [notes, setNotes] = useState('');
-  const [operatorName, setOperatorName] = useState('Auditor de Mermas');
+  const [operatorName, setOperatorName] = useState('Encargado');
   const [loading, setLoading] = useState(false);
   const [errorMsg, setErrorMsg] = useState<string | null>(null);
 
@@ -41,17 +41,17 @@ export const ShrinkageFormModal: React.FC<ShrinkageFormModalProps> = ({
         body: JSON.stringify({
           batchNumber: selectedBatchNumber,
           reason,
-          notes: notes.trim() || 'Merma declarada por revisión visual en piso.',
+          notes: notes.trim() || 'Producto retirado por revisión.',
           operatorName,
         }),
       });
 
       const data = await res.json();
       if (!res.ok) {
-        throw new Error(data.message || 'Error al registrar merma');
+        throw new Error(data.message || 'Hubo un error al dar de baja');
       }
 
-      onShrinkageRecorded(data.message);
+      onShrinkageRecorded(`Listo: Se dio de baja el lote "${selectedBatchNumber}" de la tienda.`);
       onClose();
     } catch (err: any) {
       setErrorMsg(err.message);
@@ -65,14 +65,14 @@ export const ShrinkageFormModal: React.FC<ShrinkageFormModalProps> = ({
       <div className="bg-[#FFFFFF] border border-[#E2E8F0] rounded-2xl w-full max-w-lg shadow-xl overflow-hidden animate-in fade-in zoom-in-95 duration-200">
         <div className="px-6 py-4 border-b border-[#E2E8F0] flex items-center justify-between">
           <div>
-            <h2 className="text-base font-bold text-[#0F172A]">Acta de Baja por Merma / Caducidad</h2>
+            <h2 className="text-base font-bold text-[#0F172A]">Tirar Producto Dañado o Vencido</h2>
             <p className="text-xs text-[#64748B]">
-              Retiro oficial de producto de góndola con asiento contable de pérdida.
+              Saca de la tienda la mercancía que ya no sirve para que nadie la venda por error.
             </p>
           </div>
           <button
             onClick={onClose}
-            className="p-2 rounded-xl text-[#64748B] hover:text-[#0F172A] hover:bg-slate-100"
+            className="cursor-pointer p-2 rounded-xl text-[#64748B] hover:text-[#0F172A] hover:bg-slate-100"
           >
             ✕
           </button>
@@ -86,17 +86,17 @@ export const ShrinkageFormModal: React.FC<ShrinkageFormModalProps> = ({
           )}
 
           <div>
-            <label className="block text-xs font-semibold uppercase tracking-wider text-slate-500 mb-1">
-              Seleccionar Lote a Dar de Baja
+            <label className="block text-xs font-bold uppercase tracking-wider text-slate-500 mb-1">
+              ¿Qué producto vas a tirar?
             </label>
             <select
               value={selectedBatchNumber}
               onChange={(e) => setSelectedBatchNumber(e.target.value)}
-              className="w-full px-3.5 py-2.5 text-sm bg-[#F4F6F9] border border-[#E2E8F0] rounded-xl text-[#0F172A] focus:outline-none focus:border-[#008767]"
+              className="cursor-pointer w-full px-3.5 py-2.5 text-sm bg-[#F4F6F9] border border-[#E2E8F0] rounded-xl text-[#0F172A] focus:outline-none focus:border-[#008767]"
             >
               {products.map((p) => (
                 <option key={p.id} value={p.batchNumber}>
-                  {p.name} · [{p.batchNumber} - Vence: {p.expirationDate}] · Stock: {p.stockQuantity} {p.baseUom}
+                  {p.name} · [Lote: {p.batchNumber} - Vence: {p.expirationDate}] · Quedan: {p.stockQuantity} {p.baseUom}
                 </option>
               ))}
             </select>
@@ -105,14 +105,14 @@ export const ShrinkageFormModal: React.FC<ShrinkageFormModalProps> = ({
           {currentProduct && (
             <div className="p-3.5 rounded-xl bg-red-50/60 border border-red-200 text-xs space-y-1">
               <div className="flex justify-between">
-                <span className="text-slate-600">Stock a Destruir / Retirar:</span>
+                <span className="text-slate-600">¿Cuántos se van a la basura?</span>
                 <span className="font-bold text-[#991B1B]">
                   {currentProduct.stockQuantity} {currentProduct.baseUom}
                 </span>
               </div>
               <div className="flex justify-between">
-                <span className="text-slate-600">Impacto a Costo Total:</span>
-                <span className="font-bold text-[#991B1B]">
+                <span className="text-slate-600">Dinero que se perdió:</span>
+                <span className="font-extrabold text-[#991B1B]">
                   ${(currentProduct.stockQuantity * currentProduct.unitCost).toFixed(2)}
                 </span>
               </div>
@@ -120,39 +120,39 @@ export const ShrinkageFormModal: React.FC<ShrinkageFormModalProps> = ({
           )}
 
           <div>
-            <label className="block text-xs font-semibold uppercase tracking-wider text-slate-500 mb-1">
-              Causa de la Merma
+            <label className="block text-xs font-bold uppercase tracking-wider text-slate-500 mb-1">
+              ¿Por qué se tira?
             </label>
             <select
               value={reason}
               onChange={(e) => setReason(e.target.value as any)}
-              className="w-full px-3.5 py-2 text-sm bg-[#F4F6F9] border border-[#E2E8F0] rounded-xl text-[#0F172A] focus:outline-none focus:border-[#008767]"
+              className="cursor-pointer w-full px-3.5 py-2 text-sm bg-[#F4F6F9] border border-[#E2E8F0] rounded-xl text-[#0F172A] focus:outline-none focus:border-[#008767]"
             >
-              <option value="FECHA_CADUCADA">Fecha de Caducidad Cumplida</option>
-              <option value="PERDIDA_CADENA_FRIO">Pérdida de Temperatura / Cadena de Frío</option>
-              <option value="RUPTURA_EMPAQUE">Empaque Dañado / Roto</option>
-              <option value="DANIO_MANIPULACION">Daño por Manipulación o Caída</option>
-              <option value="RETIRO_SANITARIO">Retiro Sanitario / Alerta Epidemiológica</option>
+              <option value="FECHA_CADUCADA">Ya se venció la fecha</option>
+              <option value="PERDIDA_CADENA_FRIO">Se calentó el refri</option>
+              <option value="RUPTURA_EMPAQUE">Bolsa o envase roto</option>
+              <option value="DANIO_MANIPULACION">Se cayó o golpeó</option>
+              <option value="RETIRO_SANITARIO">Vino mal de fábrica</option>
             </select>
           </div>
 
           <div>
-            <label className="block text-xs font-semibold uppercase tracking-wider text-slate-500 mb-1">
-              Observaciones del Dictamen
+            <label className="block text-xs font-bold uppercase tracking-wider text-slate-500 mb-1">
+              ¿Qué le pasó exactamente?
             </label>
             <textarea
               rows={2}
               value={notes}
               onChange={(e) => setNotes(e.target.value)}
-              placeholder="Ej: Lote vencido detectado en recorrido matutino de pasillo 2."
+              placeholder="Ej: Se cayó de la caja y se reventó el envase."
               className="w-full px-3.5 py-2 text-sm bg-[#F4F6F9] border border-[#E2E8F0] rounded-xl text-[#0F172A] focus:outline-none focus:border-[#008767]"
               required
             />
           </div>
 
           <div>
-            <label className="block text-xs font-semibold uppercase tracking-wider text-slate-500 mb-1">
-              Responsable de Auditoría
+            <label className="block text-xs font-bold uppercase tracking-wider text-slate-500 mb-1">
+              ¿Quién autoriza?
             </label>
             <input
               type="text"
@@ -167,16 +167,16 @@ export const ShrinkageFormModal: React.FC<ShrinkageFormModalProps> = ({
             <button
               type="button"
               onClick={onClose}
-              className="px-4 py-2 text-xs font-semibold text-[#64748B] hover:text-[#0F172A] rounded-xl"
+              className="cursor-pointer px-4 py-2 text-xs font-bold text-[#64748B] hover:text-[#0F172A] rounded-xl"
             >
               Cancelar
             </button>
             <button
               type="submit"
               disabled={loading}
-              className="px-5 py-2.5 rounded-xl bg-[#991B1B] hover:bg-[#7f1d1d] text-white text-xs font-semibold tracking-wide shadow-sm transition-colors disabled:opacity-50"
+              className="cursor-pointer px-5 py-2.5 rounded-xl bg-[#991B1B] hover:bg-[#7f1d1d] text-white text-xs font-bold tracking-wide shadow-sm transition-all disabled:opacity-50 active:scale-95"
             >
-              {loading ? 'Procesando Baja...' : 'Dar de Baja a Merma'}
+              {loading ? 'Sacando de la tienda...' : 'Confirmar y Tirar'}
             </button>
           </div>
         </form>

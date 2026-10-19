@@ -18,8 +18,8 @@ export const POSSimulatorModal: React.FC<POSSimulatorModalProps> = ({
 }) => {
   const [selectedBarcode, setSelectedBarcode] = useState(products[0]?.barcodeEan13 || '');
   const [quantity, setQuantity] = useState(1);
-  const [cashierName, setCashierName] = useState('Sofía Méndez');
-  const [registerNo, setRegisterNo] = useState('02');
+  const [cashierName, setCashierName] = useState('Sofía');
+  const [registerNo, setRegisterNo] = useState('1');
   const [loading, setLoading] = useState(false);
   const [alertError, setAlertError] = useState<{ message: string; errorCode?: string } | null>(
     null
@@ -54,12 +54,18 @@ export const POSSimulatorModal: React.FC<POSSimulatorModalProps> = ({
       const data = await res.json();
 
       if (!res.ok) {
-        setAlertError({ message: data.message || 'Error en la venta', errorCode: data.errorCode });
+        setAlertError({
+          message:
+            data.errorCode === 'POS_EXPIRY_BLOCK'
+              ? `¡ALERTA! El producto "${currentProduct?.name}" está VENCIDO (${currentProduct?.expirationDate}). La caja no permite venderlo. Tienes que tirarlo a merma.`
+              : data.message || 'No se pudo cobrar',
+          errorCode: data.errorCode,
+        });
         return;
       }
 
       onSaleCompleted(
-        `Venta Exitosa: ${data.saleDetails.productName} (${data.saleDetails.quantitySold} ${currentProduct?.baseUom}) - Total: $${data.saleDetails.totalAmount.toFixed(2)} [Ticket: ${ticketFolio}]`
+        `Cobro Listo: ${data.saleDetails.productName} (${data.saleDetails.quantitySold} ${currentProduct?.baseUom}) - Total: $${data.saleDetails.totalAmount.toFixed(2)}`
       );
       onClose();
     } catch (err: any) {
@@ -74,14 +80,14 @@ export const POSSimulatorModal: React.FC<POSSimulatorModalProps> = ({
       <div className="bg-[#FFFFFF] border border-[#E2E8F0] rounded-2xl w-full max-w-lg shadow-xl overflow-hidden animate-in fade-in zoom-in-95 duration-200">
         <div className="px-6 py-4 border-b border-[#E2E8F0] flex items-center justify-between">
           <div>
-            <h2 className="text-base font-bold text-[#0F172A]">Simulador de Caja Registradora POS</h2>
+            <h2 className="text-base font-bold text-[#0F172A]">Cobrar en la Caja Registradora</h2>
             <p className="text-xs text-[#64748B]">
-              Prueba de escaneo de código de barras, despacho FEFO y bloqueo de caducidad.
+              Elige el producto para vender. Si ya venció, la caja te avisará y no te dejará cobrarlo.
             </p>
           </div>
           <button
             onClick={onClose}
-            className="p-2 rounded-xl text-[#64748B] hover:text-[#0F172A] hover:bg-slate-100"
+            className="cursor-pointer p-2 rounded-xl text-[#64748B] hover:text-[#0F172A] hover:bg-slate-100"
           >
             ✕
           </button>
@@ -90,7 +96,7 @@ export const POSSimulatorModal: React.FC<POSSimulatorModalProps> = ({
         <form onSubmit={handleSale} className="p-6 space-y-4">
           {alertError && (
             <div
-              className={`p-3.5 rounded-xl border text-xs font-semibold ${
+              className={`p-3.5 rounded-xl border text-xs font-bold ${
                 alertError.errorCode === 'POS_EXPIRY_BLOCK'
                   ? 'bg-[#FEE2E2] border-[#991B1B]/30 text-[#991B1B]'
                   : 'bg-[#FEF9C3] border-[#854D0E]/30 text-[#854D0E]'
@@ -104,8 +110,8 @@ export const POSSimulatorModal: React.FC<POSSimulatorModalProps> = ({
           )}
 
           <div>
-            <label className="block text-xs font-semibold uppercase tracking-wider text-slate-500 mb-1">
-              Seleccionar Producto o Código Escaneado
+            <label className="block text-xs font-bold uppercase tracking-wider text-slate-500 mb-1">
+              ¿Qué producto vas a cobrar?
             </label>
             <select
               value={selectedBarcode}
@@ -113,11 +119,11 @@ export const POSSimulatorModal: React.FC<POSSimulatorModalProps> = ({
                 setSelectedBarcode(e.target.value);
                 setAlertError(null);
               }}
-              className="w-full px-3.5 py-2.5 text-sm bg-[#F4F6F9] border border-[#E2E8F0] rounded-xl text-[#0F172A] focus:outline-none focus:border-[#008767]"
+              className="cursor-pointer w-full px-3.5 py-2.5 text-sm bg-[#F4F6F9] border border-[#E2E8F0] rounded-xl text-[#0F172A] focus:outline-none focus:border-[#008767]"
             >
               {products.map((p) => (
                 <option key={p.id} value={p.barcodeEan13}>
-                  {p.name} · [{p.status === 'EXPIRED' ? 'CADUCADO' : `Stock: ${p.stockQuantity}`}]
+                  {p.name} · [{p.status === 'EXPIRED' ? '¡VENCIDO!' : `Quedan ${p.stockQuantity}`}]
                 </option>
               ))}
             </select>
@@ -126,15 +132,15 @@ export const POSSimulatorModal: React.FC<POSSimulatorModalProps> = ({
           {currentProduct && (
             <div className="p-3 bg-[#F4F6F9] rounded-xl border border-[#E2E8F0] text-xs space-y-1">
               <div className="flex justify-between">
-                <span className="text-slate-500">Lote FEFO Asignado:</span>
-                <span className="font-mono font-semibold text-slate-800">
+                <span className="text-slate-500">Lote que se entrega:</span>
+                <span className="font-mono font-bold text-slate-800">
                   {currentProduct.batchNumber}
                 </span>
               </div>
               <div className="flex justify-between">
-                <span className="text-slate-500">Caducidad:</span>
+                <span className="text-slate-500">Fecha de Vencimiento:</span>
                 <span
-                  className={`font-semibold ${
+                  className={`font-bold ${
                     currentProduct.status === 'EXPIRED' ? 'text-[#991B1B]' : 'text-slate-800'
                   }`}
                 >
@@ -142,8 +148,8 @@ export const POSSimulatorModal: React.FC<POSSimulatorModalProps> = ({
                 </span>
               </div>
               <div className="flex justify-between">
-                <span className="text-slate-500">Precio Unitario:</span>
-                <span className="font-bold text-[#008767]">
+                <span className="text-slate-500">Precio de venta:</span>
+                <span className="font-extrabold text-[#008767]">
                   ${currentProduct.salePrice.toFixed(2)}
                 </span>
               </div>
@@ -152,8 +158,8 @@ export const POSSimulatorModal: React.FC<POSSimulatorModalProps> = ({
 
           <div className="grid grid-cols-3 gap-3">
             <div>
-              <label className="block text-xs font-semibold uppercase tracking-wider text-slate-500 mb-1">
-                Cantidad
+              <label className="block text-xs font-bold uppercase tracking-wider text-slate-500 mb-1">
+                ¿Cuántos lleva?
               </label>
               <input
                 type="number"
@@ -165,8 +171,8 @@ export const POSSimulatorModal: React.FC<POSSimulatorModalProps> = ({
               />
             </div>
             <div>
-              <label className="block text-xs font-semibold uppercase tracking-wider text-slate-500 mb-1">
-                Caja POS
+              <label className="block text-xs font-bold uppercase tracking-wider text-slate-500 mb-1">
+                Número de Caja
               </label>
               <input
                 type="text"
@@ -177,7 +183,7 @@ export const POSSimulatorModal: React.FC<POSSimulatorModalProps> = ({
               />
             </div>
             <div>
-              <label className="block text-xs font-semibold uppercase tracking-wider text-slate-500 mb-1">
+              <label className="block text-xs font-bold uppercase tracking-wider text-slate-500 mb-1">
                 Cajero(a)
               </label>
               <input
@@ -194,16 +200,16 @@ export const POSSimulatorModal: React.FC<POSSimulatorModalProps> = ({
             <button
               type="button"
               onClick={onClose}
-              className="px-4 py-2 text-xs font-semibold text-[#64748B] hover:text-[#0F172A] rounded-xl"
+              className="cursor-pointer px-4 py-2 text-xs font-bold text-[#64748B] hover:text-[#0F172A] rounded-xl"
             >
               Cancelar
             </button>
             <button
               type="submit"
               disabled={loading}
-              className="px-5 py-2.5 rounded-xl bg-[#008767] hover:bg-[#006e54] text-white text-xs font-semibold tracking-wide shadow-sm transition-colors disabled:opacity-50"
+              className="cursor-pointer px-5 py-2.5 rounded-xl bg-[#008767] hover:bg-[#006e54] text-white text-xs font-bold tracking-wide shadow-sm transition-all disabled:opacity-50 active:scale-95"
             >
-              {loading ? 'Cobrando...' : 'Cobrar Ticket en POS'}
+              {loading ? 'Cobrando...' : 'Cobrar Producto'}
             </button>
           </div>
         </form>

@@ -25,7 +25,7 @@ export default function SupermarketDashboardPage() {
   const [isShrinkageModalOpen, setIsShrinkageModalOpen] = useState(false);
   const [loading, setLoading] = useState(true);
 
-  // Carga inicial desde el backend API
+  // Cargar productos
   const fetchProducts = async () => {
     try {
       const res = await fetch('/api/products');
@@ -34,7 +34,7 @@ export default function SupermarketDashboardPage() {
         setProducts(json.data);
       }
     } catch (err) {
-      console.error('Error al cargar inventario:', err);
+      console.error('Error al cargar la tienda:', err);
     } finally {
       setLoading(false);
     }
@@ -44,7 +44,7 @@ export default function SupermarketDashboardPage() {
     fetchProducts();
   }, []);
 
-  // Cálculo dinámico de métricas desde el estado real del inventario
+  // Tarjetas superiores con palabras normales
   const totalStockCount = products.reduce((sum, p) => sum + p.stockQuantity, 0);
   const lowStockCount = products.filter((p) => p.status === 'LOW_STOCK').length;
   const expiredCount = products.filter((p) => p.status === 'EXPIRED').length;
@@ -52,37 +52,37 @@ export default function SupermarketDashboardPage() {
   const dynamicMetrics: StoreMetricCard[] = [
     {
       id: 'm-skus',
-      title: 'Productos y Lotes Activos',
-      subtitle: 'Piso de venta + Cámara fría',
-      value: loading ? '...' : `${products.length} SKUs (${totalStockCount} U)`,
-      badgeText: 'En Góndola',
+      title: 'Total de Mercancía',
+      subtitle: 'En tienda y bodega',
+      value: loading ? '...' : `${products.length} tipos (${totalStockCount} pzas)`,
+      badgeText: 'En Tienda',
       variant: 'good',
       icon: 'barcode',
     },
     {
       id: 'm-low',
-      title: 'Quiebres / Por Resurtir',
-      subtitle: 'Stock menor al umbral mínimo',
-      value: loading ? '...' : `${lowStockCount} Lotes`,
-      badgeText: 'Prioridad Alta',
+      title: 'Queda Muy Poco',
+      subtitle: 'Hay que surtir el estante',
+      value: loading ? '...' : `${lowStockCount} por acabarse`,
+      badgeText: '¡Ojo aquí!',
       variant: 'warning',
       icon: 'low-stock',
     },
     {
       id: 'm-fefo',
-      title: 'Riesgo / Caducados (FEFO)',
-      subtitle: 'Alertas del motor de caducidad',
-      value: loading ? '...' : `${expiredCount} Lotes`,
-      badgeText: expiredCount > 0 ? `${expiredCount} Bloqueados POS` : 'Al Día',
+      title: 'Productos Vencidos',
+      subtitle: 'Bloqueados en caja',
+      value: loading ? '...' : `${expiredCount} vencidos`,
+      badgeText: expiredCount > 0 ? 'No se pueden vender' : 'Ninguno vencido',
       variant: expiredCount > 0 ? 'danger' : 'good',
       icon: 'expiry-alert',
     },
     {
       id: 'm-cold',
-      title: 'Cadena de Frío (Cámaras 1-4)',
-      subtitle: 'Sensores IoT en rango óptimo',
+      title: 'Temperatura de Refris',
+      subtitle: 'Refrigeradores 1 al 4',
       value: '3.1 °C',
-      badgeText: 'Estable 24h',
+      badgeText: 'Frío Perfecto',
       variant: 'info',
       icon: 'cold-chain',
     },
@@ -101,34 +101,34 @@ export default function SupermarketDashboardPage() {
             productId: product.id,
             quantity: 12,
             movementType: 'SHELF_REPLENISHMENT',
-            operatorName: 'Jefe de Almacén',
-            referenceDocument: 'RESURTIDO-PISO',
-            notes: `Resurtido FEFO de 12 ${product.baseUom} a góndola.`,
+            operatorName: 'Encargado de Tienda',
+            referenceDocument: 'SURTIDO-ESTANTE',
+            notes: `Se pusieron 12 ${product.baseUom} más en el estante de "${product.name}".`,
           }),
         });
 
         const data = await res.json();
         if (res.ok) {
-          setToastMessage(data.message);
+          setToastMessage(`Listo: Se pusieron 12 piezas más en el estante de "${product.name}".`);
           fetchProducts();
         } else {
-          setToastMessage(`Error: ${JSON.stringify(data.error)}`);
+          setToastMessage(`No se pudo: ${JSON.stringify(data.error)}`);
         }
       } catch (err: any) {
-        setToastMessage(`Error de comunicación: ${err.message}`);
+        setToastMessage(`Error: ${err.message}`);
       }
     } else if (action === 'MARK_MERMA') {
       setIsShrinkageModalOpen(true);
     } else if (action === 'ADJUST_STOCK') {
       setToastMessage(
-        `Conteo cíclico auditado para ${product.name} en ${product.aisleLocation}.`
+        `Se anotó el conteo a mano para "${product.name}".`
       );
     }
   };
 
   return (
     <AppLayout
-      storeBranchName="Sucursal #04 · Hipermercado Centro"
+      storeBranchName="Sucursal Centro"
       onQuickReceiveStock={() => setIsReceiveModalOpen(true)}
       onOpenPOSSimulator={() => setIsPOSModalOpen(true)}
       onOpenKardex={() => setIsKardexModalOpen(true)}
@@ -137,33 +137,33 @@ export default function SupermarketDashboardPage() {
       onOpenColdChain={() => setIsColdChainModalOpen(true)}
       onOpenShrinkage={() => setIsShrinkageModalOpen(true)}
     >
-      {/* Notificación de Confirmación de Operaciones */}
+      {/* Mensaje de Confirmación */}
       {toastMessage && (
         <div className="bg-[#FFFFFF] border border-[#008767] rounded-2xl px-5 py-3.5 shadow-sm flex items-center justify-between gap-4 animate-in fade-in">
           <div className="flex items-center gap-3">
             <span className="w-2.5 h-2.5 rounded-full bg-[#008767]" />
-            <p className="text-xs font-semibold text-[#0F172A]">{toastMessage}</p>
+            <p className="text-xs font-bold text-[#0F172A]">{toastMessage}</p>
           </div>
           <button
             type="button"
             onClick={() => setToastMessage(null)}
-            className="text-xs font-semibold text-[#64748B] hover:text-[#0F172A]"
+            className="cursor-pointer text-xs font-bold text-[#64748B] hover:text-[#0F172A]"
           >
-            Cerrar
+            Cerrar aviso
           </button>
         </div>
       )}
 
-      {/* Grid Superior de 4 Métricas Clave */}
+      {/* 4 Tarjetas de Métricas */}
       <MetricCards metrics={dynamicMetrics} />
 
-      {/* Tabla de Inventario de Supermercado con FEFO y Códigos de Barras */}
+      {/* Tabla con los Productos */}
       <SupermarketInventoryTable
         products={products}
         onActionSelect={handleTableAction}
       />
 
-      {/* Modal 1: Entrada de Lotes (Recepción de Proveedores) */}
+      {/* Modales con Lenguaje Sencillo */}
       <ReceiveBatchModal
         isOpen={isReceiveModalOpen}
         onClose={() => setIsReceiveModalOpen(false)}
@@ -174,7 +174,6 @@ export default function SupermarketDashboardPage() {
         }}
       />
 
-      {/* Modal 2: Simulador de Caja POS con Bloqueo de Vencidos */}
       <POSSimulatorModal
         isOpen={isPOSModalOpen}
         onClose={() => setIsPOSModalOpen(false)}
@@ -185,32 +184,27 @@ export default function SupermarketDashboardPage() {
         }}
       />
 
-      {/* Modal 3: Auditoría de Kardex / Ledger Inmutable */}
       <KardexAuditModal
         isOpen={isKardexModalOpen}
         onClose={() => setIsKardexModalOpen(false)}
       />
 
-      {/* Modal 4: Generador de Cenefas y Etiquetas de Precio para Góndola */}
       <PriceTagGeneratorModal
         isOpen={isPriceTagsModalOpen}
         onClose={() => setIsPriceTagsModalOpen(false)}
         products={products}
       />
 
-      {/* Modal 5: Reporte de Valuación Contable y Descarga CSV */}
       <AuditReportModal
         isOpen={isAuditModalOpen}
         onClose={() => setIsAuditModalOpen(false)}
       />
 
-      {/* Modal 6: Telemetría de Sensores de Cadena de Frío IoT */}
       <ColdChainMonitorModal
         isOpen={isColdChainModalOpen}
         onClose={() => setIsColdChainModalOpen(false)}
       />
 
-      {/* Modal 7: Acta de Baja por Merma / Caducidad */}
       <ShrinkageFormModal
         isOpen={isShrinkageModalOpen}
         onClose={() => setIsShrinkageModalOpen(false)}
