@@ -45,6 +45,8 @@ export async function POST(request: Request) {
       expirationDate: 'No Registrada',
       daysToExpire: null,
       storageTemp: validated.storageCondition,
+      shelfStock: 0,
+      backroomStock: 0,
       stockQuantity: 0,
       minStockAlert: validated.minStockAlert,
       baseUom: validated.baseUom,

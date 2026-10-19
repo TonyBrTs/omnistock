@@ -1,6 +1,5 @@
 import { v4 as uuidv4 } from 'uuid';
 import {
-  CreateProductInput,
   ReceiveBatchInput,
   DispatchStockInput,
 } from '@/lib/validators/supermarket.schema';
@@ -55,7 +54,7 @@ export class SupermarketRepository {
     return SupermarketRepository.instance;
   }
 
-  // Calcula días restantes y estado de salud FEFO
+  // Calcula días restantes y estado del producto
   public static calculateHealthStatus(
     expirationDate: string,
     currentStock: number,
@@ -86,12 +85,15 @@ export class SupermarketRepository {
     const b2Id = uuidv4();
     const p3Id = uuidv4();
     const b3Id = uuidv4();
+    const p4Id = uuidv4();
+    const b4Id = uuidv4();
 
+    // 1. Leche: 48 en estante exhibidor + 96 en bodega = 144 Total Tienda
     this.batches.push({
       batchId: b1Id,
       productId: p1Id,
       locationId: 'loc-aisle-2',
-      locationName: 'Pasillo 02 · Góndola Fría A',
+      locationName: 'Pasillo 02 · Vitrina Fría',
       batchNumber: 'LOT-2610-A1',
       expirationDate: '2026-11-04',
       quantityOnHand: 144,
@@ -104,23 +106,26 @@ export class SupermarketRepository {
       id: p1Id,
       sku: 'LAC-LECH-01',
       barcodeEan13: '7501055300128',
-      name: 'Leche Entera Pasteurizada 1 Litro',
+      name: 'Leche Entera 1 Litro',
       brand: 'Santa Clara',
       department: 'Lácteos y Refrigerados',
-      aisleLocation: 'Pasillo 02 · Góndola Fría A',
+      aisleLocation: 'Pasillo 02 · Vitrina Fría',
       batchNumber: 'LOT-2610-A1',
       expirationDate: '2026-11-04',
       daysToExpire: 17,
       storageTemp: 'Refrigerado (2°C a 6°C)',
-      stockQuantity: 144,
+      shelfStock: 48,
+      backroomStock: 96,
+      stockQuantity: 144, // Total en toda la tienda
       minStockAlert: 36,
       baseUom: 'Pza',
-      packEquivalence: '1 Caja = 12 Tetrapacks',
+      packEquivalence: '1 Caja = 12 Piezas',
       unitCost: 21.5,
       salePrice: 28.9,
       status: 'GOOD',
     });
 
+    // 2. Pechuga de Pavo: 6 en vitrina + 2 en bodega = 8 Total Tienda
     this.batches.push({
       batchId: b2Id,
       productId: p2Id,
@@ -139,7 +144,7 @@ export class SupermarketRepository {
       sku: 'CAR-PAVO-04',
       barcodeEan13: '7501031311309',
       pluCode: '4820',
-      name: 'Pechuga de Pavo Virginia Rebanada 250g',
+      name: 'Pechuga de Pavo 250g',
       brand: 'Peñaranda',
       department: 'Carnicería y Salchichonería',
       aisleLocation: 'Vitrina Salchichonería #2',
@@ -147,20 +152,23 @@ export class SupermarketRepository {
       expirationDate: '2026-10-22',
       daysToExpire: 4,
       storageTemp: 'Refrigerado (2°C a 6°C)',
+      shelfStock: 6,
+      backroomStock: 2,
       stockQuantity: 8,
       minStockAlert: 15,
       baseUom: 'Paq',
-      packEquivalence: '1 Master = 10 Paquetes',
+      packEquivalence: '1 Paquete = 10 piezas',
       unitCost: 62.0,
       salePrice: 89.5,
       status: 'LOW_STOCK',
     });
 
+    // 3. Yogurt Griego: 5 vencidos en tienda
     this.batches.push({
       batchId: b3Id,
       productId: p3Id,
       locationId: 'loc-cold-room-1',
-      locationName: 'Cuarentena Cámara Fría 1',
+      locationName: 'Estante de Yogurts',
       batchNumber: 'LOT-2609-Z4',
       expirationDate: '2026-10-16',
       quantityOnHand: 5,
@@ -173,25 +181,65 @@ export class SupermarketRepository {
       id: p3Id,
       sku: 'LAC-YOG-09',
       barcodeEan13: '7509988123004',
-      name: 'Yogurt Griego Natural Sin Azúcar 750g',
+      name: 'Yogurt Griego Natural 750g',
       brand: 'Chobani',
       department: 'Lácteos y Refrigerados',
-      aisleLocation: 'Cuarentena Cámara Fría 1',
+      aisleLocation: 'Estante de Yogurts',
       batchNumber: 'LOT-2609-Z4',
       expirationDate: '2026-10-16',
       daysToExpire: -2,
       storageTemp: 'Refrigerado (2°C a 6°C)',
+      shelfStock: 5,
+      backroomStock: 0,
       stockQuantity: 5,
       minStockAlert: 12,
       baseUom: 'Pza',
-      packEquivalence: '1 Charola = 6 Envases',
+      packEquivalence: '1 Charola = 6 Piezas',
       unitCost: 78.0,
       salePrice: 112.0,
       status: 'EXPIRED',
     });
+
+    // 4. Aguacate Hass: 35 kg en isla + 57.5 kg en bodega = 92.5 Kg Total
+    this.batches.push({
+      batchId: b4Id,
+      productId: p4Id,
+      locationId: 'loc-fruit-1',
+      locationName: 'Isla Frutas #1',
+      batchNumber: 'LOT-SEM42-MX',
+      expirationDate: '2026-10-26',
+      quantityOnHand: 92.5,
+      unitCost: 48.0,
+      status: 'GOOD',
+      receivedAt: new Date().toISOString(),
+    });
+
+    this.products.push({
+      id: p4Id,
+      sku: 'FRU-AGU-01',
+      barcodeEan13: '2004022000001',
+      pluCode: '4225',
+      name: 'Aguacate Hass Selección Extra',
+      brand: 'Huerta Michoacán',
+      department: 'Frutas y Verduras',
+      aisleLocation: 'Isla Frutas #1',
+      batchNumber: 'LOT-SEM42-MX',
+      expirationDate: '2026-10-26',
+      daysToExpire: 8,
+      storageTemp: 'Ambiente (Seco)',
+      shelfStock: 35,
+      backroomStock: 57.5,
+      stockQuantity: 92.5,
+      minStockAlert: 25,
+      baseUom: 'Kg',
+      packEquivalence: '1 Reja = 18 Kg',
+      unitCost: 48.0,
+      salePrice: 74.9,
+      status: 'GOOD',
+    });
   }
 
-  // Recalcula el producto consolidando el lote activo más próximo a vencer (FEFO)
+  // Recalcula el producto consolidando el stock total de la tienda
   private refreshProductView(productId: string) {
     const productIndex = this.products.findIndex((p) => p.id === productId);
     if (productIndex === -1) return;
@@ -199,10 +247,10 @@ export class SupermarketRepository {
     const productBatches = this.batches.filter((b) => b.productId === productId);
     const activeBatches = productBatches.filter((b) => b.quantityOnHand > 0);
 
-    // Total de stock físico disponible
-    const totalStock = activeBatches.reduce((sum, b) => sum + b.quantityOnHand, 0);
+    // TOTAL GLOBAL DE MERCANCÍA EN TODA LA TIENDA
+    const totalGlobalStock = activeBatches.reduce((sum, b) => sum + b.quantityOnHand, 0);
 
-    // Ordenamiento FEFO: fecha de caducidad más próxima primero
+    // Ordenamiento FEFO
     const fefoSorted = [...activeBatches].sort((a, b) => {
       return new Date(a.expirationDate).getTime() - new Date(b.expirationDate).getTime();
     });
@@ -212,13 +260,19 @@ export class SupermarketRepository {
     if (currentLeadingBatch) {
       const { status, daysToExpire } = SupermarketRepository.calculateHealthStatus(
         currentLeadingBatch.expirationDate,
-        totalStock,
+        totalGlobalStock,
         this.products[productIndex].minStockAlert
       );
 
+      // Conservar proporción de estante o recalcular si bajó de stock
+      const currentShelf = Math.min(this.products[productIndex].shelfStock, totalGlobalStock);
+      const currentBackroom = Math.max(0, totalGlobalStock - currentShelf);
+
       this.products[productIndex] = {
         ...this.products[productIndex],
-        stockQuantity: totalStock,
+        stockQuantity: totalGlobalStock,
+        shelfStock: currentShelf,
+        backroomStock: currentBackroom,
         batchNumber: currentLeadingBatch.batchNumber,
         expirationDate: currentLeadingBatch.expirationDate,
         daysToExpire,
@@ -228,14 +282,16 @@ export class SupermarketRepository {
     }
   }
 
-  // Registrar Entrada de Lote (Recepción de Proveedor)
+  // Registrar Entrada de Mercancía Nueva
   public receiveBatch(input: ReceiveBatchInput): { batch: BatchEntity; movement: StockMovementEntity } {
     const product = this.products.find((p) => p.id === input.productId);
     if (!product) throw new Error(`Producto ${input.productId} no encontrado`);
 
+    const newTotal = product.stockQuantity + input.quantity;
+
     const { status } = SupermarketRepository.calculateHealthStatus(
       input.expirationDate,
-      product.stockQuantity + input.quantity,
+      newTotal,
       product.minStockAlert
     );
 
@@ -243,7 +299,7 @@ export class SupermarketRepository {
       batchId: uuidv4(),
       productId: input.productId,
       locationId: input.locationId,
-      locationName: input.locationId === 'loc-cold' ? 'Cámara Fría #1' : 'Bodega Central Recepción',
+      locationName: input.locationId === 'loc-cold' ? 'Refrigerador' : 'Bodega Central',
       batchNumber: input.batchNumber,
       expirationDate: input.expirationDate,
       quantityOnHand: input.quantity,
@@ -254,7 +310,6 @@ export class SupermarketRepository {
 
     this.batches.push(newBatch);
 
-    const newBalance = product.stockQuantity + input.quantity;
     const movement: StockMovementEntity = {
       movementId: uuidv4(),
       productId: input.productId,
@@ -262,11 +317,11 @@ export class SupermarketRepository {
       locationId: newBatch.locationId,
       movementType: 'PURCHASE_RECEIPT',
       quantityDelta: input.quantity,
-      balanceAfter: newBalance,
+      balanceAfter: newTotal,
       unitCostSnapshot: input.unitCost,
       referenceDocument: input.supplierInvoice,
       operatorName: input.operatorName,
-      notes: `Recepción de lote FEFO ${input.batchNumber}`,
+      notes: `Llegada de mercancía nueva: Lote ${input.batchNumber}`,
       occurredAt: new Date().toISOString(),
     };
 
@@ -276,7 +331,7 @@ export class SupermarketRepository {
     return { batch: newBatch, movement };
   }
 
-  // Despacho FEFO (Venta POS o Resurtido): Descuenta automáticamente del lote más próximo a caducar
+  // Despacho de mercancía (Venta o Salida)
   public dispatchStockFEFO(input: DispatchStockInput): StockMovementEntity[] {
     const product = this.products.find((p) => p.id === input.productId);
     if (!product) throw new Error(`Producto ${input.productId} no encontrado`);
@@ -287,7 +342,7 @@ export class SupermarketRepository {
 
     const totalAvailable = availableBatches.reduce((acc, b) => acc + b.quantityOnHand, 0);
     if (totalAvailable < input.quantity) {
-      throw new Error(`Stock insuficiente. Solicitado: ${input.quantity}, Disponible: ${totalAvailable}`);
+      throw new Error(`No hay suficiente mercancía en la tienda. Solicitado: ${input.quantity}, Hay en total: ${totalAvailable}`);
     }
 
     let remainingToDispatch = input.quantity;
@@ -311,7 +366,7 @@ export class SupermarketRepository {
         unitCostSnapshot: batch.unitCost,
         referenceDocument: input.referenceDocument,
         operatorName: input.operatorName,
-        notes: input.notes || `Despacho FEFO de lote ${batch.batchNumber}`,
+        notes: input.notes || `Salida por venta de lote ${batch.batchNumber}`,
         occurredAt: new Date().toISOString(),
       };
 
@@ -323,7 +378,7 @@ export class SupermarketRepository {
     return generatedMovements;
   }
 
-  // Registrar Merma / Caducidad
+  // Registrar Baja por Merma
   public markBatchAsShrinkage(batchNumber: string, operatorName: string, reason: string): StockMovementEntity | null {
     const batch = this.batches.find((b) => b.batchNumber === batchNumber);
     if (!batch) return null;
@@ -341,7 +396,7 @@ export class SupermarketRepository {
       quantityDelta: -qtyToLoss,
       balanceAfter: 0,
       unitCostSnapshot: batch.unitCost,
-      referenceDocument: 'ACTA-MERMA',
+      referenceDocument: 'BAJA-MERMA',
       operatorName,
       notes: reason,
       occurredAt: new Date().toISOString(),

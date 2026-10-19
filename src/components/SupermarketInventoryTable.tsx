@@ -14,6 +14,7 @@ import {
   AlertOctagon,
   ChevronLeft,
   ChevronRight,
+  Store,
 } from 'lucide-react';
 
 interface SupermarketInventoryTableProps {
@@ -35,7 +36,7 @@ const STATUS_STYLES: Record<BatchHealthStatus, { classes: string; label: string 
   },
   EXPIRED: {
     classes: 'bg-[#FEE2E2] text-[#991B1B]',
-    label: 'Vencido (No se puede vender)',
+    label: 'Vencido (No vender)',
   },
 };
 
@@ -84,8 +85,8 @@ export const SupermarketInventoryTable: React.FC<SupermarketInventoryTableProps>
   }, [filteredProducts, currentPage]);
 
   return (
-    <section className="bg-[#FFFFFF] border border-[#E2E8F0] rounded-2xl shadow-[0_4px_20px_-4px_rgba(0,0,0,0.05)] overflow-visible">
-      {/* Barra de Búsqueda y Filtros con Nombres Comunes */}
+    <section className="bg-[#FFFFFF] border border-[#E2E8F0] rounded-2xl shadow-[0_4px_20px_-4px_rgba(0,0,0,0.05)] w-full overflow-hidden">
+      {/* Barra de Búsqueda y Filtros */}
       <div className="p-5 border-b border-[#E2E8F0] flex flex-col xl:flex-row xl:items-center xl:justify-between gap-4">
         <div className="relative flex-1 max-w-xl">
           <Search className="w-4 h-4 text-[#64748B] absolute left-3.5 top-1/2 -translate-y-1/2" />
@@ -102,7 +103,7 @@ export const SupermarketInventoryTable: React.FC<SupermarketInventoryTableProps>
         </div>
 
         {/* Filtros */}
-        <div className="flex flex-wrap items-center gap-3">
+        <div className="flex flex-wrap items-center gap-2 sm:gap-3">
           <select
             value={departmentFilter}
             onChange={(e) => {
@@ -128,13 +129,13 @@ export const SupermarketInventoryTable: React.FC<SupermarketInventoryTableProps>
               setTempFilter(e.target.value as 'ALL' | StorageTemperature);
               setCurrentPage(1);
             }}
-            aria-label="Filtrar por Refrigeración"
+            aria-label="Filtrar por Tipo de Conservación"
             className="cursor-pointer px-3.5 py-2.5 text-xs font-semibold bg-[#F4F6F9] border border-[#E2E8F0] rounded-xl text-[#0F172A] hover:border-[#008767] transition-colors focus:outline-none"
           >
-            <option value="ALL">Todo Tipo de Frío</option>
-            <option value="Ambiente (Seco)">En Estante (Seco)</option>
-            <option value="Refrigerado (2°C a 6°C)">En Refri (Fresco)</option>
-            <option value="Congelado (-18°C)">En Congelador</option>
+            <option value="ALL">Todo Tipo de Conservación</option>
+            <option value="Ambiente (Seco)">Estante Seco</option>
+            <option value="Refrigerado (2°C a 6°C)">Refrigerado</option>
+            <option value="Congelado (-18°C)">Congelador</option>
           </select>
 
           <select
@@ -149,39 +150,39 @@ export const SupermarketInventoryTable: React.FC<SupermarketInventoryTableProps>
             <option value="ALL">Todos los Estados</option>
             <option value="GOOD">Todo Bien</option>
             <option value="LOW_STOCK">Por Vencer / Queda Poco</option>
-            <option value="EXPIRED">Vencidos (Tirar)</option>
+            <option value="EXPIRED">Vencidos</option>
           </select>
         </div>
       </div>
 
-      {/* Tabla con Columnas Claras */}
-      <div className="overflow-x-auto">
-        <table className="w-full text-left border-collapse">
+      {/* Tabla con Existencias Totales y Desglose Estante/Bodega */}
+      <div className="overflow-x-auto w-full">
+        <table className="w-full text-left border-collapse min-w-[900px]">
           <thead>
             <tr className="border-b border-[#E2E8F0] bg-[#F4F6F9]/60">
               <th className="py-4 px-6 text-xs font-bold uppercase tracking-wider text-slate-500">
-                Código de Barras
+                Código
               </th>
               <th className="py-4 px-6 text-xs font-bold uppercase tracking-wider text-slate-500">
                 Producto
               </th>
               <th className="py-4 px-6 text-xs font-bold uppercase tracking-wider text-slate-500">
-                Dónde está guardado
+                Ubicación
               </th>
               <th className="py-4 px-6 text-xs font-bold uppercase tracking-wider text-slate-500">
-                Lote y Cuándo Vence
+                Lote y Vencimiento
               </th>
               <th className="py-4 px-6 text-xs font-bold uppercase tracking-wider text-slate-500">
-                ¿Cuánto Queda?
+                TOTAL EN TIENDA
               </th>
               <th className="py-4 px-6 text-xs font-bold uppercase tracking-wider text-slate-500">
-                Precio al Cliente
+                Precio
               </th>
               <th className="py-4 px-6 text-xs font-bold uppercase tracking-wider text-slate-500">
                 Estado
               </th>
               <th className="py-4 px-6 text-right text-xs font-bold uppercase tracking-wider text-slate-500">
-                Opciones
+                Acciones
               </th>
             </tr>
           </thead>
@@ -217,14 +218,14 @@ export const SupermarketInventoryTable: React.FC<SupermarketInventoryTableProps>
                     </td>
 
                     {/* Nombre */}
-                    <td className="py-4 px-6">
-                      <p className="text-sm font-bold text-[#0F172A]">{row.name}</p>
-                      <p className="text-xs text-[#64748B]">
+                    <td className="py-4 px-6 max-w-xs">
+                      <p className="text-sm font-bold text-[#0F172A] truncate">{row.name}</p>
+                      <p className="text-xs text-[#64748B] truncate">
                         Marca: {row.brand} · <span className="font-medium text-slate-600">{row.department}</span>
                       </p>
                     </td>
 
-                    {/* Pasillo / Refri */}
+                    {/* Pasillo */}
                     <td className="py-4 px-6 whitespace-nowrap">
                       <span className="text-sm font-medium text-slate-800 block">
                         {row.aisleLocation}
@@ -234,7 +235,7 @@ export const SupermarketInventoryTable: React.FC<SupermarketInventoryTableProps>
                       </span>
                     </td>
 
-                    {/* Vencimiento */}
+                    {/* Lote y Vencimiento */}
                     <td className="py-4 px-6 whitespace-nowrap">
                       <span className="font-mono text-xs font-semibold bg-slate-100 text-slate-800 px-2.5 py-1 rounded-xl border border-[#E2E8F0] inline-block">
                         Lote: {row.batchNumber}
@@ -252,21 +253,28 @@ export const SupermarketInventoryTable: React.FC<SupermarketInventoryTableProps>
                             }`}
                           >
                             ({row.daysToExpire <= 0
-                              ? '¡Ya venció!'
-                              : `Faltan ${row.daysToExpire} días`})
+                              ? '¡Vencido!'
+                              : `${row.daysToExpire} días`})
                           </span>
                         )}
                       </span>
                     </td>
 
-                    {/* Cantidad disponible */}
+                    {/* TOTAL EN TIENDA (Estante + Bodega) */}
                     <td className="py-4 px-6 whitespace-nowrap">
-                      <span className="text-sm font-extrabold text-[#0F172A] block">
-                        {row.stockQuantity} {row.baseUom}
-                      </span>
-                      <span className="text-[11px] text-[#64748B]">
-                        Viene en: {row.packEquivalence}
-                      </span>
+                      <div className="flex items-baseline gap-1.5">
+                        <span className="text-base font-black text-[#0F172A]">
+                          {row.stockQuantity} {row.baseUom}
+                        </span>
+                        <span className="text-[10px] uppercase font-bold text-[#008767] bg-emerald-50 px-1.5 py-0.2 rounded">
+                          Total
+                        </span>
+                      </div>
+                      <div className="text-[11px] text-[#64748B] flex items-center gap-2 mt-0.5">
+                        <span>Estante: <strong>{row.shelfStock}</strong></span>
+                        <span>·</span>
+                        <span>Bodega: <strong>{row.backroomStock}</strong></span>
+                      </div>
                     </td>
 
                     {/* Precio */}
@@ -275,7 +283,7 @@ export const SupermarketInventoryTable: React.FC<SupermarketInventoryTableProps>
                         ${row.salePrice.toFixed(2)}
                       </span>
                       <span className="text-[11px] text-[#64748B]">
-                        Nos costó: ${row.unitCost.toFixed(2)}
+                        Costo: ${row.unitCost.toFixed(2)}
                       </span>
                     </td>
 
@@ -314,10 +322,10 @@ export const SupermarketInventoryTable: React.FC<SupermarketInventoryTableProps>
                           >
                             <span className="flex items-center gap-2">
                               <ArrowUpRight className="w-3.5 h-3.5 text-[#008767]" />
-                              Poner más en el estante
+                              Mover al estante (+12)
                             </span>
                             <span className="text-[10px] font-bold text-[#008767] bg-emerald-50 px-1.5 py-0.5 rounded">
-                              +12
+                              Bodega
                             </span>
                           </button>
 
@@ -363,7 +371,7 @@ export const SupermarketInventoryTable: React.FC<SupermarketInventoryTableProps>
           Mostrando{' '}
           <span className="font-bold text-[#0F172A]">{paginatedRows.length}</span> de{' '}
           <span className="font-bold text-[#0F172A]">{filteredProducts.length}</span>{' '}
-          productos en la tienda
+          artículos en toda la tienda
         </div>
 
         <div className="flex items-center gap-2">

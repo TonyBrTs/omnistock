@@ -21,11 +21,17 @@ export interface SupermarketProductRow {
   name: string;
   brand: string;
   department: StoreDepartment;
+  /** Dónde está colocado en la tienda */
   aisleLocation: string;
   batchNumber: string;
   expirationDate: string;
   daysToExpire: number | null;
   storageTemp: StorageTemperature;
+  /** Cuántos hay en los estantes / exhibición */
+  shelfStock: number;
+  /** Cuántos hay guardados en bodega / almacén */
+  backroomStock: number;
+  /** TOTAL GLOBAL en toda la tienda (estantes + bodega) */
   stockQuantity: number;
   minStockAlert: number;
   baseUom: 'Pza' | 'Kg' | 'Litro' | 'Paq';
