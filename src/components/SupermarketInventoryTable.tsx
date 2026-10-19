@@ -125,9 +125,9 @@ export const SupermarketInventoryTable: React.FC<SupermarketInventoryTableProps>
   }, [filteredProducts, currentPage]);
 
   return (
-    <section className="bg-[#FFFFFF] border border-[#E2E8F0] rounded-2xl shadow-[0_4px_20px_-4px_rgba(0,0,0,0.05)] w-full overflow-hidden">
+    <section className="bg-[#FFFFFF] border border-[#E2E8F0] rounded-2xl shadow-[0_4px_20px_-4px_rgba(0,0,0,0.05)] w-full relative">
       {/* Barra de Búsqueda y Filtros */}
-      <div className="p-5 border-b border-[#E2E8F0] flex flex-col xl:flex-row xl:items-center xl:justify-between gap-4">
+      <div className="p-5 border-b border-[#E2E8F0] flex flex-col xl:flex-row xl:items-center xl:justify-between gap-4 relative z-20">
         <div className="relative flex-1 max-w-xl">
           <Search className="w-4 h-4 text-[#64748B] absolute left-3.5 top-1/2 -translate-y-1/2" />
           <input
@@ -152,6 +152,8 @@ export const SupermarketInventoryTable: React.FC<SupermarketInventoryTableProps>
             }}
             options={departmentOptions}
             buttonClassName="py-2 px-3 text-xs font-semibold rounded-xl"
+            menuWidthClass="w-56"
+            align="left"
             ariaLabel="Filtrar por Departamento"
           />
 
@@ -163,6 +165,8 @@ export const SupermarketInventoryTable: React.FC<SupermarketInventoryTableProps>
             }}
             options={tempOptions}
             buttonClassName="py-2 px-3 text-xs font-semibold rounded-xl"
+            menuWidthClass="w-52"
+            align="left"
             ariaLabel="Filtrar por Tipo de Conservación"
           />
 
@@ -174,6 +178,8 @@ export const SupermarketInventoryTable: React.FC<SupermarketInventoryTableProps>
             }}
             options={statusOptions}
             buttonClassName="py-2 px-3 text-xs font-semibold rounded-xl"
+            menuWidthClass="w-52"
+            align="right"
             ariaLabel="Filtrar por Estado"
           />
         </div>

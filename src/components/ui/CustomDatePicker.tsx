@@ -11,6 +11,7 @@ interface CustomDatePickerProps {
   className?: string;
   ariaLabel?: string;
   required?: boolean;
+  align?: 'left' | 'right';
 }
 
 const MONTH_NAMES = [
@@ -26,6 +27,7 @@ export const CustomDatePicker: React.FC<CustomDatePickerProps> = ({
   placeholder = 'Elige una fecha...',
   className = '',
   ariaLabel,
+  align = 'right',
 }) => {
   const [isOpen, setIsOpen] = useState(false);
   const containerRef = useRef<HTMLDivElement>(null);
@@ -114,7 +116,6 @@ export const CustomDatePicker: React.FC<CustomDatePickerProps> = ({
   // Cálculo de los días del mes para la cuadrícula
   const calendarDays = useMemo(() => {
     const firstDayIndex = new Date(viewYear, viewMonth, 1).getDay();
-    // En JS 0 es domingo. Queremos que la semana empiece en Lunes (0=Lunes... 6=Domingo)
     const startOffset = (firstDayIndex + 6) % 7;
 
     const daysInCurrentMonth = new Date(viewYear, viewMonth + 1, 0).getDate();
@@ -138,7 +139,7 @@ export const CustomDatePicker: React.FC<CustomDatePickerProps> = ({
       days.push({ day: d, monthOffset: 0, dateString });
     }
 
-    // Días del mes siguiente para completar la matriz de 35 o 42 celdas
+    // Días del mes siguiente para completar la matriz
     const remaining = (7 - (days.length % 7)) % 7;
     for (let d = 1; d <= remaining; d++) {
       const m = viewMonth === 11 ? 1 : viewMonth + 2;
@@ -182,81 +183,85 @@ export const CustomDatePicker: React.FC<CustomDatePickerProps> = ({
       >
         <div className="flex items-center gap-2.5 min-w-0">
           <CalendarIcon className="w-4 h-4 text-[#008767] shrink-0" />
-          <span className={`truncate font-medium ${formattedDisplay ? 'text-slate-900' : 'text-slate-400'}`}>
+          <span className={`truncate font-medium text-xs sm:text-sm ${formattedDisplay ? 'text-slate-900' : 'text-slate-400'}`}>
             {formattedDisplay || placeholder}
           </span>
         </div>
-        <span className="text-[10px] font-bold text-slate-400 uppercase tracking-wider shrink-0 bg-slate-100 px-2 py-0.5 rounded-md">
+        <span className="text-[10px] font-bold text-slate-400 uppercase tracking-wider shrink-0 bg-slate-100 px-1.5 py-0.5 rounded">
           {value || 'Fecha'}
         </span>
       </button>
 
-      {/* Popover desplegable del calendario */}
+      {/* Popover desplegable del calendario contenido sin desbordes */}
       {isOpen && (
-        <div className="absolute z-50 mt-1.5 p-4 bg-white border border-[#E2E8F0] rounded-2xl shadow-2xl w-80 text-[#0F172A] animate-in fade-in zoom-in-95 duration-150">
+        <div
+          className={`absolute z-50 mt-1.5 p-3.5 bg-white border border-[#E2E8F0] rounded-2xl shadow-2xl w-[280px] max-w-[calc(100vw-2.5rem)] text-[#0F172A] animate-in fade-in zoom-in-95 duration-150 ${
+            align === 'right' ? 'right-0' : 'left-0'
+          }`}
+        >
           {/* Cabecera con selector de mes y año */}
-          <div className="flex items-center justify-between mb-3">
+          <div className="flex items-center justify-between mb-2.5">
             <button
               type="button"
               onClick={handlePrevMonth}
               title="Mes anterior"
-              className="cursor-pointer p-1.5 rounded-lg text-slate-500 hover:text-slate-900 hover:bg-slate-100 transition-colors"
+              className="cursor-pointer p-1 rounded-lg text-slate-500 hover:text-slate-900 hover:bg-slate-100 transition-colors"
             >
               <ChevronLeft className="w-4 h-4" />
             </button>
-            <div className="text-center font-bold text-sm text-slate-800">
+            <div className="text-center font-bold text-xs text-slate-800">
               {MONTH_NAMES[viewMonth]} {viewYear}
             </div>
             <button
               type="button"
               onClick={handleNextMonth}
               title="Mes siguiente"
-              className="cursor-pointer p-1.5 rounded-lg text-slate-500 hover:text-slate-900 hover:bg-slate-100 transition-colors"
+              className="cursor-pointer p-1 rounded-lg text-slate-500 hover:text-slate-900 hover:bg-slate-100 transition-colors"
             >
               <ChevronRight className="w-4 h-4" />
             </button>
           </div>
 
           {/* Atajos rápidos para fechas de vencimiento */}
-          <div className="mb-3 pt-1 border-t border-slate-100">
-            <p className="text-[10px] uppercase tracking-wider font-bold text-slate-400 mb-1.5">
+          <div className="mb-2.5 pt-1 border-t border-slate-100">
+            <p className="text-[9px] uppercase tracking-wider font-bold text-slate-400 mb-1">
               Atajos de Vencimiento:
             </p>
             <div className="flex flex-wrap gap-1">
               <button
                 type="button"
                 onClick={() => applyQuickOffset(7)}
-                className="cursor-pointer text-[11px] px-2 py-1 rounded-lg bg-emerald-50 text-[#008767] font-semibold hover:bg-emerald-100 transition-colors"
+                className="cursor-pointer text-[10px] px-1.5 py-0.5 rounded-md bg-emerald-50 text-[#008767] font-semibold hover:bg-emerald-100 transition-colors"
               >
-                +7 días
+                +7d
               </button>
               <button
                 type="button"
                 onClick={() => applyQuickOffset(15)}
-                className="cursor-pointer text-[11px] px-2 py-1 rounded-lg bg-emerald-50 text-[#008767] font-semibold hover:bg-emerald-100 transition-colors"
+                className="cursor-pointer text-[10px] px-1.5 py-0.5 rounded-md bg-emerald-50 text-[#008767] font-semibold hover:bg-emerald-100 transition-colors"
               >
-                +15 días
+                +15d
               </button>
               <button
                 type="button"
                 onClick={() => applyQuickOffset(30)}
-                className="cursor-pointer text-[11px] px-2 py-1 rounded-lg bg-emerald-50 text-[#008767] font-semibold hover:bg-emerald-100 transition-colors"
+                className="cursor-pointer text-[10px] px-1.5 py-0.5 rounded-md bg-emerald-50 text-[#008767] font-semibold hover:bg-emerald-100 transition-colors"
               >
-                +1 mes
+                +1m
               </button>
               <button
                 type="button"
                 onClick={() => applyQuickOffset(180)}
-                className="cursor-pointer text-[11px] px-2 py-1 rounded-lg bg-emerald-50 text-[#008767] font-semibold hover:bg-emerald-100 transition-colors"
+                className="cursor-pointer text-[10px] px-1.5 py-0.5 rounded-md bg-emerald-50 text-[#008767] font-semibold hover:bg-emerald-100 transition-colors"
               >
-                +6 meses
+                +6m
               </button>
               <button
                 type="button"
                 onClick={() => applyQuickOffset(365)}
-                className="cursor-pointer text-[11px] px-2 py-1 rounded-lg bg-emerald-50 text-[#008767] font-semibold hover:bg-emerald-100 transition-colors"
+                className="cursor-pointer text-[10px] px-1.5 py-0.5 rounded-md bg-emerald-50 text-[#008767] font-semibold hover:bg-emerald-100 transition-colors"
               >
-                +1 año
+                +1a
               </button>
             </div>
           </div>
@@ -264,7 +269,7 @@ export const CustomDatePicker: React.FC<CustomDatePickerProps> = ({
           {/* Días de la semana */}
           <div className="grid grid-cols-7 gap-1 text-center mb-1">
             {WEEK_DAYS.map((wd) => (
-              <span key={wd} className="text-[11px] font-bold text-slate-400 py-1">
+              <span key={wd} className="text-[10px] font-bold text-slate-400 py-0.5">
                 {wd}
               </span>
             ))}
@@ -285,7 +290,7 @@ export const CustomDatePicker: React.FC<CustomDatePickerProps> = ({
                     onChange(item.dateString);
                     setIsOpen(false);
                   }}
-                  className={`cursor-pointer h-8 w-8 mx-auto rounded-lg text-xs flex items-center justify-center font-medium transition-all ${
+                  className={`cursor-pointer h-7 w-7 mx-auto rounded-lg text-xs flex items-center justify-center font-medium transition-all ${
                     isSelected
                       ? 'bg-[#008767] text-white font-bold shadow-xs scale-105'
                       : isOtherMonth
@@ -300,7 +305,7 @@ export const CustomDatePicker: React.FC<CustomDatePickerProps> = ({
           </div>
 
           {/* Pie del calendario con botón Hoy */}
-          <div className="mt-3 pt-2.5 border-t border-slate-100 flex items-center justify-between text-xs">
+          <div className="mt-2.5 pt-2 border-t border-slate-100 flex items-center justify-between text-[11px]">
             <button
               type="button"
               onClick={() => {
@@ -310,17 +315,17 @@ export const CustomDatePicker: React.FC<CustomDatePickerProps> = ({
                 setViewMonth(m - 1);
                 setIsOpen(false);
               }}
-              className="cursor-pointer flex items-center gap-1.5 text-slate-600 hover:text-[#008767] font-semibold transition-colors"
+              className="cursor-pointer flex items-center gap-1 text-slate-600 hover:text-[#008767] font-semibold transition-colors"
             >
-              <RotateCcw className="w-3.5 h-3.5" />
-              <span>Hoy ({todayStr})</span>
+              <RotateCcw className="w-3 h-3" />
+              <span>Hoy</span>
             </button>
             <button
               type="button"
               onClick={() => setIsOpen(false)}
               className="cursor-pointer font-semibold text-slate-500 hover:text-slate-800"
             >
-              Cerrar
+              Listo
             </button>
           </div>
         </div>

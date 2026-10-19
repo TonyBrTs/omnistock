@@ -79,9 +79,9 @@ export const ShrinkageFormModal: React.FC<ShrinkageFormModalProps> = ({
   };
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/40 backdrop-blur-xs p-4">
-      <div className="bg-[#FFFFFF] border border-[#E2E8F0] rounded-2xl w-full max-w-lg shadow-xl overflow-hidden animate-in fade-in zoom-in-95 duration-200">
-        <div className="px-6 py-4 border-b border-[#E2E8F0] flex items-center justify-between">
+    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/40 backdrop-blur-xs p-4 overflow-y-auto">
+      <div className="bg-[#FFFFFF] border border-[#E2E8F0] rounded-2xl w-full max-w-lg shadow-xl overflow-visible animate-in fade-in zoom-in-95 duration-200 my-auto">
+        <div className="px-6 py-4 border-b border-[#E2E8F0] flex items-center justify-between rounded-t-2xl bg-white">
           <div>
             <h2 className="text-base font-bold text-[#0F172A]">Tirar Producto Dañado o Vencido</h2>
             <p className="text-xs text-[#64748B]">

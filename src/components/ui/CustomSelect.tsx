@@ -21,6 +21,8 @@ interface CustomSelectProps {
   buttonClassName?: string;
   ariaLabel?: string;
   disabled?: boolean;
+  align?: 'left' | 'right';
+  menuWidthClass?: string;
 }
 
 export const CustomSelect: React.FC<CustomSelectProps> = ({
@@ -32,6 +34,8 @@ export const CustomSelect: React.FC<CustomSelectProps> = ({
   buttonClassName = '',
   ariaLabel,
   disabled = false,
+  align = 'left',
+  menuWidthClass,
 }) => {
   const [isOpen, setIsOpen] = useState(false);
   const containerRef = useRef<HTMLDivElement>(null);
@@ -104,11 +108,13 @@ export const CustomSelect: React.FC<CustomSelectProps> = ({
         />
       </button>
 
-      {/* Menú desplegable flotante estilizado */}
+      {/* Menú desplegable flotante estilizado sin desbordes */}
       {isOpen && (
         <div
           role="listbox"
-          className="absolute z-50 mt-1.5 w-full min-w-[220px] max-h-64 overflow-y-auto bg-white border border-[#E2E8F0] rounded-xl shadow-xl py-1.5 text-sm text-[#0F172A] focus:outline-none animate-in fade-in zoom-in-95 duration-150"
+          className={`absolute z-50 mt-1.5 max-h-56 overflow-y-auto bg-white border border-[#E2E8F0] rounded-xl shadow-xl py-1 text-sm text-[#0F172A] focus:outline-none animate-in fade-in zoom-in-95 duration-150 ${
+            align === 'right' ? 'right-0' : 'left-0'
+          } ${menuWidthClass || 'w-full max-w-[calc(100vw-2rem)]'}`}
         >
           {options.length === 0 ? (
             <div className="px-4 py-3 text-xs text-slate-400 text-center">
@@ -126,9 +132,9 @@ export const CustomSelect: React.FC<CustomSelectProps> = ({
                     onChange(option.value);
                     setIsOpen(false);
                   }}
-                  className={`cursor-pointer px-3.5 py-2.5 flex items-center justify-between gap-2 transition-colors ${
+                  className={`cursor-pointer px-3.5 py-2 flex items-center justify-between gap-2 transition-colors ${
                     isSelected
-                      ? 'bg-emerald-50/80 text-[#008767] font-semibold'
+                      ? 'bg-emerald-50/90 text-[#008767] font-semibold'
                       : 'hover:bg-slate-50 text-slate-700 hover:text-slate-900'
                   }`}
                 >
@@ -137,11 +143,11 @@ export const CustomSelect: React.FC<CustomSelectProps> = ({
                       <span className="shrink-0 text-slate-400">{option.icon}</span>
                     )}
                     <div className="truncate">
-                      <div className="flex items-center gap-2 truncate">
-                        <span className="truncate">{option.label}</span>
+                      <div className="flex items-center gap-1.5 truncate">
+                        <span className="truncate text-xs font-semibold">{option.label}</span>
                         {option.badge && (
                           <span
-                            className={`text-[10px] px-2 py-0.5 rounded-full font-bold shrink-0 ${
+                            className={`text-[9px] px-1.5 py-0.2 rounded-full font-bold shrink-0 ${
                               option.badgeColor || 'bg-slate-100 text-slate-600'
                             }`}
                           >
@@ -150,7 +156,7 @@ export const CustomSelect: React.FC<CustomSelectProps> = ({
                         )}
                       </div>
                       {option.sublabel && (
-                        <p className="text-[11px] text-slate-500 font-normal truncate mt-0.5">
+                        <p className="text-[10px] text-slate-500 font-normal truncate mt-0.5">
                           {option.sublabel}
                         </p>
                       )}
@@ -158,7 +164,7 @@ export const CustomSelect: React.FC<CustomSelectProps> = ({
                   </div>
 
                   {isSelected && (
-                    <Check className="w-4 h-4 text-[#008767] shrink-0" />
+                    <Check className="w-3.5 h-3.5 text-[#008767] shrink-0 ml-1.5" />
                   )}
                 </div>
               );
