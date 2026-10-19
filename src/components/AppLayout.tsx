@@ -8,7 +8,6 @@ import {
   ShoppingCart,
   Tag,
   FileSpreadsheet,
-  ThermometerSnowflake,
   History,
   ChevronLeft,
   ChevronRight,
@@ -23,7 +22,6 @@ interface AppLayoutProps {
   onOpenKardex?: () => void;
   onOpenPriceTags?: () => void;
   onOpenAuditReport?: () => void;
-  onOpenColdChain?: () => void;
   onOpenShrinkage?: () => void;
   children: React.ReactNode;
 }
@@ -35,34 +33,33 @@ export const AppLayout: React.FC<AppLayoutProps> = ({
   onOpenKardex,
   onOpenPriceTags,
   onOpenAuditReport,
-  onOpenColdChain,
   onOpenShrinkage,
   children,
 }) => {
   const [collapsed, setCollapsed] = useState(false);
 
   return (
-    <div className="min-h-screen flex bg-[#F4F6F9] text-[#0F172A] font-sans antialiased">
-      {/* Barra Lateral Institucional */}
+    <div className="min-h-screen w-full flex bg-[#F4F6F9] text-[#0F172A] font-sans antialiased overflow-x-hidden">
+      {/* Barra Lateral Izquierda */}
       <aside
         className={`${
           collapsed ? 'w-20' : 'w-64'
-        } shrink-0 bg-[#0F172A] text-white flex flex-col justify-between transition-all duration-300 ease-in-out border-r border-slate-800 select-none sticky top-0 h-screen`}
+        } shrink-0 bg-[#0F172A] text-white flex flex-col justify-between transition-all duration-300 ease-in-out border-r border-slate-800 select-none sticky top-0 h-screen z-30`}
       >
         <div className="flex flex-col h-full overflow-hidden">
-          {/* Cabecera del Menú con Logo */}
+          {/* Cabecera del Menú */}
           <div className="h-20 px-4 flex items-center justify-between border-b border-slate-800/80 shrink-0">
-            <div className="flex items-center gap-3 overflow-hidden cursor-default">
+            <div className="flex items-center gap-3 overflow-hidden cursor-default min-w-0">
               <div className="w-10 h-10 rounded-xl bg-[#008767] flex items-center justify-center font-extrabold text-white shadow-sm shrink-0">
                 <Store className="w-5 h-5 text-white" />
               </div>
               {!collapsed && (
-                <div className="leading-tight overflow-hidden">
+                <div className="leading-tight overflow-hidden truncate">
                   <span className="font-bold text-base tracking-tight block text-white truncate">
                     OmniStock
                   </span>
                   <span className="text-[11px] text-emerald-400 font-medium uppercase tracking-wider block truncate">
-                    Control de Tienda
+                    Inventario de Tienda
                   </span>
                 </div>
               )}
@@ -83,13 +80,13 @@ export const AppLayout: React.FC<AppLayoutProps> = ({
             </button>
           </div>
 
-          {/* Menú de Navegación con Palabras Cotidianas */}
+          {/* Opciones del Gestor de Inventario */}
           <nav className="flex-1 overflow-y-auto p-3 space-y-5">
-            {/* Sección: Inventario */}
+            {/* Sección: Inventario y Almacén */}
             <div>
               {!collapsed ? (
                 <p className="px-3 mb-2 text-[11px] font-bold uppercase tracking-wider text-slate-400">
-                  Productos y Almacén
+                  Gestión de Inventario
                 </p>
               ) : (
                 <div className="my-2 border-t border-slate-800" />
@@ -101,12 +98,12 @@ export const AppLayout: React.FC<AppLayoutProps> = ({
                     title="Ver Productos y Lotes"
                     className="cursor-pointer w-full flex items-center justify-between px-3 py-2.5 rounded-xl text-sm font-semibold bg-[#008767] text-white shadow-xs transition-all hover:brightness-105"
                   >
-                    <div className="flex items-center gap-3">
+                    <div className="flex items-center gap-3 truncate">
                       <Boxes className="w-4 h-4 shrink-0" />
-                      {!collapsed && <span>Mis Productos</span>}
+                      {!collapsed && <span className="truncate">Mis Productos</span>}
                     </div>
                     {!collapsed && (
-                      <span className="px-2 py-0.5 text-[10px] font-bold rounded-full bg-white/20">
+                      <span className="px-2 py-0.5 text-[10px] font-bold rounded-full bg-white/20 shrink-0">
                         Activo
                       </span>
                     )}
@@ -120,28 +117,28 @@ export const AppLayout: React.FC<AppLayoutProps> = ({
                     className="cursor-pointer w-full flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-medium text-slate-300 hover:bg-[#1E293B] hover:text-white transition-colors"
                   >
                     <PackagePlus className="w-4 h-4 text-emerald-400 shrink-0" />
-                    {!collapsed && <span>Meter Mercancía</span>}
+                    {!collapsed && <span className="truncate">Meter Mercancía</span>}
                   </button>
                 </li>
                 <li>
                   <button
                     type="button"
                     onClick={onOpenShrinkage}
-                    title="Tirar o dar de baja producto echado a perder"
+                    title="Dar de baja producto dañado o vencido"
                     className="cursor-pointer w-full flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-medium text-slate-300 hover:bg-[#1E293B] hover:text-white transition-colors"
                   >
                     <Trash2 className="w-4 h-4 text-red-400 shrink-0" />
-                    {!collapsed && <span>Tirar Producto Dañado</span>}
+                    {!collapsed && <span className="truncate">Dar de Baja Merma</span>}
                   </button>
                 </li>
               </ul>
             </div>
 
-            {/* Sección: Ventas y Tienda */}
+            {/* Sección: Piso de Venta y Precios */}
             <div>
               {!collapsed ? (
                 <p className="px-3 mb-2 text-[11px] font-bold uppercase tracking-wider text-slate-400">
-                  Caja y Estantes
+                  Piso de Venta
                 </p>
               ) : (
                 <div className="my-2 border-t border-slate-800" />
@@ -151,32 +148,32 @@ export const AppLayout: React.FC<AppLayoutProps> = ({
                   <button
                     type="button"
                     onClick={onOpenPOSSimulator}
-                    title="Simular cobro en caja registradora"
+                    title="Cobrar en caja registradora"
                     className="cursor-pointer w-full flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-medium text-slate-300 hover:bg-[#1E293B] hover:text-white transition-colors"
                   >
                     <ShoppingCart className="w-4 h-4 text-blue-400 shrink-0" />
-                    {!collapsed && <span>Cobrar en Caja</span>}
+                    {!collapsed && <span className="truncate">Cobrar en Caja</span>}
                   </button>
                 </li>
                 <li>
                   <button
                     type="button"
                     onClick={onOpenPriceTags}
-                    title="Imprimir etiquetas de precio para pegar en los estantes"
+                    title="Imprimir etiquetas de precio para estantes"
                     className="cursor-pointer w-full flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-medium text-slate-300 hover:bg-[#1E293B] hover:text-white transition-colors"
                   >
                     <Tag className="w-4 h-4 text-amber-400 shrink-0" />
-                    {!collapsed && <span>Etiquetas de Precios</span>}
+                    {!collapsed && <span className="truncate">Etiquetas de Precios</span>}
                   </button>
                 </li>
               </ul>
             </div>
 
-            {/* Sección: Reportes y Sensores */}
+            {/* Sección: Historial y Cuentas */}
             <div>
               {!collapsed ? (
                 <p className="px-3 mb-2 text-[11px] font-bold uppercase tracking-wider text-slate-400">
-                  Historial y Refrigeradores
+                  Control y Cuentas
                 </p>
               ) : (
                 <div className="my-2 border-t border-slate-800" />
@@ -186,22 +183,11 @@ export const AppLayout: React.FC<AppLayoutProps> = ({
                   <button
                     type="button"
                     onClick={onOpenKardex}
-                    title="Ver historial de entradas y salidas"
+                    title="Ver historial de movimientos"
                     className="cursor-pointer w-full flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-medium text-slate-300 hover:bg-[#1E293B] hover:text-white transition-colors"
                   >
                     <History className="w-4 h-4 text-purple-400 shrink-0" />
-                    {!collapsed && <span>Historial de Movimientos</span>}
-                  </button>
-                </li>
-                <li>
-                  <button
-                    type="button"
-                    onClick={onOpenColdChain}
-                    title="Revisar temperatura de refrigeradores y congeladores"
-                    className="cursor-pointer w-full flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-medium text-slate-300 hover:bg-[#1E293B] hover:text-white transition-colors"
-                  >
-                    <ThermometerSnowflake className="w-4 h-4 text-cyan-400 shrink-0" />
-                    {!collapsed && <span>Temperatura de Refri</span>}
+                    {!collapsed && <span className="truncate">Historial de Salidas</span>}
                   </button>
                 </li>
                 <li>
@@ -212,21 +198,21 @@ export const AppLayout: React.FC<AppLayoutProps> = ({
                     className="cursor-pointer w-full flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-medium text-slate-300 hover:bg-[#1E293B] hover:text-white transition-colors"
                   >
                     <FileSpreadsheet className="w-4 h-4 text-emerald-400 shrink-0" />
-                    {!collapsed && <span>Reporte de Ganancias</span>}
+                    {!collapsed && <span className="truncate">Reporte de Inventario</span>}
                   </button>
                 </li>
               </ul>
             </div>
           </nav>
 
-          {/* Pie de Página */}
+          {/* Pie del Menú */}
           <div className="p-3 border-t border-slate-800/80 shrink-0">
             <div className="p-3 rounded-2xl bg-[#1E293B] flex items-center gap-3">
-              <div className="w-2.5 h-2.5 rounded-full bg-emerald-400 animate-pulse shrink-0" />
+              <div className="w-2.5 h-2.5 rounded-full bg-emerald-400 shrink-0" />
               {!collapsed && (
                 <div className="overflow-hidden">
-                  <p className="text-xs font-bold text-white truncate">Cajas y Refris</p>
-                  <p className="text-[11px] text-slate-400 truncate">Todo Funcionando</p>
+                  <p className="text-xs font-bold text-white truncate">Inventario al Día</p>
+                  <p className="text-[11px] text-slate-400 truncate">Modo Gestor Activo</p>
                 </div>
               )}
             </div>
@@ -234,41 +220,33 @@ export const AppLayout: React.FC<AppLayoutProps> = ({
         </div>
       </aside>
 
-      {/* Contenedor Principal */}
-      <div className="flex-1 flex flex-col min-w-0">
+      {/* Área de Trabajo Principal */}
+      <div className="flex-1 flex flex-col min-w-0 max-w-full overflow-hidden">
         {/* Cabecera Superior */}
-        <header className="bg-[#FFFFFF] border-b border-[#E2E8F0] px-6 md:px-8 py-4 flex flex-col lg:flex-row lg:items-center lg:justify-between gap-4 sticky top-0 z-20 shadow-xs">
-          <div>
+        <header className="bg-[#FFFFFF] border-b border-[#E2E8F0] px-4 sm:px-6 md:px-8 py-4 flex flex-col md:flex-row md:items-center md:justify-between gap-4 sticky top-0 z-20 shadow-xs">
+          <div className="min-w-0">
             <div className="flex items-center gap-2.5">
-              <h1 className="text-xl font-extrabold tracking-tight text-slate-900">
-                Inventario de la Tienda y Fechas de Vencimiento
+              <h1 className="text-xl font-extrabold tracking-tight text-slate-900 truncate">
+                Control de Inventario y Fechas de Vencimiento
               </h1>
-              <span className="px-2.5 py-0.5 text-xs font-bold rounded-full bg-[#DCFCE7] text-[#166534]">
+              <span className="px-2.5 py-0.5 text-xs font-bold rounded-full bg-[#DCFCE7] text-[#166534] shrink-0">
                 {storeBranchName}
               </span>
             </div>
-            <p className="text-xs text-[#64748B] mt-0.5">
-              Controla qué productos van a vencer pronto, saca primero los más viejos y evita pérdidas.
+            <p className="text-xs text-[#64748B] mt-0.5 truncate">
+              Administra existencias, registra entradas, imprime precios y evita que se venzan productos.
             </p>
           </div>
 
-          <div className="flex flex-wrap items-center gap-2">
-            <button
-              type="button"
-              onClick={onOpenColdChain}
-              className="cursor-pointer px-3 py-2 rounded-xl bg-blue-50 hover:bg-blue-100 text-blue-700 text-xs font-semibold tracking-wide border border-blue-200 transition-colors flex items-center gap-1.5 active:scale-95"
-            >
-              <ThermometerSnowflake className="w-3.5 h-3.5" />
-              <span>Ver Refris</span>
-            </button>
-
+          {/* Botones de Acción de Cabecera */}
+          <div className="flex flex-wrap items-center gap-2 shrink-0">
             <button
               type="button"
               onClick={onOpenPriceTags}
               className="cursor-pointer px-3 py-2 rounded-xl bg-slate-100 hover:bg-slate-200 text-slate-700 text-xs font-semibold tracking-wide border border-slate-200 transition-colors flex items-center gap-1.5 active:scale-95"
             >
               <Tag className="w-3.5 h-3.5" />
-              <span>Imprimir Precios</span>
+              <span>Etiquetas</span>
             </button>
 
             <button
@@ -277,7 +255,7 @@ export const AppLayout: React.FC<AppLayoutProps> = ({
               className="cursor-pointer px-3 py-2 rounded-xl bg-emerald-50 hover:bg-emerald-100 text-[#008767] text-xs font-semibold tracking-wide border border-emerald-200 transition-colors flex items-center gap-1.5 active:scale-95"
             >
               <FileSpreadsheet className="w-3.5 h-3.5" />
-              <span>Descargar Excel</span>
+              <span>Reporte Excel</span>
             </button>
 
             <button
@@ -309,7 +287,7 @@ export const AppLayout: React.FC<AppLayoutProps> = ({
 
             {/* Usuario Encargado */}
             <div className="flex items-center gap-2 pl-2 border-l border-[#E2E8F0]">
-              <div className="w-9 h-9 rounded-xl bg-[#0D5C75] text-white flex items-center justify-center font-bold shadow-xs">
+              <div className="w-9 h-9 rounded-xl bg-[#0D5C75] text-white flex items-center justify-center font-bold shadow-xs shrink-0">
                 <UserCheck className="w-4 h-4" />
               </div>
               <div className="hidden xl:block leading-tight">
@@ -320,8 +298,8 @@ export const AppLayout: React.FC<AppLayoutProps> = ({
           </div>
         </header>
 
-        {/* Cuerpo Principal */}
-        <main className="flex-1 p-6 md:p-8 space-y-6 max-w-full overflow-x-hidden">
+        {/* Contenedor Interior */}
+        <main className="flex-1 p-4 sm:p-6 md:p-8 space-y-6 w-full max-w-full overflow-x-hidden">
           {children}
         </main>
       </div>

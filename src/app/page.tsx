@@ -9,7 +9,6 @@ import { POSSimulatorModal } from '@/components/POSSimulatorModal';
 import { KardexAuditModal } from '@/components/KardexAuditModal';
 import { PriceTagGeneratorModal } from '@/components/PriceTagGeneratorModal';
 import { AuditReportModal } from '@/components/AuditReportModal';
-import { ColdChainMonitorModal } from '@/components/ColdChainMonitorModal';
 import { ShrinkageFormModal } from '@/components/ShrinkageFormModal';
 import { StoreMetricCard, SupermarketProductRow } from '@/types/supermarket';
 
@@ -21,11 +20,10 @@ export default function SupermarketDashboardPage() {
   const [isKardexModalOpen, setIsKardexModalOpen] = useState(false);
   const [isPriceTagsModalOpen, setIsPriceTagsModalOpen] = useState(false);
   const [isAuditModalOpen, setIsAuditModalOpen] = useState(false);
-  const [isColdChainModalOpen, setIsColdChainModalOpen] = useState(false);
   const [isShrinkageModalOpen, setIsShrinkageModalOpen] = useState(false);
   const [loading, setLoading] = useState(true);
 
-  // Cargar productos
+  // Cargar productos del inventario
   const fetchProducts = async () => {
     try {
       const res = await fetch('/api/products');
@@ -44,18 +42,28 @@ export default function SupermarketDashboardPage() {
     fetchProducts();
   }, []);
 
-  // Tarjetas superiores con palabras normales
+  // Tarjetas principales 100% de inventario
   const totalStockCount = products.reduce((sum, p) => sum + p.stockQuantity, 0);
   const lowStockCount = products.filter((p) => p.status === 'LOW_STOCK').length;
   const expiredCount = products.filter((p) => p.status === 'EXPIRED').length;
+  const optimalCount = products.filter((p) => p.status === 'GOOD').length;
 
   const dynamicMetrics: StoreMetricCard[] = [
     {
       id: 'm-skus',
       title: 'Total de Mercancía',
       subtitle: 'En tienda y bodega',
-      value: loading ? '...' : `${products.length} tipos (${totalStockCount} pzas)`,
+      value: loading ? '...' : `${products.length} productos (${totalStockCount} pzas)`,
       badgeText: 'En Tienda',
+      variant: 'good',
+      icon: 'barcode',
+    },
+    {
+      id: 'm-optimal',
+      title: 'Inventario Disponible',
+      subtitle: 'Listos para la venta',
+      value: loading ? '...' : `${optimalCount} en buen estado`,
+      badgeText: 'Al 100%',
       variant: 'good',
       icon: 'barcode',
     },
@@ -64,7 +72,7 @@ export default function SupermarketDashboardPage() {
       title: 'Queda Muy Poco',
       subtitle: 'Hay que surtir el estante',
       value: loading ? '...' : `${lowStockCount} por acabarse`,
-      badgeText: '¡Ojo aquí!',
+      badgeText: 'Por Surtir',
       variant: 'warning',
       icon: 'low-stock',
     },
@@ -73,18 +81,9 @@ export default function SupermarketDashboardPage() {
       title: 'Productos Vencidos',
       subtitle: 'Bloqueados en caja',
       value: loading ? '...' : `${expiredCount} vencidos`,
-      badgeText: expiredCount > 0 ? 'No se pueden vender' : 'Ninguno vencido',
+      badgeText: expiredCount > 0 ? 'Para Tirar' : 'Sin Vencidos',
       variant: expiredCount > 0 ? 'danger' : 'good',
       icon: 'expiry-alert',
-    },
-    {
-      id: 'm-cold',
-      title: 'Temperatura de Refris',
-      subtitle: 'Refrigeradores 1 al 4',
-      value: '3.1 °C',
-      badgeText: 'Frío Perfecto',
-      variant: 'info',
-      icon: 'cold-chain',
     },
   ];
 
@@ -120,9 +119,7 @@ export default function SupermarketDashboardPage() {
     } else if (action === 'MARK_MERMA') {
       setIsShrinkageModalOpen(true);
     } else if (action === 'ADJUST_STOCK') {
-      setToastMessage(
-        `Se anotó el conteo a mano para "${product.name}".`
-      );
+      setToastMessage(`Se anotó el conteo a mano para "${product.name}".`);
     }
   };
 
@@ -134,27 +131,26 @@ export default function SupermarketDashboardPage() {
       onOpenKardex={() => setIsKardexModalOpen(true)}
       onOpenPriceTags={() => setIsPriceTagsModalOpen(true)}
       onOpenAuditReport={() => setIsAuditModalOpen(true)}
-      onOpenColdChain={() => setIsColdChainModalOpen(true)}
       onOpenShrinkage={() => setIsShrinkageModalOpen(true)}
     >
       {/* Mensaje de Confirmación */}
       {toastMessage && (
-        <div className="bg-[#FFFFFF] border border-[#008767] rounded-2xl px-5 py-3.5 shadow-sm flex items-center justify-between gap-4 animate-in fade-in">
-          <div className="flex items-center gap-3">
-            <span className="w-2.5 h-2.5 rounded-full bg-[#008767]" />
-            <p className="text-xs font-bold text-[#0F172A]">{toastMessage}</p>
+        <div className="bg-[#FFFFFF] border border-[#008767] rounded-2xl px-5 py-3.5 shadow-sm flex items-center justify-between gap-4 animate-in fade-in w-full overflow-hidden">
+          <div className="flex items-center gap-3 min-w-0">
+            <span className="w-2.5 h-2.5 rounded-full bg-[#008767] shrink-0" />
+            <p className="text-xs font-bold text-[#0F172A] truncate">{toastMessage}</p>
           </div>
           <button
             type="button"
             onClick={() => setToastMessage(null)}
-            className="cursor-pointer text-xs font-bold text-[#64748B] hover:text-[#0F172A]"
+            className="cursor-pointer text-xs font-bold text-[#64748B] hover:text-[#0F172A] shrink-0"
           >
             Cerrar aviso
           </button>
         </div>
       )}
 
-      {/* 4 Tarjetas de Métricas */}
+      {/* 4 Tarjetas de Métricas de Inventario */}
       <MetricCards metrics={dynamicMetrics} />
 
       {/* Tabla con los Productos */}
@@ -163,7 +159,7 @@ export default function SupermarketDashboardPage() {
         onActionSelect={handleTableAction}
       />
 
-      {/* Modales con Lenguaje Sencillo */}
+      {/* Modales del Gestor de Inventario */}
       <ReceiveBatchModal
         isOpen={isReceiveModalOpen}
         onClose={() => setIsReceiveModalOpen(false)}
@@ -198,11 +194,6 @@ export default function SupermarketDashboardPage() {
       <AuditReportModal
         isOpen={isAuditModalOpen}
         onClose={() => setIsAuditModalOpen(false)}
-      />
-
-      <ColdChainMonitorModal
-        isOpen={isColdChainModalOpen}
-        onClose={() => setIsColdChainModalOpen(false)}
       />
 
       <ShrinkageFormModal
