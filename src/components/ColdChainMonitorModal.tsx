@@ -1,7 +1,7 @@
 'use client';
 
 import React, { useEffect, useState } from 'react';
-import { RefreshCw } from 'lucide-react';
+import { RefreshCw, ThermometerSnowflake, X } from 'lucide-react';
 
 interface ColdRoomSensor {
   chamberId: string;
@@ -53,7 +53,7 @@ export const ColdChainMonitorModal: React.FC<ColdChainMonitorModalProps> = ({ is
         <div className="px-6 py-4 border-b border-[#E2E8F0] flex items-center justify-between">
           <div className="flex items-center gap-3">
             <div className="w-9 h-9 rounded-xl bg-blue-50 border border-blue-200 flex items-center justify-center text-blue-700 font-bold">
-              ❄️
+              <ThermometerSnowflake className="w-5 h-5 text-blue-600" />
             </div>
             <div>
               <h2 className="text-base font-bold text-[#0F172A]">
@@ -70,14 +70,14 @@ export const ColdChainMonitorModal: React.FC<ColdChainMonitorModalProps> = ({ is
               disabled={loading}
               className="cursor-pointer px-3 py-1.5 rounded-xl bg-slate-100 hover:bg-slate-200 text-slate-700 text-xs font-bold flex items-center gap-1 active:scale-95"
             >
-              <RefreshCw className="w-3 h-3" />
+              <RefreshCw className={`w-3 h-3 ${loading ? 'animate-spin' : ''}`} />
               <span>Actualizar</span>
             </button>
             <button
               onClick={onClose}
               className="cursor-pointer p-2 rounded-xl text-[#64748B] hover:text-[#0F172A] hover:bg-slate-100"
             >
-              ✕
+              <X className="w-4 h-4" />
             </button>
           </div>
         </div>
@@ -132,12 +132,21 @@ export const ColdChainMonitorModal: React.FC<ColdChainMonitorModalProps> = ({ is
 
                     <div className="text-right text-xs">
                       <span className="text-slate-500 block text-[10px]">Motor:</span>
-                      <span className="font-semibold text-slate-800">
+                      <span className="font-semibold text-slate-800 flex items-center justify-end gap-1.5 mt-0.5">
+                        <span
+                          className={`w-2 h-2 rounded-full ${
+                            chamber.compressorState === 'ACTIVE'
+                              ? 'bg-emerald-500'
+                              : chamber.compressorState === 'DEFROST'
+                              ? 'bg-amber-500'
+                              : 'bg-slate-400'
+                          }`}
+                        />
                         {chamber.compressorState === 'ACTIVE'
-                          ? '🟢 Enfriando'
+                          ? 'Enfriando'
                           : chamber.compressorState === 'DEFROST'
-                          ? '🟡 Deshielo'
-                          : '⚪ Apagado / Descanso'}
+                          ? 'Deshielo'
+                          : 'Apagado / Descanso'}
                       </span>
                       <span className="text-[10px] text-slate-400 block mt-0.5">
                         Guarda {chamber.linkedProductsCount} productos

@@ -2,6 +2,7 @@
 
 import React, { useState } from 'react';
 import { SupermarketProductRow } from '@/types/supermarket';
+import { X } from 'lucide-react';
 
 interface ShrinkageFormModalProps {
   isOpen: boolean;
@@ -74,7 +75,7 @@ export const ShrinkageFormModal: React.FC<ShrinkageFormModalProps> = ({
             onClick={onClose}
             className="cursor-pointer p-2 rounded-xl text-[#64748B] hover:text-[#0F172A] hover:bg-slate-100"
           >
-            ✕
+            <X className="w-4 h-4" />
           </button>
         </div>
 

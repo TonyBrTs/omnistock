@@ -1,7 +1,7 @@
 'use client';
 
 import React, { useEffect, useState } from 'react';
-import { Download } from 'lucide-react';
+import { Download, X } from 'lucide-react';
 
 interface AuditReportModalProps {
   isOpen: boolean;
@@ -69,7 +69,7 @@ export const AuditReportModal: React.FC<AuditReportModalProps> = ({ isOpen, onCl
             onClick={onClose}
             className="cursor-pointer p-2 rounded-xl text-[#64748B] hover:text-[#0F172A] hover:bg-slate-100"
           >
-            ✕
+            <X className="w-4 h-4" />
           </button>
         </div>
 

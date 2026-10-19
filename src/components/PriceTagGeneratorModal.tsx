@@ -2,7 +2,7 @@
 
 import React from 'react';
 import { SupermarketProductRow } from '@/types/supermarket';
-import { Printer } from 'lucide-react';
+import { Printer, X } from 'lucide-react';
 
 interface PriceTagGeneratorModalProps {
   isOpen: boolean;
@@ -46,7 +46,7 @@ export const PriceTagGeneratorModal: React.FC<PriceTagGeneratorModalProps> = ({
               onClick={onClose}
               className="cursor-pointer p-2 rounded-xl text-[#64748B] hover:text-[#0F172A] hover:bg-slate-100"
             >
-              ✕
+              <X className="w-4 h-4" />
             </button>
           </div>
         </div>

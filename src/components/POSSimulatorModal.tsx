@@ -2,6 +2,7 @@
 
 import React, { useState } from 'react';
 import { SupermarketProductRow } from '@/types/supermarket';
+import { AlertCircle, X } from 'lucide-react';
 
 interface POSSimulatorModalProps {
   isOpen: boolean;
@@ -57,7 +58,7 @@ export const POSSimulatorModal: React.FC<POSSimulatorModalProps> = ({
         setAlertError({
           message:
             data.errorCode === 'POS_EXPIRY_BLOCK'
-              ? `¡ALERTA! El producto "${currentProduct?.name}" está VENCIDO (${currentProduct?.expirationDate}). La caja no permite venderlo. Tienes que tirarlo a merma.`
+              ? `ALERTA: El producto "${currentProduct?.name}" está VENCIDO (${currentProduct?.expirationDate}). La caja no permite venderlo. Tienes que retirarlo a merma.`
               : data.message || 'No se pudo cobrar',
           errorCode: data.errorCode,
         });
@@ -89,7 +90,7 @@ export const POSSimulatorModal: React.FC<POSSimulatorModalProps> = ({
             onClick={onClose}
             className="cursor-pointer p-2 rounded-xl text-[#64748B] hover:text-[#0F172A] hover:bg-slate-100"
           >
-            ✕
+            <X className="w-4 h-4" />
           </button>
         </div>
 
@@ -103,7 +104,7 @@ export const POSSimulatorModal: React.FC<POSSimulatorModalProps> = ({
               }`}
             >
               <div className="flex items-start gap-2">
-                <span className="text-sm">⚠️</span>
+                <AlertCircle className="w-4 h-4 shrink-0 mt-0.5" />
                 <span>{alertError.message}</span>
               </div>
             </div>
@@ -123,7 +124,7 @@ export const POSSimulatorModal: React.FC<POSSimulatorModalProps> = ({
             >
               {products.map((p) => (
                 <option key={p.id} value={p.barcodeEan13}>
-                  {p.name} · [{p.status === 'EXPIRED' ? '¡VENCIDO!' : `Quedan ${p.stockQuantity}`}]
+                  {p.name} · [{p.status === 'EXPIRED' ? 'VENCIDO' : `Quedan ${p.stockQuantity}`}]
                 </option>
               ))}
             </select>
