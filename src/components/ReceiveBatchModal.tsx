@@ -79,16 +79,16 @@ export const ReceiveBatchModal: React.FC<ReceiveBatchModalProps> = ({
   };
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/40 backdrop-blur-xs p-4 overflow-y-auto">
-      <div className="bg-[#FFFFFF] border border-[#E2E8F0] rounded-2xl w-full max-w-lg shadow-xl overflow-visible animate-in fade-in zoom-in-95 duration-200 my-auto">
-        <div className="px-6 py-4 border-b border-[#E2E8F0] flex items-center justify-between rounded-t-2xl bg-white">
+    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 backdrop-blur-xs p-4 overflow-y-auto">
+      <div className="bg-[#FFFFFF] dark:bg-[#1E293B] border border-[#E2E8F0] dark:border-slate-700 rounded-2xl w-full max-w-lg shadow-xl overflow-visible animate-in fade-in zoom-in-95 duration-200 my-auto">
+        <div className="px-6 py-4 border-b border-[#E2E8F0] dark:border-slate-700 flex items-center justify-between rounded-t-2xl bg-white dark:bg-[#1E293B]">
           <div>
-            <h2 className="text-base font-bold text-[#0F172A]">Meter Mercancía Nueva a la Tienda</h2>
-            <p className="text-xs text-[#64748B]">Registra lo que llegó del proveedor con su fecha de vencimiento</p>
+            <h2 className="text-base font-bold text-[#0F172A] dark:text-white">Meter Mercancía Nueva a la Tienda</h2>
+            <p className="text-xs text-[#64748B] dark:text-slate-400">Registra lo que llegó del proveedor con su fecha de vencimiento</p>
           </div>
           <button
             onClick={onClose}
-            className="cursor-pointer p-2 rounded-xl text-[#64748B] hover:text-[#0F172A] hover:bg-slate-100"
+            className="cursor-pointer p-2 rounded-xl text-[#64748B] dark:text-slate-400 hover:text-[#0F172A] dark:hover:text-white hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors"
           >
             <X className="w-4 h-4" />
           </button>
@@ -96,13 +96,13 @@ export const ReceiveBatchModal: React.FC<ReceiveBatchModalProps> = ({
 
         <form onSubmit={handleSubmit} className="p-6 space-y-4">
           {errorMsg && (
-            <div className="p-3 text-xs bg-[#FEE2E2] text-[#991B1B] rounded-xl font-medium">
+            <div className="p-3 text-xs bg-[#FEE2E2] dark:bg-red-950/40 text-[#991B1B] dark:text-red-300 rounded-xl font-medium">
               {errorMsg}
             </div>
           )}
 
           <div>
-            <label className="block text-xs font-bold uppercase tracking-wider text-slate-500 mb-1.5">
+            <label className="block text-xs font-bold uppercase tracking-wider text-slate-500 dark:text-slate-400 mb-1.5">
               ¿Qué producto llegó?
             </label>
             <CustomSelect
@@ -115,7 +115,7 @@ export const ReceiveBatchModal: React.FC<ReceiveBatchModalProps> = ({
 
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
             <div>
-              <label className="block text-xs font-bold uppercase tracking-wider text-slate-500 mb-1.5">
+              <label className="block text-xs font-bold uppercase tracking-wider text-slate-500 dark:text-slate-400 mb-1.5">
                 Número de Lote
               </label>
               <input
@@ -123,12 +123,12 @@ export const ReceiveBatchModal: React.FC<ReceiveBatchModalProps> = ({
                 placeholder="Ej: LOTE-24A"
                 value={batchNumber}
                 onChange={(e) => setBatchNumber(e.target.value)}
-                className="w-full px-3.5 py-2.5 text-sm bg-white border border-[#E2E8F0] rounded-xl text-[#0F172A] shadow-xs focus:outline-none focus:border-[#008767] focus:ring-2 focus:ring-[#008767]/20"
+                className="w-full px-3.5 py-2.5 text-sm bg-white dark:bg-[#0F172A] border border-[#E2E8F0] dark:border-slate-700 rounded-xl text-[#0F172A] dark:text-slate-100 shadow-xs focus:outline-none focus:border-[#008767] dark:focus:border-emerald-500 focus:ring-2 focus:ring-[#008767]/20 dark:focus:ring-emerald-500/30"
                 required
               />
             </div>
             <div>
-              <label className="block text-xs font-bold uppercase tracking-wider text-slate-500 mb-1.5">
+              <label className="block text-xs font-bold uppercase tracking-wider text-slate-500 dark:text-slate-400 mb-1.5">
                 ¿Cuándo Vence? (Calendario)
               </label>
               <CustomDatePicker
@@ -142,7 +142,7 @@ export const ReceiveBatchModal: React.FC<ReceiveBatchModalProps> = ({
 
           <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
             <div>
-              <label className="block text-xs font-bold uppercase tracking-wider text-slate-500 mb-1.5">
+              <label className="block text-xs font-bold uppercase tracking-wider text-slate-500 dark:text-slate-400 mb-1.5">
                 ¿Cuántos llegaron?
               </label>
               <input
@@ -150,12 +150,12 @@ export const ReceiveBatchModal: React.FC<ReceiveBatchModalProps> = ({
                 min="1"
                 value={quantity}
                 onChange={(e) => setQuantity(Number(e.target.value))}
-                className="w-full px-3.5 py-2.5 text-sm bg-white border border-[#E2E8F0] rounded-xl text-[#0F172A] shadow-xs focus:outline-none focus:border-[#008767] focus:ring-2 focus:ring-[#008767]/20"
+                className="w-full px-3.5 py-2.5 text-sm bg-white dark:bg-[#0F172A] border border-[#E2E8F0] dark:border-slate-700 rounded-xl text-[#0F172A] dark:text-slate-100 shadow-xs focus:outline-none focus:border-[#008767] dark:focus:border-emerald-500 focus:ring-2 focus:ring-[#008767]/20 dark:focus:ring-emerald-500/30"
                 required
               />
             </div>
             <div>
-              <label className="block text-xs font-bold uppercase tracking-wider text-slate-500 mb-1.5">
+              <label className="block text-xs font-bold uppercase tracking-wider text-slate-500 dark:text-slate-400 mb-1.5">
                 Costo por pieza ($)
               </label>
               <input
@@ -163,12 +163,12 @@ export const ReceiveBatchModal: React.FC<ReceiveBatchModalProps> = ({
                 step="0.01"
                 value={unitCost}
                 onChange={(e) => setUnitCost(Number(e.target.value))}
-                className="w-full px-3.5 py-2.5 text-sm bg-white border border-[#E2E8F0] rounded-xl text-[#0F172A] shadow-xs focus:outline-none focus:border-[#008767] focus:ring-2 focus:ring-[#008767]/20"
+                className="w-full px-3.5 py-2.5 text-sm bg-white dark:bg-[#0F172A] border border-[#E2E8F0] dark:border-slate-700 rounded-xl text-[#0F172A] dark:text-slate-100 shadow-xs focus:outline-none focus:border-[#008767] dark:focus:border-emerald-500 focus:ring-2 focus:ring-[#008767]/20 dark:focus:ring-emerald-500/30"
                 required
               />
             </div>
             <div>
-              <label className="block text-xs font-bold uppercase tracking-wider text-slate-500 mb-1.5">
+              <label className="block text-xs font-bold uppercase tracking-wider text-slate-500 dark:text-slate-400 mb-1.5">
                 ¿Dónde se guarda?
               </label>
               <CustomSelect
@@ -182,7 +182,7 @@ export const ReceiveBatchModal: React.FC<ReceiveBatchModalProps> = ({
           </div>
 
           <div>
-            <label className="block text-xs font-bold uppercase tracking-wider text-slate-500 mb-1">
+            <label className="block text-xs font-bold uppercase tracking-wider text-slate-500 dark:text-slate-400 mb-1">
               Nota o Factura del Proveedor
             </label>
             <input
@@ -190,23 +190,23 @@ export const ReceiveBatchModal: React.FC<ReceiveBatchModalProps> = ({
               placeholder="Ej: Remisión #4081"
               value={invoice}
               onChange={(e) => setInvoice(e.target.value)}
-              className="w-full px-3.5 py-2 text-sm bg-[#F4F6F9] border border-[#E2E8F0] rounded-xl text-[#0F172A] focus:outline-none focus:border-[#008767]"
+              className="w-full px-3.5 py-2 text-sm bg-[#F4F6F9] dark:bg-[#0F172A] border border-[#E2E8F0] dark:border-slate-700 rounded-xl text-[#0F172A] dark:text-white focus:outline-none focus:border-[#008767] dark:focus:border-emerald-500"
               required
             />
           </div>
 
-          <div className="pt-3 border-t border-[#E2E8F0] flex items-center justify-end gap-3">
+          <div className="pt-3 border-t border-[#E2E8F0] dark:border-slate-700 flex items-center justify-end gap-3">
             <button
               type="button"
               onClick={onClose}
-              className="cursor-pointer px-4 py-2 text-xs font-bold text-[#64748B] hover:text-[#0F172A] rounded-xl"
+              className="cursor-pointer px-4 py-2 text-xs font-bold text-[#64748B] dark:text-slate-400 hover:text-[#0F172A] dark:hover:text-white rounded-xl transition-colors"
             >
               Cancelar
             </button>
             <button
               type="submit"
               disabled={loading}
-              className="cursor-pointer px-5 py-2.5 rounded-xl bg-[#008767] hover:bg-[#006e54] text-white text-xs font-bold tracking-wide shadow-sm transition-all disabled:opacity-50 active:scale-95"
+              className="cursor-pointer px-5 py-2.5 rounded-xl bg-[#008767] hover:bg-[#006e54] dark:bg-emerald-600 dark:hover:bg-emerald-500 text-white text-xs font-bold tracking-wide shadow-sm transition-all disabled:opacity-50 active:scale-95"
             >
               {loading ? 'Guardando...' : 'Guardar en Inventario'}
             </button>

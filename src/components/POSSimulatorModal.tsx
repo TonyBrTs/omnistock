@@ -86,18 +86,18 @@ export const POSSimulatorModal: React.FC<POSSimulatorModalProps> = ({
   };
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/40 backdrop-blur-xs p-4 overflow-y-auto">
-      <div className="bg-[#FFFFFF] border border-[#E2E8F0] rounded-2xl w-full max-w-lg shadow-xl overflow-visible animate-in fade-in zoom-in-95 duration-200 my-auto">
-        <div className="px-6 py-4 border-b border-[#E2E8F0] flex items-center justify-between rounded-t-2xl bg-white">
+    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 backdrop-blur-xs p-4 overflow-y-auto">
+      <div className="bg-[#FFFFFF] dark:bg-[#1E293B] border border-[#E2E8F0] dark:border-slate-700 rounded-2xl w-full max-w-lg shadow-xl overflow-visible animate-in fade-in zoom-in-95 duration-200 my-auto">
+        <div className="px-6 py-4 border-b border-[#E2E8F0] dark:border-slate-700 flex items-center justify-between rounded-t-2xl bg-white dark:bg-[#1E293B]">
           <div>
-            <h2 className="text-base font-bold text-[#0F172A]">Cobrar en la Caja Registradora</h2>
-            <p className="text-xs text-[#64748B]">
+            <h2 className="text-base font-bold text-[#0F172A] dark:text-white">Cobrar en la Caja Registradora</h2>
+            <p className="text-xs text-[#64748B] dark:text-slate-400">
               Elige el producto para vender. Si ya venció, la caja te avisará y no te dejará cobrarlo.
             </p>
           </div>
           <button
             onClick={onClose}
-            className="cursor-pointer p-2 rounded-xl text-[#64748B] hover:text-[#0F172A] hover:bg-slate-100"
+            className="cursor-pointer p-2 rounded-xl text-[#64748B] dark:text-slate-400 hover:text-[#0F172A] dark:hover:text-white hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors"
           >
             <X className="w-4 h-4" />
           </button>
@@ -108,8 +108,8 @@ export const POSSimulatorModal: React.FC<POSSimulatorModalProps> = ({
             <div
               className={`p-3.5 rounded-xl border text-xs font-bold ${
                 alertError.errorCode === 'POS_EXPIRY_BLOCK'
-                  ? 'bg-[#FEE2E2] border-[#991B1B]/30 text-[#991B1B]'
-                  : 'bg-[#FEF9C3] border-[#854D0E]/30 text-[#854D0E]'
+                  ? 'bg-[#FEE2E2] dark:bg-red-950/40 border-[#991B1B]/30 dark:border-red-900/50 text-[#991B1B] dark:text-red-300'
+                  : 'bg-[#FEF9C3] dark:bg-amber-950/40 border-[#854D0E]/30 dark:border-amber-900/50 text-[#854D0E] dark:text-amber-300'
               }`}
             >
               <div className="flex items-start gap-2">
@@ -120,7 +120,7 @@ export const POSSimulatorModal: React.FC<POSSimulatorModalProps> = ({
           )}
 
           <div>
-            <label className="block text-xs font-bold uppercase tracking-wider text-slate-500 mb-1.5">
+            <label className="block text-xs font-bold uppercase tracking-wider text-slate-500 dark:text-slate-400 mb-1.5">
               ¿Qué producto vas a cobrar?
             </label>
             <CustomSelect
@@ -135,26 +135,26 @@ export const POSSimulatorModal: React.FC<POSSimulatorModalProps> = ({
           </div>
 
           {currentProduct && (
-            <div className="p-3 bg-[#F4F6F9] rounded-xl border border-[#E2E8F0] text-xs space-y-1">
+            <div className="p-3 bg-[#F4F6F9] dark:bg-[#0F172A] rounded-xl border border-[#E2E8F0] dark:border-slate-700 text-xs space-y-1">
               <div className="flex justify-between">
-                <span className="text-slate-500">Lote que se entrega:</span>
-                <span className="font-mono font-bold text-slate-800">
+                <span className="text-slate-500 dark:text-slate-400">Lote que se entrega:</span>
+                <span className="font-mono font-bold text-slate-800 dark:text-slate-200">
                   {currentProduct.batchNumber}
                 </span>
               </div>
               <div className="flex justify-between">
-                <span className="text-slate-500">Fecha de Vencimiento:</span>
+                <span className="text-slate-500 dark:text-slate-400">Fecha de Vencimiento:</span>
                 <span
                   className={`font-bold ${
-                    currentProduct.status === 'EXPIRED' ? 'text-[#991B1B]' : 'text-slate-800'
+                    currentProduct.status === 'EXPIRED' ? 'text-[#991B1B] dark:text-red-400' : 'text-slate-800 dark:text-slate-200'
                   }`}
                 >
                   {currentProduct.expirationDate}
                 </span>
               </div>
               <div className="flex justify-between">
-                <span className="text-slate-500">Precio de venta:</span>
-                <span className="font-extrabold text-[#008767]">
+                <span className="text-slate-500 dark:text-slate-400">Precio de venta:</span>
+                <span className="font-extrabold text-[#008767] dark:text-emerald-400">
                   ${currentProduct.salePrice.toFixed(2)}
                 </span>
               </div>
@@ -163,7 +163,7 @@ export const POSSimulatorModal: React.FC<POSSimulatorModalProps> = ({
 
           <div className="grid grid-cols-3 gap-3">
             <div>
-              <label className="block text-xs font-bold uppercase tracking-wider text-slate-500 mb-1">
+              <label className="block text-xs font-bold uppercase tracking-wider text-slate-500 dark:text-slate-400 mb-1">
                 ¿Cuántos lleva?
               </label>
               <input
@@ -171,48 +171,48 @@ export const POSSimulatorModal: React.FC<POSSimulatorModalProps> = ({
                 min="1"
                 value={quantity}
                 onChange={(e) => setQuantity(Number(e.target.value))}
-                className="w-full px-3 py-2 text-sm bg-[#F4F6F9] border border-[#E2E8F0] rounded-xl text-[#0F172A] focus:outline-none focus:border-[#008767]"
+                className="w-full px-3 py-2 text-sm bg-[#F4F6F9] dark:bg-[#0F172A] border border-[#E2E8F0] dark:border-slate-700 rounded-xl text-[#0F172A] dark:text-white focus:outline-none focus:border-[#008767] dark:focus:border-emerald-500"
                 required
               />
             </div>
             <div>
-              <label className="block text-xs font-bold uppercase tracking-wider text-slate-500 mb-1">
+              <label className="block text-xs font-bold uppercase tracking-wider text-slate-500 dark:text-slate-400 mb-1">
                 Número de Caja
               </label>
               <input
                 type="text"
                 value={registerNo}
                 onChange={(e) => setRegisterNo(e.target.value)}
-                className="w-full px-3 py-2 text-sm bg-[#F4F6F9] border border-[#E2E8F0] rounded-xl text-[#0F172A] focus:outline-none focus:border-[#008767]"
+                className="w-full px-3 py-2 text-sm bg-[#F4F6F9] dark:bg-[#0F172A] border border-[#E2E8F0] dark:border-slate-700 rounded-xl text-[#0F172A] dark:text-white focus:outline-none focus:border-[#008767] dark:focus:border-emerald-500"
                 required
               />
             </div>
             <div>
-              <label className="block text-xs font-bold uppercase tracking-wider text-slate-500 mb-1">
+              <label className="block text-xs font-bold uppercase tracking-wider text-slate-500 dark:text-slate-400 mb-1">
                 Cajero(a)
               </label>
               <input
                 type="text"
                 value={cashierName}
                 onChange={(e) => setCashierName(e.target.value)}
-                className="w-full px-3 py-2 text-sm bg-[#F4F6F9] border border-[#E2E8F0] rounded-xl text-[#0F172A] focus:outline-none focus:border-[#008767]"
+                className="w-full px-3 py-2 text-sm bg-[#F4F6F9] dark:bg-[#0F172A] border border-[#E2E8F0] dark:border-slate-700 rounded-xl text-[#0F172A] dark:text-white focus:outline-none focus:border-[#008767] dark:focus:border-emerald-500"
                 required
               />
             </div>
           </div>
 
-          <div className="pt-3 border-t border-[#E2E8F0] flex items-center justify-end gap-3">
+          <div className="pt-3 border-t border-[#E2E8F0] dark:border-slate-700 flex items-center justify-end gap-3">
             <button
               type="button"
               onClick={onClose}
-              className="cursor-pointer px-4 py-2 text-xs font-bold text-[#64748B] hover:text-[#0F172A] rounded-xl"
+              className="cursor-pointer px-4 py-2 text-xs font-bold text-[#64748B] dark:text-slate-400 hover:text-[#0F172A] dark:hover:text-white rounded-xl transition-colors"
             >
               Cancelar
             </button>
             <button
               type="submit"
               disabled={loading}
-              className="cursor-pointer px-5 py-2.5 rounded-xl bg-[#008767] hover:bg-[#006e54] text-white text-xs font-bold tracking-wide shadow-sm transition-all disabled:opacity-50 active:scale-95"
+              className="cursor-pointer px-5 py-2.5 rounded-xl bg-[#008767] hover:bg-[#006e54] dark:bg-emerald-600 dark:hover:bg-emerald-500 text-white text-xs font-bold tracking-wide shadow-sm transition-all disabled:opacity-50 active:scale-95"
             >
               {loading ? 'Cobrando...' : 'Cobrar Producto'}
             </button>

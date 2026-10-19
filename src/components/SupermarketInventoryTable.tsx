@@ -28,15 +28,15 @@ interface SupermarketInventoryTableProps {
 
 const STATUS_STYLES: Record<BatchHealthStatus, { classes: string; label: string }> = {
   GOOD: {
-    classes: 'bg-[#DCFCE7] text-[#166534]',
+    classes: 'bg-[#DCFCE7] dark:bg-emerald-950/70 text-[#166534] dark:text-emerald-300 border border-transparent dark:border-emerald-800/60',
     label: 'Todo Bien',
   },
   LOW_STOCK: {
-    classes: 'bg-[#FEF9C3] text-[#854D0E]',
+    classes: 'bg-[#FEF9C3] dark:bg-amber-950/70 text-[#854D0E] dark:text-amber-300 border border-transparent dark:border-amber-800/60',
     label: 'Por Vencer / Queda Poco',
   },
   EXPIRED: {
-    classes: 'bg-[#FEE2E2] text-[#991B1B]',
+    classes: 'bg-[#FEE2E2] dark:bg-red-950/70 text-[#991B1B] dark:text-red-300 border border-transparent dark:border-red-800/60',
     label: 'Vencido (No vender)',
   },
 };
@@ -91,9 +91,9 @@ export const SupermarketInventoryTable: React.FC<SupermarketInventoryTableProps>
 
   const statusOptions: SelectOption[] = [
     { value: 'ALL', label: 'Todos los Estados' },
-    { value: 'GOOD', label: 'Todo Bien', badge: 'En regla', badgeColor: 'bg-emerald-50 text-emerald-700' },
-    { value: 'LOW_STOCK', label: 'Por Vencer / Queda Poco', badge: 'Atención', badgeColor: 'bg-amber-50 text-amber-700' },
-    { value: 'EXPIRED', label: 'Vencidos', badge: 'No vender', badgeColor: 'bg-red-50 text-red-700' },
+    { value: 'GOOD', label: 'Todo Bien', badge: 'En regla', badgeColor: 'bg-emerald-50 dark:bg-emerald-950/60 text-emerald-700 dark:text-emerald-300 border border-transparent dark:border-emerald-800/60' },
+    { value: 'LOW_STOCK', label: 'Por Vencer / Queda Poco', badge: 'Atención', badgeColor: 'bg-amber-50 dark:bg-amber-950/60 text-amber-700 dark:text-amber-300 border border-transparent dark:border-amber-800/60' },
+    { value: 'EXPIRED', label: 'Vencidos', badge: 'No vender', badgeColor: 'bg-red-50 dark:bg-red-950/60 text-red-700 dark:text-red-300 border border-transparent dark:border-red-800/60' },
   ];
 
   const filteredProducts = useMemo(() => {
@@ -125,11 +125,11 @@ export const SupermarketInventoryTable: React.FC<SupermarketInventoryTableProps>
   }, [filteredProducts, currentPage]);
 
   return (
-    <section className="bg-[#FFFFFF] border border-[#E2E8F0] rounded-2xl shadow-[0_4px_20px_-4px_rgba(0,0,0,0.05)] w-full relative">
+    <section className="bg-[#FFFFFF] dark:bg-[#1E293B] border border-[#E2E8F0] dark:border-slate-800 rounded-2xl shadow-[0_4px_20px_-4px_rgba(0,0,0,0.05)] dark:shadow-none w-full relative transition-colors duration-200">
       {/* Barra de Búsqueda y Filtros */}
-      <div className="p-5 border-b border-[#E2E8F0] flex flex-col xl:flex-row xl:items-center xl:justify-between gap-4 relative z-20">
+      <div className="p-5 border-b border-[#E2E8F0] dark:border-slate-800 flex flex-col xl:flex-row xl:items-center xl:justify-between gap-4 relative z-20">
         <div className="relative flex-1 max-w-xl">
-          <Search className="w-4 h-4 text-[#64748B] absolute left-3.5 top-1/2 -translate-y-1/2" />
+          <Search className="w-4 h-4 text-[#64748B] dark:text-slate-400 absolute left-3.5 top-1/2 -translate-y-1/2" />
           <input
             type="text"
             value={searchQuery}
@@ -138,7 +138,7 @@ export const SupermarketInventoryTable: React.FC<SupermarketInventoryTableProps>
               setCurrentPage(1);
             }}
             placeholder="Buscar por código de barras, lote o nombre de producto..."
-            className="w-full pl-10 pr-4 py-2.5 text-sm bg-[#F4F6F9] border border-[#E2E8F0] rounded-xl text-[#0F172A] placeholder-[#64748B] focus:outline-none focus:ring-2 focus:ring-[#008767]/25 focus:border-[#008767] transition-all"
+            className="w-full pl-10 pr-4 py-2.5 text-sm bg-[#F4F6F9] dark:bg-[#0F172A] border border-[#E2E8F0] dark:border-slate-700 rounded-xl text-[#0F172A] dark:text-white placeholder-[#64748B] dark:placeholder-slate-500 focus:outline-none focus:ring-2 focus:ring-[#008767]/25 focus:border-[#008767] transition-all"
           />
         </div>
 
@@ -189,40 +189,40 @@ export const SupermarketInventoryTable: React.FC<SupermarketInventoryTableProps>
       <div className="overflow-x-auto w-full">
         <table className="w-full text-left border-collapse min-w-[900px]">
           <thead>
-            <tr className="border-b border-[#E2E8F0] bg-[#F4F6F9]/60">
-              <th className="py-4 px-6 text-xs font-bold uppercase tracking-wider text-slate-500">
+            <tr className="border-b border-[#E2E8F0] dark:border-slate-800 bg-[#F4F6F9]/60 dark:bg-slate-900/60">
+              <th className="py-4 px-6 text-xs font-bold uppercase tracking-wider text-slate-500 dark:text-slate-400">
                 Código
               </th>
-              <th className="py-4 px-6 text-xs font-bold uppercase tracking-wider text-slate-500">
+              <th className="py-4 px-6 text-xs font-bold uppercase tracking-wider text-slate-500 dark:text-slate-400">
                 Producto
               </th>
-              <th className="py-4 px-6 text-xs font-bold uppercase tracking-wider text-slate-500">
+              <th className="py-4 px-6 text-xs font-bold uppercase tracking-wider text-slate-500 dark:text-slate-400">
                 Ubicación
               </th>
-              <th className="py-4 px-6 text-xs font-bold uppercase tracking-wider text-slate-500">
+              <th className="py-4 px-6 text-xs font-bold uppercase tracking-wider text-slate-500 dark:text-slate-400">
                 Lote y Vencimiento
               </th>
-              <th className="py-4 px-6 text-xs font-bold uppercase tracking-wider text-slate-500">
+              <th className="py-4 px-6 text-xs font-bold uppercase tracking-wider text-slate-500 dark:text-slate-400">
                 TOTAL EN TIENDA
               </th>
-              <th className="py-4 px-6 text-xs font-bold uppercase tracking-wider text-slate-500">
+              <th className="py-4 px-6 text-xs font-bold uppercase tracking-wider text-slate-500 dark:text-slate-400">
                 Precio
               </th>
-              <th className="py-4 px-6 text-xs font-bold uppercase tracking-wider text-slate-500">
+              <th className="py-4 px-6 text-xs font-bold uppercase tracking-wider text-slate-500 dark:text-slate-400">
                 Estado
               </th>
-              <th className="py-4 px-6 text-right text-xs font-bold uppercase tracking-wider text-slate-500">
+              <th className="py-4 px-6 text-right text-xs font-bold uppercase tracking-wider text-slate-500 dark:text-slate-400">
                 Acciones
               </th>
             </tr>
           </thead>
 
-          <tbody className="divide-y divide-[#E2E8F0]">
+          <tbody className="divide-y divide-[#E2E8F0] dark:divide-slate-800">
             {paginatedRows.length === 0 ? (
               <tr>
                 <td
                   colSpan={8}
-                  className="py-12 px-6 text-center text-sm font-medium text-[#64748B]"
+                  className="py-12 px-6 text-center text-sm font-medium text-[#64748B] dark:text-slate-400"
                 >
                   No encontramos ningún producto con esa búsqueda.
                 </td>
@@ -235,51 +235,51 @@ export const SupermarketInventoryTable: React.FC<SupermarketInventoryTableProps>
                 return (
                   <tr
                     key={row.id}
-                    className="hover:bg-[#F4F6F9]/70 transition-colors group cursor-default"
+                    className="hover:bg-[#F4F6F9]/70 dark:hover:bg-slate-800/50 transition-colors group cursor-default"
                   >
                     {/* Código */}
                     <td className="py-4 px-6 whitespace-nowrap">
-                      <span className="font-mono text-xs font-bold text-[#0F172A] block">
+                      <span className="font-mono text-xs font-bold text-[#0F172A] dark:text-slate-100 block">
                         {row.barcodeEan13}
                       </span>
-                      <span className="text-[11px] text-[#64748B]">
+                      <span className="text-[11px] text-[#64748B] dark:text-slate-400">
                         {row.pluCode ? `Báscula: ${row.pluCode}` : `Clave: ${row.sku}`}
                       </span>
                     </td>
 
                     {/* Nombre */}
                     <td className="py-4 px-6 max-w-xs">
-                      <p className="text-sm font-bold text-[#0F172A] truncate">{row.name}</p>
-                      <p className="text-xs text-[#64748B] truncate">
-                        Marca: {row.brand} · <span className="font-medium text-slate-600">{row.department}</span>
+                      <p className="text-sm font-bold text-[#0F172A] dark:text-white truncate">{row.name}</p>
+                      <p className="text-xs text-[#64748B] dark:text-slate-400 truncate">
+                        Marca: {row.brand} · <span className="font-medium text-slate-600 dark:text-slate-300">{row.department}</span>
                       </p>
                     </td>
 
                     {/* Pasillo */}
                     <td className="py-4 px-6 whitespace-nowrap">
-                      <span className="text-sm font-medium text-slate-800 block">
+                      <span className="text-sm font-medium text-slate-800 dark:text-slate-200 block">
                         {row.aisleLocation}
                       </span>
-                      <span className="inline-flex items-center mt-0.5 px-2 py-0.5 rounded-full text-[11px] font-semibold bg-[#F4F6F9] text-[#64748B] border border-[#E2E8F0]">
+                      <span className="inline-flex items-center mt-0.5 px-2 py-0.5 rounded-full text-[11px] font-semibold bg-[#F4F6F9] dark:bg-slate-800 text-[#64748B] dark:text-slate-400 border border-[#E2E8F0] dark:border-slate-700">
                         {row.storageTemp}
                       </span>
                     </td>
 
                     {/* Lote y Vencimiento */}
                     <td className="py-4 px-6 whitespace-nowrap">
-                      <span className="font-mono text-xs font-semibold bg-slate-100 text-slate-800 px-2.5 py-1 rounded-xl border border-[#E2E8F0] inline-block">
+                      <span className="font-mono text-xs font-semibold bg-slate-100 dark:bg-slate-900 text-slate-800 dark:text-slate-200 px-2.5 py-1 rounded-xl border border-[#E2E8F0] dark:border-slate-700 inline-block">
                         Lote: {row.batchNumber}
                       </span>
-                      <span className="block text-xs text-slate-700 mt-1 font-medium">
+                      <span className="block text-xs text-slate-700 dark:text-slate-300 mt-1 font-medium">
                         Vence: {row.expirationDate}
                         {row.daysToExpire !== null && (
                           <span
                             className={`ml-1.5 font-bold ${
                               row.daysToExpire <= 0
-                                ? 'text-[#991B1B]'
+                                ? 'text-[#991B1B] dark:text-red-400'
                                 : row.daysToExpire <= 7
-                                ? 'text-[#854D0E]'
-                                : 'text-[#166534]'
+                                ? 'text-[#854D0E] dark:text-amber-400'
+                                : 'text-[#166534] dark:text-emerald-400'
                             }`}
                           >
                             ({row.daysToExpire <= 0
@@ -293,26 +293,26 @@ export const SupermarketInventoryTable: React.FC<SupermarketInventoryTableProps>
                     {/* TOTAL EN TIENDA (Estante + Bodega) */}
                     <td className="py-4 px-6 whitespace-nowrap">
                       <div className="flex items-baseline gap-1.5">
-                        <span className="text-base font-black text-[#0F172A]">
+                        <span className="text-base font-black text-[#0F172A] dark:text-white">
                           {row.stockQuantity} {row.baseUom}
                         </span>
-                        <span className="text-[10px] uppercase font-bold text-[#008767] bg-emerald-50 px-1.5 py-0.2 rounded">
+                        <span className="text-[10px] uppercase font-bold text-[#008767] dark:text-emerald-400 bg-emerald-50 dark:bg-emerald-950/60 px-1.5 py-0.2 rounded">
                           Total
                         </span>
                       </div>
-                      <div className="text-[11px] text-[#64748B] flex items-center gap-2 mt-0.5">
-                        <span>Estante: <strong>{row.shelfStock}</strong></span>
+                      <div className="text-[11px] text-[#64748B] dark:text-slate-400 flex items-center gap-2 mt-0.5">
+                        <span>Estante: <strong className="text-slate-800 dark:text-slate-200">{row.shelfStock}</strong></span>
                         <span>·</span>
-                        <span>Bodega: <strong>{row.backroomStock}</strong></span>
+                        <span>Bodega: <strong className="text-slate-800 dark:text-slate-200">{row.backroomStock}</strong></span>
                       </div>
                     </td>
 
                     {/* Precio */}
                     <td className="py-4 px-6 whitespace-nowrap">
-                      <span className="text-sm font-extrabold text-[#008767] block">
+                      <span className="text-sm font-extrabold text-[#008767] dark:text-emerald-400 block">
                         ${row.salePrice.toFixed(2)}
                       </span>
-                      <span className="text-[11px] text-[#64748B]">
+                      <span className="text-[11px] text-[#64748B] dark:text-slate-400">
                         Costo: ${row.unitCost.toFixed(2)}
                       </span>
                     </td>
@@ -336,26 +336,26 @@ export const SupermarketInventoryTable: React.FC<SupermarketInventoryTableProps>
                           setActiveMenuId(isMenuOpen ? null : row.id);
                         }}
                         aria-label="Abrir opciones"
-                        className="cursor-pointer p-2 rounded-xl text-[#64748B] hover:text-[#0F172A] hover:bg-slate-100 transition-colors"
+                        className="cursor-pointer p-2 rounded-xl text-[#64748B] dark:text-slate-400 hover:text-[#0F172A] dark:hover:text-white hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors"
                       >
                         <MoreVertical className="w-5 h-5" />
                       </button>
 
                       {isMenuOpen && (
-                        <div className="origin-top-right absolute right-6 mt-1 w-56 rounded-2xl bg-[#FFFFFF] border border-[#E2E8F0] shadow-xl z-30 py-2 text-left animate-in fade-in zoom-in-95">
+                        <div className="origin-top-right absolute right-6 mt-1 w-56 rounded-2xl bg-[#FFFFFF] dark:bg-[#1E293B] border border-[#E2E8F0] dark:border-slate-700 shadow-xl z-30 py-2 text-left animate-in fade-in zoom-in-95">
                           <button
                             type="button"
                             onClick={() => {
                               setActiveMenuId(null);
                               onActionSelect?.('REPLENISH_AISLE', row);
                             }}
-                            className="cursor-pointer w-full px-4 py-2.5 text-xs font-semibold text-slate-700 hover:bg-[#F4F6F9] flex items-center justify-between transition-colors"
+                            className="cursor-pointer w-full px-4 py-2.5 text-xs font-semibold text-slate-700 dark:text-slate-200 hover:bg-[#F4F6F9] dark:hover:bg-slate-800/90 flex items-center justify-between transition-colors"
                           >
                             <span className="flex items-center gap-2">
-                              <ArrowUpRight className="w-3.5 h-3.5 text-[#008767]" />
+                              <ArrowUpRight className="w-3.5 h-3.5 text-[#008767] dark:text-emerald-400" />
                               Mover al estante (+12)
                             </span>
-                            <span className="text-[10px] font-bold text-[#008767] bg-emerald-50 px-1.5 py-0.5 rounded">
+                            <span className="text-[10px] font-bold text-[#008767] dark:text-emerald-400 bg-emerald-50 dark:bg-emerald-950/60 px-1.5 py-0.5 rounded">
                               Bodega
                             </span>
                           </button>
@@ -366,13 +366,13 @@ export const SupermarketInventoryTable: React.FC<SupermarketInventoryTableProps>
                               setActiveMenuId(null);
                               onActionSelect?.('ADJUST_STOCK', row);
                             }}
-                            className="cursor-pointer w-full px-4 py-2.5 text-xs font-medium text-slate-700 hover:bg-[#F4F6F9] flex items-center gap-2 transition-colors"
+                            className="cursor-pointer w-full px-4 py-2.5 text-xs font-medium text-slate-700 dark:text-slate-200 hover:bg-[#F4F6F9] dark:hover:bg-slate-800/90 flex items-center gap-2 transition-colors"
                           >
-                            <ClipboardList className="w-3.5 h-3.5 text-slate-500" />
+                            <ClipboardList className="w-3.5 h-3.5 text-slate-500 dark:text-slate-400" />
                             Contar a mano cuántos hay
                           </button>
 
-                          <div className="my-1 border-t border-slate-100" />
+                          <div className="my-1 border-t border-slate-100 dark:border-slate-800" />
 
                           <button
                             type="button"
@@ -380,7 +380,7 @@ export const SupermarketInventoryTable: React.FC<SupermarketInventoryTableProps>
                               setActiveMenuId(null);
                               onActionSelect?.('MARK_MERMA', row);
                             }}
-                            className="cursor-pointer w-full px-4 py-2.5 text-xs font-bold text-[#991B1B] hover:bg-[#FEE2E2]/50 flex items-center gap-2 transition-colors"
+                            className="cursor-pointer w-full px-4 py-2.5 text-xs font-bold text-[#991B1B] dark:text-red-400 hover:bg-[#FEE2E2]/50 dark:hover:bg-red-950/50 flex items-center gap-2 transition-colors"
                           >
                             <AlertOctagon className="w-3.5 h-3.5" />
                             Tirar / Dar de baja
@@ -397,11 +397,11 @@ export const SupermarketInventoryTable: React.FC<SupermarketInventoryTableProps>
       </div>
 
       {/* Paginación */}
-      <div className="px-6 py-4 border-t border-[#E2E8F0] flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 text-xs text-[#64748B]">
+      <div className="px-6 py-4 border-t border-[#E2E8F0] dark:border-slate-800 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 text-xs text-[#64748B] dark:text-slate-400">
         <div>
           Mostrando{' '}
-          <span className="font-bold text-[#0F172A]">{paginatedRows.length}</span> de{' '}
-          <span className="font-bold text-[#0F172A]">{filteredProducts.length}</span>{' '}
+          <span className="font-bold text-[#0F172A] dark:text-white">{paginatedRows.length}</span> de{' '}
+          <span className="font-bold text-[#0F172A] dark:text-white">{filteredProducts.length}</span>{' '}
           artículos en toda la tienda
         </div>
 
@@ -410,19 +410,19 @@ export const SupermarketInventoryTable: React.FC<SupermarketInventoryTableProps>
             type="button"
             disabled={currentPage === 1}
             onClick={() => setCurrentPage((p) => Math.max(1, p - 1))}
-            className="cursor-pointer px-3 py-1.5 rounded-xl border border-[#E2E8F0] bg-[#FFFFFF] text-[#0F172A] font-semibold disabled:opacity-40 disabled:cursor-not-allowed hover:bg-[#F4F6F9] flex items-center gap-1 transition-all"
+            className="cursor-pointer px-3 py-1.5 rounded-xl border border-[#E2E8F0] dark:border-slate-700 bg-[#FFFFFF] dark:bg-slate-800 text-[#0F172A] dark:text-slate-200 font-semibold disabled:opacity-40 disabled:cursor-not-allowed hover:bg-[#F4F6F9] dark:hover:bg-slate-700 flex items-center gap-1 transition-all"
           >
             <ChevronLeft className="w-3.5 h-3.5" />
             Anterior
           </button>
-          <span className="px-2 font-bold text-[#0F172A]">
+          <span className="px-2 font-bold text-[#0F172A] dark:text-white">
             Página {currentPage} de {totalPages}
           </span>
           <button
             type="button"
             disabled={currentPage === totalPages}
             onClick={() => setCurrentPage((p) => Math.min(totalPages, p + 1))}
-            className="cursor-pointer px-3 py-1.5 rounded-xl border border-[#E2E8F0] bg-[#FFFFFF] text-[#0F172A] font-semibold disabled:opacity-40 disabled:cursor-not-allowed hover:bg-[#F4F6F9] flex items-center gap-1 transition-all"
+            className="cursor-pointer px-3 py-1.5 rounded-xl border border-[#E2E8F0] dark:border-slate-700 bg-[#FFFFFF] dark:bg-slate-800 text-[#0F172A] dark:text-slate-200 font-semibold disabled:opacity-40 disabled:cursor-not-allowed hover:bg-[#F4F6F9] dark:hover:bg-slate-700 flex items-center gap-1 transition-all"
           >
             Siguiente
             <ChevronRight className="w-3.5 h-3.5" />
