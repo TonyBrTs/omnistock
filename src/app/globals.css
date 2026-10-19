@@ -12,3 +12,34 @@ body {
   margin: 0;
   padding: 0;
 }
+
+/* Customización del icono de calendario en inputs tipo date */
+input[type="date"] {
+  color-scheme: light;
+}
+
+input[type="date"]::-webkit-calendar-picker-indicator {
+  cursor: pointer;
+  border-radius: 6px;
+  padding: 4px;
+  background-color: transparent;
+  transition: all 0.2s ease;
+  filter: invert(36%) sepia(85%) saturate(540%) hue-rotate(120deg) brightness(95%) contrast(90%);
+}
+
+input[type="date"]::-webkit-calendar-picker-indicator:hover {
+  background-color: #ECFDF5;
+  transform: scale(1.1);
+}
+
+/* Customización de selects nativos con scrollbar limpia */
+select {
+  cursor: pointer;
+}
+
+select option {
+  background-color: #FFFFFF;
+  color: #0F172A;
+  padding: 8px 12px;
+}
+

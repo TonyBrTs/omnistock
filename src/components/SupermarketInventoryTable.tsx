@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useMemo, useState } from 'react';
+import React, { useMemo, useState, useEffect } from 'react';
 import {
   BatchHealthStatus,
   StorageTemperature,
@@ -16,6 +16,7 @@ import {
   ChevronRight,
   Store,
 } from 'lucide-react';
+import { CustomSelect, SelectOption } from './ui/CustomSelect';
 
 interface SupermarketInventoryTableProps {
   products: SupermarketProductRow[];
@@ -52,9 +53,48 @@ export const SupermarketInventoryTable: React.FC<SupermarketInventoryTableProps>
   const [currentPage, setCurrentPage] = useState(1);
   const pageSize = 6;
 
+  // Cerrar menú de acciones contextual al hacer clic fuera o pulsar escape
+  useEffect(() => {
+    if (!activeMenuId) return;
+    const handleClose = () => setActiveMenuId(null);
+    const handleKey = (e: KeyboardEvent) => {
+      if (e.key === 'Escape') setActiveMenuId(null);
+    };
+    const timer = setTimeout(() => {
+      window.addEventListener('click', handleClose);
+      window.addEventListener('keydown', handleKey);
+    }, 0);
+    return () => {
+      clearTimeout(timer);
+      window.removeEventListener('click', handleClose);
+      window.removeEventListener('keydown', handleKey);
+    };
+  }, [activeMenuId]);
+
   const departments = useMemo(() => {
     return ['ALL', ...Array.from(new Set(products.map((p) => p.department)))];
   }, [products]);
+
+  const departmentOptions: SelectOption[] = useMemo(() => {
+    return departments.map((dept) => ({
+      value: dept,
+      label: dept === 'ALL' ? 'Todos los Departamentos' : dept,
+    }));
+  }, [departments]);
+
+  const tempOptions: SelectOption[] = [
+    { value: 'ALL', label: 'Todo Tipo de Conservación' },
+    { value: 'Ambiente (Seco)', label: 'Estante Seco' },
+    { value: 'Refrigerado (2°C a 6°C)', label: 'Refrigerado' },
+    { value: 'Congelado (-18°C)', label: 'Congelador' },
+  ];
+
+  const statusOptions: SelectOption[] = [
+    { value: 'ALL', label: 'Todos los Estados' },
+    { value: 'GOOD', label: 'Todo Bien', badge: 'En regla', badgeColor: 'bg-emerald-50 text-emerald-700' },
+    { value: 'LOW_STOCK', label: 'Por Vencer / Queda Poco', badge: 'Atención', badgeColor: 'bg-amber-50 text-amber-700' },
+    { value: 'EXPIRED', label: 'Vencidos', badge: 'No vender', badgeColor: 'bg-red-50 text-red-700' },
+  ];
 
   const filteredProducts = useMemo(() => {
     return products.filter((item) => {
@@ -104,54 +144,38 @@ export const SupermarketInventoryTable: React.FC<SupermarketInventoryTableProps>
 
         {/* Filtros */}
         <div className="flex flex-wrap items-center gap-2 sm:gap-3">
-          <select
+          <CustomSelect
             value={departmentFilter}
-            onChange={(e) => {
-              setDepartmentFilter(e.target.value);
+            onChange={(val) => {
+              setDepartmentFilter(val);
               setCurrentPage(1);
             }}
-            aria-label="Filtrar por Departamento"
-            className="cursor-pointer px-3.5 py-2.5 text-xs font-semibold bg-[#F4F6F9] border border-[#E2E8F0] rounded-xl text-[#0F172A] hover:border-[#008767] transition-colors focus:outline-none"
-          >
-            <option value="ALL">Todos los Departamentos</option>
-            {departments
-              .filter((d) => d !== 'ALL')
-              .map((dept) => (
-                <option key={dept} value={dept}>
-                  {dept}
-                </option>
-              ))}
-          </select>
+            options={departmentOptions}
+            buttonClassName="py-2 px-3 text-xs font-semibold rounded-xl"
+            ariaLabel="Filtrar por Departamento"
+          />
 
-          <select
+          <CustomSelect
             value={tempFilter}
-            onChange={(e) => {
-              setTempFilter(e.target.value as 'ALL' | StorageTemperature);
+            onChange={(val) => {
+              setTempFilter(val as any);
               setCurrentPage(1);
             }}
-            aria-label="Filtrar por Tipo de Conservación"
-            className="cursor-pointer px-3.5 py-2.5 text-xs font-semibold bg-[#F4F6F9] border border-[#E2E8F0] rounded-xl text-[#0F172A] hover:border-[#008767] transition-colors focus:outline-none"
-          >
-            <option value="ALL">Todo Tipo de Conservación</option>
-            <option value="Ambiente (Seco)">Estante Seco</option>
-            <option value="Refrigerado (2°C a 6°C)">Refrigerado</option>
-            <option value="Congelado (-18°C)">Congelador</option>
-          </select>
+            options={tempOptions}
+            buttonClassName="py-2 px-3 text-xs font-semibold rounded-xl"
+            ariaLabel="Filtrar por Tipo de Conservación"
+          />
 
-          <select
+          <CustomSelect
             value={statusFilter}
-            onChange={(e) => {
-              setStatusFilter(e.target.value as 'ALL' | BatchHealthStatus);
+            onChange={(val) => {
+              setStatusFilter(val as any);
               setCurrentPage(1);
             }}
-            aria-label="Filtrar por Estado"
-            className="cursor-pointer px-3.5 py-2.5 text-xs font-semibold bg-[#F4F6F9] border border-[#E2E8F0] rounded-xl text-[#0F172A] hover:border-[#008767] transition-colors focus:outline-none"
-          >
-            <option value="ALL">Todos los Estados</option>
-            <option value="GOOD">Todo Bien</option>
-            <option value="LOW_STOCK">Por Vencer / Queda Poco</option>
-            <option value="EXPIRED">Vencidos</option>
-          </select>
+            options={statusOptions}
+            buttonClassName="py-2 px-3 text-xs font-semibold rounded-xl"
+            ariaLabel="Filtrar por Estado"
+          />
         </div>
       </div>
 
@@ -301,9 +325,10 @@ export const SupermarketInventoryTable: React.FC<SupermarketInventoryTableProps>
                     <td className="py-4 px-6 whitespace-nowrap text-right relative">
                       <button
                         type="button"
-                        onClick={() =>
-                          setActiveMenuId(isMenuOpen ? null : row.id)
-                        }
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          setActiveMenuId(isMenuOpen ? null : row.id);
+                        }}
                         aria-label="Abrir opciones"
                         className="cursor-pointer p-2 rounded-xl text-[#64748B] hover:text-[#0F172A] hover:bg-slate-100 transition-colors"
                       >

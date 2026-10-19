@@ -3,6 +3,7 @@
 import React, { useState } from 'react';
 import { SupermarketProductRow } from '@/types/supermarket';
 import { X } from 'lucide-react';
+import { CustomSelect, SelectOption } from './ui/CustomSelect';
 
 interface ShrinkageFormModalProps {
   isOpen: boolean;
@@ -25,6 +26,22 @@ export const ShrinkageFormModal: React.FC<ShrinkageFormModalProps> = ({
   const [operatorName, setOperatorName] = useState('Encargado');
   const [loading, setLoading] = useState(false);
   const [errorMsg, setErrorMsg] = useState<string | null>(null);
+
+  const productOptions: SelectOption[] = products.map((p) => ({
+    value: p.batchNumber,
+    label: `${p.name} · Lote ${p.batchNumber}`,
+    sublabel: `Vence: ${p.expirationDate} · Departamento: ${p.department}`,
+    badge: `${p.stockQuantity} ${p.baseUom}`,
+    badgeColor: p.status === 'EXPIRED' ? 'bg-red-50 text-red-700 border border-red-200' : undefined,
+  }));
+
+  const reasonOptions: SelectOption[] = [
+    { value: 'FECHA_CADUCADA', label: 'Ya se venció la fecha', sublabel: 'Alcanzó su fecha límite de venta' },
+    { value: 'PERDIDA_CADENA_FRIO', label: 'Se calentó el refrigerador', sublabel: 'Falla eléctrica o pérdida de temperatura' },
+    { value: 'RUPTURA_EMPAQUE', label: 'Bolsa o envase roto', sublabel: 'Fuga, perforación o sello abierto' },
+    { value: 'DANIO_MANIPULACION', label: 'Se cayó o golpeó', sublabel: 'Accidente en pasillo o acomodo' },
+    { value: 'RETIRO_SANITARIO', label: 'Vino mal de fábrica', sublabel: 'Defecto de empaque o alerta de proveedor' },
+  ];
 
   if (!isOpen) return null;
 
@@ -87,20 +104,15 @@ export const ShrinkageFormModal: React.FC<ShrinkageFormModalProps> = ({
           )}
 
           <div>
-            <label className="block text-xs font-bold uppercase tracking-wider text-slate-500 mb-1">
+            <label className="block text-xs font-bold uppercase tracking-wider text-slate-500 mb-1.5">
               ¿Qué producto vas a tirar?
             </label>
-            <select
+            <CustomSelect
               value={selectedBatchNumber}
-              onChange={(e) => setSelectedBatchNumber(e.target.value)}
-              className="cursor-pointer w-full px-3.5 py-2.5 text-sm bg-[#F4F6F9] border border-[#E2E8F0] rounded-xl text-[#0F172A] focus:outline-none focus:border-[#008767]"
-            >
-              {products.map((p) => (
-                <option key={p.id} value={p.batchNumber}>
-                  {p.name} · [Lote: {p.batchNumber} - Vence: {p.expirationDate}] · Quedan: {p.stockQuantity} {p.baseUom}
-                </option>
-              ))}
-            </select>
+              onChange={setSelectedBatchNumber}
+              options={productOptions}
+              placeholder="Seleccionar producto a tirar..."
+            />
           </div>
 
           {currentProduct && (
@@ -121,20 +133,15 @@ export const ShrinkageFormModal: React.FC<ShrinkageFormModalProps> = ({
           )}
 
           <div>
-            <label className="block text-xs font-bold uppercase tracking-wider text-slate-500 mb-1">
+            <label className="block text-xs font-bold uppercase tracking-wider text-slate-500 mb-1.5">
               ¿Por qué se tira?
             </label>
-            <select
+            <CustomSelect
               value={reason}
-              onChange={(e) => setReason(e.target.value as any)}
-              className="cursor-pointer w-full px-3.5 py-2 text-sm bg-[#F4F6F9] border border-[#E2E8F0] rounded-xl text-[#0F172A] focus:outline-none focus:border-[#008767]"
-            >
-              <option value="FECHA_CADUCADA">Ya se venció la fecha</option>
-              <option value="PERDIDA_CADENA_FRIO">Se calentó el refri</option>
-              <option value="RUPTURA_EMPAQUE">Bolsa o envase roto</option>
-              <option value="DANIO_MANIPULACION">Se cayó o golpeó</option>
-              <option value="RETIRO_SANITARIO">Vino mal de fábrica</option>
-            </select>
+              onChange={(val) => setReason(val as any)}
+              options={reasonOptions}
+              placeholder="Seleccionar motivo..."
+            />
           </div>
 
           <div>

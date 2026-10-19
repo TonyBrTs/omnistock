@@ -3,6 +3,7 @@
 import React, { useState } from 'react';
 import { SupermarketProductRow } from '@/types/supermarket';
 import { AlertCircle, X } from 'lucide-react';
+import { CustomSelect, SelectOption } from './ui/CustomSelect';
 
 interface POSSimulatorModalProps {
   isOpen: boolean;
@@ -25,6 +26,14 @@ export const POSSimulatorModal: React.FC<POSSimulatorModalProps> = ({
   const [alertError, setAlertError] = useState<{ message: string; errorCode?: string } | null>(
     null
   );
+
+  const productOptions: SelectOption[] = products.map((p) => ({
+    value: p.barcodeEan13,
+    label: p.name,
+    sublabel: `Precio: $${p.salePrice.toFixed(2)} · Departamento: ${p.department}`,
+    badge: p.status === 'EXPIRED' ? 'VENCIDO' : `${p.stockQuantity} disponibles`,
+    badgeColor: p.status === 'EXPIRED' ? 'bg-red-50 text-red-700 border border-red-200' : undefined,
+  }));
 
   if (!isOpen) return null;
 
@@ -111,23 +120,18 @@ export const POSSimulatorModal: React.FC<POSSimulatorModalProps> = ({
           )}
 
           <div>
-            <label className="block text-xs font-bold uppercase tracking-wider text-slate-500 mb-1">
+            <label className="block text-xs font-bold uppercase tracking-wider text-slate-500 mb-1.5">
               ¿Qué producto vas a cobrar?
             </label>
-            <select
+            <CustomSelect
               value={selectedBarcode}
-              onChange={(e) => {
-                setSelectedBarcode(e.target.value);
+              onChange={(val) => {
+                setSelectedBarcode(val);
                 setAlertError(null);
               }}
-              className="cursor-pointer w-full px-3.5 py-2.5 text-sm bg-[#F4F6F9] border border-[#E2E8F0] rounded-xl text-[#0F172A] focus:outline-none focus:border-[#008767]"
-            >
-              {products.map((p) => (
-                <option key={p.id} value={p.barcodeEan13}>
-                  {p.name} · [{p.status === 'EXPIRED' ? 'VENCIDO' : `Quedan ${p.stockQuantity}`}]
-                </option>
-              ))}
-            </select>
+              options={productOptions}
+              placeholder="Seleccionar producto a cobrar..."
+            />
           </div>
 
           {currentProduct && (

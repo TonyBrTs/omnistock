@@ -3,6 +3,8 @@
 import React, { useState } from 'react';
 import { SupermarketProductRow } from '@/types/supermarket';
 import { X } from 'lucide-react';
+import { CustomSelect, SelectOption } from './ui/CustomSelect';
+import { CustomDatePicker } from './ui/CustomDatePicker';
 
 interface ReceiveBatchModalProps {
   isOpen: boolean;
@@ -26,6 +28,18 @@ export const ReceiveBatchModal: React.FC<ReceiveBatchModalProps> = ({
   const [locationId, setLocationId] = useState('loc-cold');
   const [loading, setLoading] = useState(false);
   const [errorMsg, setErrorMsg] = useState<string | null>(null);
+
+  const productOptions: SelectOption[] = products.map((p) => ({
+    value: p.id,
+    label: p.name,
+    sublabel: `Código: ${p.barcodeEan13} · Departamento: ${p.department}`,
+    badge: `${p.stockQuantity} en stock`,
+  }));
+
+  const locationOptions: SelectOption[] = [
+    { value: 'loc-cold', label: 'En el Refrigerador', sublabel: 'Lácteos, carnes, embutidos y frescos' },
+    { value: 'loc-main', label: 'En el Estante / Bodega', sublabel: 'Secos, abarrotes, harinas y enlatados' },
+  ];
 
   if (!isOpen) return null;
 
@@ -88,26 +102,20 @@ export const ReceiveBatchModal: React.FC<ReceiveBatchModalProps> = ({
           )}
 
           <div>
-            <label className="block text-xs font-bold uppercase tracking-wider text-slate-500 mb-1">
+            <label className="block text-xs font-bold uppercase tracking-wider text-slate-500 mb-1.5">
               ¿Qué producto llegó?
             </label>
-            <select
+            <CustomSelect
               value={selectedProductId}
-              onChange={(e) => setSelectedProductId(e.target.value)}
-              className="cursor-pointer w-full px-3.5 py-2.5 text-sm bg-[#F4F6F9] border border-[#E2E8F0] rounded-xl text-[#0F172A] focus:outline-none focus:border-[#008767]"
-              required
-            >
-              {products.map((p) => (
-                <option key={p.id} value={p.id}>
-                  {p.name} ({p.barcodeEan13})
-                </option>
-              ))}
-            </select>
+              onChange={setSelectedProductId}
+              options={productOptions}
+              placeholder="Seleccionar producto..."
+            />
           </div>
 
-          <div className="grid grid-cols-2 gap-3">
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
             <div>
-              <label className="block text-xs font-bold uppercase tracking-wider text-slate-500 mb-1">
+              <label className="block text-xs font-bold uppercase tracking-wider text-slate-500 mb-1.5">
                 Número de Lote
               </label>
               <input
@@ -115,27 +123,25 @@ export const ReceiveBatchModal: React.FC<ReceiveBatchModalProps> = ({
                 placeholder="Ej: LOTE-24A"
                 value={batchNumber}
                 onChange={(e) => setBatchNumber(e.target.value)}
-                className="w-full px-3.5 py-2 text-sm bg-[#F4F6F9] border border-[#E2E8F0] rounded-xl text-[#0F172A] focus:outline-none focus:border-[#008767]"
+                className="w-full px-3.5 py-2.5 text-sm bg-white border border-[#E2E8F0] rounded-xl text-[#0F172A] shadow-xs focus:outline-none focus:border-[#008767] focus:ring-2 focus:ring-[#008767]/20"
                 required
               />
             </div>
             <div>
-              <label className="block text-xs font-bold uppercase tracking-wider text-slate-500 mb-1">
-                ¿Cuándo Vence?
+              <label className="block text-xs font-bold uppercase tracking-wider text-slate-500 mb-1.5">
+                ¿Cuándo Vence? (Calendario)
               </label>
-              <input
-                type="date"
+              <CustomDatePicker
                 value={expirationDate}
-                onChange={(e) => setExpirationDate(e.target.value)}
-                className="cursor-pointer w-full px-3.5 py-2 text-sm bg-[#F4F6F9] border border-[#E2E8F0] rounded-xl text-[#0F172A] focus:outline-none focus:border-[#008767]"
-                required
+                onChange={setExpirationDate}
+                placeholder="Elegir fecha de vencimiento..."
               />
             </div>
           </div>
 
-          <div className="grid grid-cols-3 gap-3">
+          <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
             <div>
-              <label className="block text-xs font-bold uppercase tracking-wider text-slate-500 mb-1">
+              <label className="block text-xs font-bold uppercase tracking-wider text-slate-500 mb-1.5">
                 ¿Cuántos llegaron?
               </label>
               <input
@@ -143,12 +149,12 @@ export const ReceiveBatchModal: React.FC<ReceiveBatchModalProps> = ({
                 min="1"
                 value={quantity}
                 onChange={(e) => setQuantity(Number(e.target.value))}
-                className="w-full px-3.5 py-2 text-sm bg-[#F4F6F9] border border-[#E2E8F0] rounded-xl text-[#0F172A] focus:outline-none focus:border-[#008767]"
+                className="w-full px-3.5 py-2.5 text-sm bg-white border border-[#E2E8F0] rounded-xl text-[#0F172A] shadow-xs focus:outline-none focus:border-[#008767] focus:ring-2 focus:ring-[#008767]/20"
                 required
               />
             </div>
             <div>
-              <label className="block text-xs font-bold uppercase tracking-wider text-slate-500 mb-1">
+              <label className="block text-xs font-bold uppercase tracking-wider text-slate-500 mb-1.5">
                 Costo por pieza ($)
               </label>
               <input
@@ -156,22 +162,20 @@ export const ReceiveBatchModal: React.FC<ReceiveBatchModalProps> = ({
                 step="0.01"
                 value={unitCost}
                 onChange={(e) => setUnitCost(Number(e.target.value))}
-                className="w-full px-3.5 py-2 text-sm bg-[#F4F6F9] border border-[#E2E8F0] rounded-xl text-[#0F172A] focus:outline-none focus:border-[#008767]"
+                className="w-full px-3.5 py-2.5 text-sm bg-white border border-[#E2E8F0] rounded-xl text-[#0F172A] shadow-xs focus:outline-none focus:border-[#008767] focus:ring-2 focus:ring-[#008767]/20"
                 required
               />
             </div>
             <div>
-              <label className="block text-xs font-bold uppercase tracking-wider text-slate-500 mb-1">
+              <label className="block text-xs font-bold uppercase tracking-wider text-slate-500 mb-1.5">
                 ¿Dónde se guarda?
               </label>
-              <select
+              <CustomSelect
                 value={locationId}
-                onChange={(e) => setLocationId(e.target.value)}
-                className="cursor-pointer w-full px-3 py-2 text-sm bg-[#F4F6F9] border border-[#E2E8F0] rounded-xl text-[#0F172A] focus:outline-none focus:border-[#008767]"
-              >
-                <option value="loc-cold">En el Refrigerador</option>
-                <option value="loc-main">En el Estante / Bodega</option>
-              </select>
+                onChange={setLocationId}
+                options={locationOptions}
+                placeholder="Lugar de almacenaje..."
+              />
             </div>
           </div>
 
