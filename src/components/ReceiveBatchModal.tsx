@@ -37,8 +37,8 @@ export const ReceiveBatchModal: React.FC<ReceiveBatchModalProps> = ({
   }));
 
   const locationOptions: SelectOption[] = [
-    { value: 'loc-cold', label: 'En el Refrigerador', sublabel: 'Lácteos, carnes, embutidos y frescos' },
-    { value: 'loc-main', label: 'En el Estante / Bodega', sublabel: 'Secos, abarrotes, harinas y enlatados' },
+    { value: 'loc-main', label: 'Área General / Secos', sublabel: 'Abarrotes, harinas y productos a temperatura ambiente' },
+    { value: 'loc-cold', label: 'Refrigeración / Frescos', sublabel: 'Lácteos, carnes, embutidos y perecederos' },
   ];
 
   if (!isOpen) return null;

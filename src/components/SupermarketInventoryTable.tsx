@@ -9,7 +9,6 @@ import {
 import {
   Search,
   MoreVertical,
-  ArrowUpRight,
   ClipboardList,
   AlertOctagon,
   ChevronLeft,
@@ -24,7 +23,7 @@ import { CustomSelect, SelectOption } from './ui/CustomSelect';
 interface SupermarketInventoryTableProps {
   products: SupermarketProductRow[];
   onActionSelect?: (
-    action: 'REPLENISH_AISLE' | 'MARK_MERMA' | 'ADJUST_STOCK',
+    action: 'MARK_MERMA' | 'ADJUST_STOCK',
     product: SupermarketProductRow
   ) => void;
   onCreateProduct?: () => void;
@@ -93,7 +92,7 @@ export const SupermarketInventoryTable: React.FC<SupermarketInventoryTableProps>
 
   const tempOptions: SelectOption[] = [
     { value: 'ALL', label: 'Todo Tipo de Conservación' },
-    { value: 'Ambiente (Seco)', label: 'Estante Seco' },
+    { value: 'Ambiente (Seco)', label: 'Ambiente (Seco)' },
     { value: 'Refrigerado (2°C a 6°C)', label: 'Refrigerado' },
     { value: 'Congelado (-18°C)', label: 'Congelador' },
   ];
@@ -311,15 +310,13 @@ export const SupermarketInventoryTable: React.FC<SupermarketInventoryTableProps>
                       </span>
                     </td>
 
-                    {/* TOTAL EN TIENDA (Estante + Bodega) */}
+                    {/* Stock Total */}
                     <td className="py-4 px-6 whitespace-nowrap">
                       <span className="text-base font-black text-[#0F172A] dark:text-white block">
                         {row.stockQuantity} {row.baseUom}
                       </span>
                       <div className="text-[11px] text-[#64748B] dark:text-slate-400 flex items-center gap-2 mt-0.5">
-                        <span>Estante: <strong className="text-slate-800 dark:text-slate-200">{row.shelfStock}</strong></span>
-                        <span>·</span>
-                        <span>Bodega: <strong className="text-slate-800 dark:text-slate-200">{row.backroomStock}</strong></span>
+                        <span>Stock Mínimo: <strong className="text-slate-800 dark:text-slate-200">{row.minStockAlert} {row.baseUom}</strong></span>
                       </div>
                     </td>
 
@@ -359,23 +356,6 @@ export const SupermarketInventoryTable: React.FC<SupermarketInventoryTableProps>
 
                       {isMenuOpen && (
                         <div className="origin-top-right absolute right-6 mt-1 w-56 rounded-2xl bg-[#FFFFFF] dark:bg-[#1E293B] border border-[#E2E8F0] dark:border-slate-700 shadow-xl z-30 py-2 text-left animate-in fade-in zoom-in-95">
-                          <button
-                            type="button"
-                            onClick={() => {
-                              setActiveMenuId(null);
-                              onActionSelect?.('REPLENISH_AISLE', row);
-                            }}
-                            className="cursor-pointer w-full px-4 py-2.5 text-xs font-semibold text-slate-700 dark:text-slate-200 hover:bg-[#F4F6F9] dark:hover:bg-slate-800/90 flex items-center justify-between transition-colors"
-                          >
-                            <span className="flex items-center gap-2">
-                              <ArrowUpRight className="w-3.5 h-3.5 text-[#008767] dark:text-emerald-400" />
-                              Mover a estante (12 pzas)
-                            </span>
-                            <span className="text-[10px] font-bold text-[#008767] dark:text-emerald-400 bg-emerald-50 dark:bg-emerald-950/60 px-1.5 py-0.5 rounded">
-                              Bodega
-                            </span>
-                          </button>
-
                           <button
                             type="button"
                             onClick={() => {

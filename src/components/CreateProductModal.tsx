@@ -28,7 +28,7 @@ const UOM_OPTIONS: SelectOption[] = [
 ];
 
 const TEMP_OPTIONS: SelectOption[] = [
-  { value: 'Ambiente (Seco)', label: 'Estante Normal (Seco)', sublabel: 'No necesita refrigeración' },
+  { value: 'Ambiente (Seco)', label: 'Temperatura Ambiente (Seco)', sublabel: 'No requiere refrigeración' },
   { value: 'Refrigerado (2°C a 6°C)', label: 'Refrigerador (2°C a 6°C)', sublabel: 'Vitrina fría o refrigerador' },
   { value: 'Congelado (-18°C)', label: 'Congelador (-18°C)', sublabel: 'Nevera o vitrina congelada' },
 ];
@@ -44,7 +44,7 @@ export const CreateProductModal: React.FC<CreateProductModalProps> = ({
   const [department, setDepartment] = useState('Abarrotes y Despensa');
   const [baseUom, setBaseUom] = useState('Pza');
   const [storageTemp, setStorageTemp] = useState('Ambiente (Seco)');
-  const [aisleLocation, setAisleLocation] = useState('Pasillo 01 · Estante A');
+  const [aisleLocation, setAisleLocation] = useState('Pasillo 01');
   const [salePrice, setSalePrice] = useState<number | ''>(25);
   const [unitCost, setUnitCost] = useState<number | ''>(18);
   const [minStockAlert, setMinStockAlert] = useState<number | ''>(10);
@@ -79,7 +79,7 @@ export const CreateProductModal: React.FC<CreateProductModalProps> = ({
         department,
         baseUom,
         storageTemp,
-        aisleLocation: aisleLocation.trim() || 'Estante Central',
+        aisleLocation: aisleLocation.trim() || 'Pasillo Principal',
         salePrice: Number(salePrice),
         unitCost: Number(unitCost),
         minStockAlert: Number(minStockAlert) || 5,
@@ -233,7 +233,7 @@ export const CreateProductModal: React.FC<CreateProductModalProps> = ({
               </label>
               <input
                 type="text"
-                placeholder="Ej: Pasillo 03 · Estante Central"
+                placeholder="Ej: Pasillo 03, Sección A"
                 value={aisleLocation}
                 onChange={(e) => setAisleLocation(e.target.value)}
                 className="w-full px-3.5 py-2.5 text-sm bg-white dark:bg-[#0F172A] border border-[#E2E8F0] dark:border-slate-700 rounded-xl text-[#0F172A] dark:text-slate-100 placeholder:text-slate-400 dark:placeholder:text-slate-500 focus:outline-none focus:border-[#008767] dark:focus:border-emerald-500"

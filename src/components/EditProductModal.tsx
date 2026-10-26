@@ -29,7 +29,7 @@ const UOM_OPTIONS: SelectOption[] = [
 ];
 
 const TEMP_OPTIONS: SelectOption[] = [
-  { value: 'Ambiente (Seco)', label: 'Estante Normal (Seco)', sublabel: 'No necesita refrigeración' },
+  { value: 'Ambiente (Seco)', label: 'Temperatura Ambiente (Seco)', sublabel: 'No requiere refrigeración' },
   { value: 'Refrigerado (2°C a 6°C)', label: 'Refrigerador (2°C a 6°C)', sublabel: 'Vitrina fría o refrigerador' },
   { value: 'Congelado (-18°C)', label: 'Congelador (-18°C)', sublabel: 'Nevera o vitrina congelada' },
 ];
@@ -82,7 +82,7 @@ export const EditProductModal: React.FC<EditProductModalProps> = ({
         department,
         baseUom,
         storageTemp,
-        aisleLocation: aisleLocation.trim() || 'Estante Central',
+        aisleLocation: aisleLocation.trim() || 'Pasillo Principal',
         salePrice: Number(salePrice),
         unitCost: Number(unitCost),
         minStockAlert: Number(minStockAlert) || 5,

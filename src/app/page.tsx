@@ -96,35 +96,10 @@ export default function SupermarketDashboardPage() {
   ];
 
   const handleTableAction = async (
-    action: 'REPLENISH_AISLE' | 'MARK_MERMA' | 'ADJUST_STOCK',
+    action: 'MARK_MERMA' | 'ADJUST_STOCK',
     product: SupermarketProductRow
   ) => {
-    if (action === 'REPLENISH_AISLE') {
-      try {
-        const res = await fetch('/api/movements', {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({
-            productId: product.id,
-            quantity: 12,
-            movementType: 'SHELF_REPLENISHMENT',
-            operatorName: 'Encargado de Tienda',
-            referenceDocument: 'SURTIDO-ESTANTE',
-            notes: `Se pusieron 12 ${product.baseUom} más en el estante de "${product.name}".`,
-          }),
-        });
-
-        const data = await res.json();
-        if (res.ok) {
-          setToastMessage(`Se reabastecieron 12 piezas en piso de venta para "${product.name}".`);
-          fetchProducts();
-        } else {
-          setToastMessage(`No se pudo reabastecer: ${JSON.stringify(data.error)}`);
-        }
-      } catch (err: any) {
-        setToastMessage(`Error: ${err.message}`);
-      }
-    } else if (action === 'MARK_MERMA') {
+    if (action === 'MARK_MERMA') {
       setIsShrinkageModalOpen(true);
     } else if (action === 'ADJUST_STOCK') {
       setToastMessage(`Conteo físico registrado para "${product.name}".`);

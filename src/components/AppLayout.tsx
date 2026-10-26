@@ -188,7 +188,7 @@ export const AppLayout: React.FC<AppLayoutProps> = ({
                   <button
                     type="button"
                     onClick={onOpenPriceTags}
-                    title="Imprimir etiquetas para estantes"
+                    title="Imprimir etiquetas de precio"
                     className={`cursor-pointer w-full flex items-center ${
                       collapsed ? 'justify-center px-0' : 'gap-3 px-3'
                     } py-2.5 rounded-xl text-sm font-medium text-slate-300 hover:bg-[#1E293B] hover:text-white transition-colors`}
