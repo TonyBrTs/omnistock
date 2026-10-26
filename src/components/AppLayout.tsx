@@ -273,53 +273,8 @@ export const AppLayout: React.FC<AppLayoutProps> = ({
             </p>
           </div>
 
-          {/* Botones de Acción de Cabecera */}
-          <div className="flex flex-wrap items-center gap-2 shrink-0">
-            <button
-              type="button"
-              onClick={onOpenPriceTags}
-              className="cursor-pointer px-3 py-2 rounded-xl bg-slate-100 dark:bg-slate-800 hover:bg-slate-200 dark:hover:bg-slate-700 text-slate-700 dark:text-slate-200 text-xs font-semibold tracking-wide border border-slate-200 dark:border-slate-700 transition-colors flex items-center gap-1.5 active:scale-95"
-            >
-              <Tag className="w-3.5 h-3.5" />
-              <span>Etiquetas</span>
-            </button>
-
-            <button
-              type="button"
-              onClick={onOpenAuditReport}
-              className="cursor-pointer px-3 py-2 rounded-xl bg-emerald-50 dark:bg-emerald-950/40 hover:bg-emerald-100 dark:hover:bg-emerald-900/40 text-[#008767] dark:text-emerald-400 text-xs font-semibold tracking-wide border border-emerald-200 dark:border-emerald-800/60 transition-colors flex items-center gap-1.5 active:scale-95"
-            >
-              <FileSpreadsheet className="w-3.5 h-3.5" />
-              <span>Reporte Excel</span>
-            </button>
-
-            <button
-              type="button"
-              onClick={onOpenPOSSimulator}
-              className="cursor-pointer px-3.5 py-2 rounded-xl bg-indigo-50 dark:bg-indigo-950/40 hover:bg-indigo-100 dark:hover:bg-indigo-900/40 text-indigo-700 dark:text-indigo-400 text-xs font-bold tracking-wide border border-indigo-200 dark:border-indigo-800/60 transition-colors flex items-center gap-1.5 active:scale-95"
-            >
-              <ShoppingCart className="w-3.5 h-3.5" />
-              <span>Cobro en Caja</span>
-            </button>
-
-            <button
-              type="button"
-              onClick={onOpenKardex}
-              className="cursor-pointer px-3 py-2 rounded-xl bg-purple-50 dark:bg-purple-950/40 hover:bg-purple-100 dark:hover:bg-purple-900/40 text-purple-700 dark:text-purple-400 text-xs font-semibold tracking-wide border border-purple-200 dark:border-purple-800/60 transition-colors flex items-center gap-1.5 active:scale-95"
-            >
-              <History className="w-3.5 h-3.5" />
-              <span>Historial</span>
-            </button>
-
-            <button
-              type="button"
-              onClick={onQuickReceiveStock}
-              className="cursor-pointer px-4 py-2 rounded-xl bg-[#008767] hover:bg-[#006e54] text-white text-xs font-bold tracking-wide shadow-sm transition-all flex items-center gap-1.5 hover:shadow-md active:scale-95"
-            >
-              <PackagePlus className="w-4 h-4" />
-              <span>Meter Mercancía</span>
-            </button>
-
+          {/* Herramientas de Cabecera (solo Modo Oscuro y Usuario) */}
+          <div className="flex items-center gap-2 shrink-0">
             {/* Selector de Modo Oscuro / Claro */}
             <button
               type="button"
@@ -340,7 +295,7 @@ export const AppLayout: React.FC<AppLayoutProps> = ({
               <div className="w-9 h-9 rounded-xl bg-[#0D5C75] text-white flex items-center justify-center font-bold shadow-xs shrink-0">
                 <UserCheck className="w-4 h-4" />
               </div>
-              <div className="hidden xl:block leading-tight">
+              <div className="hidden sm:block leading-tight">
                 <p className="text-xs font-bold text-[#0F172A] dark:text-white">Encargado</p>
                 <p className="text-[10px] text-[#64748B] dark:text-slate-400">Sucursal Centro</p>
               </div>
