@@ -5,13 +5,16 @@ export type StorageTemperature =
   | 'Refrigerado (2°C a 6°C)'
   | 'Congelado (-18°C)';
 
-export type StoreDepartment =
-  | 'Lácteos y Refrigerados'
-  | 'Frutas y Verduras'
-  | 'Carnicería y Salchichonería'
-  | 'Abarrotes y Despensa'
-  | 'Bebidas y Licores'
-  | 'Panadería';
+export type StoreDepartment = string;
+
+export interface StoreCategory {
+  id: string;
+  name: string;
+  code: string;
+  defaultAisle?: string;
+  requiresColdChain?: boolean;
+  productCount?: number;
+}
 
 export interface SupermarketProductRow {
   id: string;

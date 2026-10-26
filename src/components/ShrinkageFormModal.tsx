@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { SupermarketProductRow } from '@/types/supermarket';
 import { X } from 'lucide-react';
 import { CustomSelect, SelectOption } from './ui/CustomSelect';
@@ -9,6 +9,7 @@ interface ShrinkageFormModalProps {
   isOpen: boolean;
   onClose: () => void;
   products: SupermarketProductRow[];
+  initialBatchNumber?: string;
   onShrinkageRecorded: (message: string) => void;
 }
 
@@ -16,6 +17,7 @@ export const ShrinkageFormModal: React.FC<ShrinkageFormModalProps> = ({
   isOpen,
   onClose,
   products,
+  initialBatchNumber,
   onShrinkageRecorded,
 }) => {
   const [selectedBatchNumber, setSelectedBatchNumber] = useState(products[0]?.batchNumber || '');
@@ -27,6 +29,17 @@ export const ShrinkageFormModal: React.FC<ShrinkageFormModalProps> = ({
   const [loading, setLoading] = useState(false);
   const [errorMsg, setErrorMsg] = useState<string | null>(null);
 
+  useEffect(() => {
+    if (isOpen) {
+      if (initialBatchNumber && products.some((p) => p.batchNumber === initialBatchNumber)) {
+        setSelectedBatchNumber(initialBatchNumber);
+      } else if (products.length > 0 && (!selectedBatchNumber || !products.some((p) => p.batchNumber === selectedBatchNumber))) {
+        setSelectedBatchNumber(products[0].batchNumber);
+      }
+      setErrorMsg(null);
+    }
+  }, [isOpen, initialBatchNumber, products]);
+
   const productOptions: SelectOption[] = products.map((p) => ({
     value: p.batchNumber,
     label: `${p.name} · Lote ${p.batchNumber}`,
@@ -36,11 +49,11 @@ export const ShrinkageFormModal: React.FC<ShrinkageFormModalProps> = ({
   }));
 
   const reasonOptions: SelectOption[] = [
-    { value: 'FECHA_CADUCADA', label: 'Ya se venció la fecha', sublabel: 'Alcanzó su fecha límite de venta' },
-    { value: 'PERDIDA_CADENA_FRIO', label: 'Se calentó el refrigerador', sublabel: 'Falla eléctrica o pérdida de temperatura' },
-    { value: 'RUPTURA_EMPAQUE', label: 'Bolsa o envase roto', sublabel: 'Fuga, perforación o sello abierto' },
-    { value: 'DANIO_MANIPULACION', label: 'Se cayó o golpeó', sublabel: 'Accidente en pasillo o acomodo' },
-    { value: 'RETIRO_SANITARIO', label: 'Vino mal de fábrica', sublabel: 'Defecto de empaque o alerta de proveedor' },
+    { value: 'FECHA_CADUCADA', label: 'Caducidad Vencida' },
+    { value: 'PERDIDA_CADENA_FRIO', label: 'Pérdida de Cadena de Frío' },
+    { value: 'RUPTURA_EMPAQUE', label: 'Ruptura o Daño de Empaque' },
+    { value: 'DANIO_MANIPULACION', label: 'Daño por Manipulación' },
+    { value: 'RETIRO_SANITARIO', label: 'Defecto de Fábrica / Retiro Sanitario' },
   ];
 
   if (!isOpen) return null;
@@ -69,7 +82,7 @@ export const ShrinkageFormModal: React.FC<ShrinkageFormModalProps> = ({
         throw new Error(data.message || 'Hubo un error al dar de baja');
       }
 
-      onShrinkageRecorded(`Listo: Se dio de baja el lote "${selectedBatchNumber}" de la tienda.`);
+      onShrinkageRecorded(`Baja por merma registrada para el lote "${selectedBatchNumber}".`);
       onClose();
     } catch (err: any) {
       setErrorMsg(err.message);

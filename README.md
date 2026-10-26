@@ -1,31 +1,32 @@
 # OmniStock · Sistema Gestor de Inventario para Supermercados y Perecederos (FEFO)
 
-**OmniStock** es una plataforma moderna para el control de inventario de tiendas y supermercados, diseñada para resolver la gestión de productos perecederos mediante despacho **FEFO (*First Expired, First Out*)**, control de cadena de frío por telemetría IoT y cobro en cajas registradoras (POS) con bloqueo automático de caducidad.
+OmniStock es una plataforma moderna para el control de inventario de tiendas y supermercados, diseñada para resolver la gestión de productos perecederos mediante despacho FEFO (*First Expired, First Out*), categorización personalizable por departamento y cobro en cajas registradoras (POS) con bloqueo preventivo de caducidad.
 
 ---
 
-## 🚀 Características Principales
+## Características Principales
 
-1. **Motor FEFO Automatizado**: Priorización automática del lote con fecha de vencimiento más próxima en cada venta o resurtido.
-2. **Bloqueo Preventivo en Caja POS**: Si un producto alcanza o supera su fecha de caducidad, el sistema bloquea inmediatamente la venta y alerta al cajero para mandarlo a merma.
-3. **Kardex y Libro Mayor Inmutable**: Registro de entradas, ventas POS, resurtidos a piso y mermas con saldo contable continuo.
-4. **Generador de Cenefas para Góndola**: Impresión de etiquetas de precio estándar (100x50 mm) con código de barras EAN-13, código PLU para báscula, lote y fecha de vencimiento.
-5. **Auditoría Financiera y Exportador CSV**: Valuación en tiempo real a costo vs. precio de venta, cálculo de margen proyectado y descarga de reportes oficiales.
-6. **Telemetría de Cadena de Frío IoT**: Monitoreo de temperatura y humedad en 4 cámaras de refrigeración y congelación.
-7. **Actas de Baja por Merma**: Registro categorizado de pérdidas (vencimiento, ruptura, daño o cadena de frío).
+1. **Motor FEFO Automatizado**: Priorización automática del lote con fecha de vencimiento más próxima en cada venta o salida de mercancía.
+2. **Bloqueo Preventivo en Caja POS**: Si un producto alcanza o supera su fecha de caducidad, el sistema bloquea inmediatamente la venta en caja y alerta al operador para su canalización a merma.
+3. **Departamentos y Categorías Dinámicas**: Creación, edición y personalización en tiempo real de departamentos para adaptar el inventario al giro comercial específico de la tienda.
+4. **Kardex y Libro Mayor Inmutable**: Registro de entradas, ventas POS y bajas por merma con saldo contable continuo y trazabilidad por lote.
+5. **Generador de Etiquetas para Anaquel**: Impresión de etiquetas de precio estándar con código de barras EAN-13, código PLU para báscula, número de lote y fecha de vencimiento.
+6. **Valuación Financiera y Exportador CSV**: Valuación en tiempo real a costo vs. precio de venta, cálculo de margen proyectado y descarga de reportes oficiales.
+7. **Actas de Baja por Merma**: Registro formal categorizado de pérdidas operativas (caducidad vencida, ruptura de empaque, daño por manipulación, etc.).
 
 ---
 
-## 🛠️ Stack Tecnológico
+## Stack Tecnológico
 
-- **Frontend**: Next.js 14+ (App Router), TypeScript, Tailwind CSS.
+- **Frontend**: Next.js 16 (App Router, Turbopack), React 19, TypeScript, Tailwind CSS v4.
+- **Iconografía**: Lucide React.
 - **Validación de Datos**: Zod.
 - **Base de Datos**: PostgreSQL (Esquema DDL relacional con índices B-Tree y FEFO).
-- **Diseño**: Basado en especificaciones de `DESIGN.md` (Paleta: `#F4F6F9`, `#0F172A`, `#008767`, esquinas `rounded-2xl`).
+- **Diseño**: Basado en especificaciones de `DESIGN.md` (Paleta: `#F4F6F9`, `#0F172A`, `#008767`, esquinas `rounded-2xl`, soporte completo para Modo Oscuro).
 
 ---
 
-## 💻 Instalación y Ejecución Local
+## Instalación y Ejecución Local
 
 1. Clona el repositorio:
    ```bash
@@ -47,7 +48,7 @@
 
 ---
 
-## 📁 Estructura del Proyecto
+## Estructura del Proyecto
 
 ```text
 omnistock/
@@ -58,24 +59,28 @@ omnistock/
 │   │   ├── api/
 │   │   │   ├── audit/report/route.ts          # Valuación y exportador CSV
 │   │   │   ├── batches/route.ts               # Recepción de lotes FEFO
-│   │   │   ├── cold-chain/route.ts            # Sensores IoT de frío
+│   │   │   ├── categories/route.ts            # Gestión de departamentos dinámicos
 │   │   │   ├── movements/route.ts             # Kardex de movimientos
 │   │   │   ├── pos/sale/route.ts              # Ventas POS y bloqueo de caducos
 │   │   │   ├── products/route.ts              # Catálogo maestro de productos
+│   │   │   ├── products/[id]/route.ts         # Edición y eliminación de productos
 │   │   │   └── shrinkage/route.ts             # Registro formal de mermas
 │   │   ├── layout.tsx
 │   │   └── page.tsx                           # Panel principal de control
 │   ├── components/
 │   │   ├── AppLayout.tsx                      # Barra lateral y cabecera
 │   │   ├── AuditReportModal.tsx               # Modal de valuación financiera
-│   │   ├── ColdChainMonitorModal.tsx          # Modal de telemetría IoT
+│   │   ├── CreateProductModal.tsx             # Alta de artículos con categorías dinámicas
+│   │   ├── DeleteProductModal.tsx             # Confirmación de baja de producto
+│   │   ├── EditProductModal.tsx               # Edición de producto
 │   │   ├── KardexAuditModal.tsx               # Modal de auditoría de movimientos
+│   │   ├── ManageCategoriesModal.tsx          # Gestión y personalización de categorías
 │   │   ├── MetricCards.tsx                    # Tarjetas de indicadores clave
 │   │   ├── POSSimulatorModal.tsx              # Simulador de cobro en caja POS
-│   │   ├── PriceTagGeneratorModal.tsx         # Generador de cenefas de góndola
+│   │   ├── PriceTagGeneratorModal.tsx         # Generador de etiquetas para anaquel
 │   │   ├── ReceiveBatchModal.tsx              # Recepción de mercancía de proveedor
-│   │   ├── ShrinkageFormModal.tsx             # Acta de merma
-│   │   └── SupermarketInventoryTable.tsx      # Tabla de inventario FEFO
+│   │   ├── ShrinkageFormModal.tsx             # Registro de merma
+│   │   └── SupermarketInventoryTable.tsx      # Tabla de inventario FEFO con filtros dinámicos
 │   ├── database/migrations/
 │   │   └── 001_initial_supermarket_schema.sql # Script SQL para PostgreSQL
 │   ├── lib/
@@ -87,6 +92,6 @@ omnistock/
 
 ---
 
-## 👤 Autor
+## Autor
 
-- **Usuario**: TonyBrTs (`brts2461@gmail.com`)
+- TonyBrTs (`brts2461@gmail.com`)

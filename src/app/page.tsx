@@ -13,10 +13,12 @@ import { ShrinkageFormModal } from '@/components/ShrinkageFormModal';
 import { CreateProductModal } from '@/components/CreateProductModal';
 import { EditProductModal } from '@/components/EditProductModal';
 import { DeleteProductModal } from '@/components/DeleteProductModal';
+import { ManageCategoriesModal } from '@/components/ManageCategoriesModal';
 import { StoreMetricCard, SupermarketProductRow } from '@/types/supermarket';
 
 export default function SupermarketDashboardPage() {
   const [products, setProducts] = useState<SupermarketProductRow[]>([]);
+  const [availableDepartments, setAvailableDepartments] = useState<string[]>([]);
   const [toastMessage, setToastMessage] = useState<string | null>(null);
   const [isReceiveModalOpen, setIsReceiveModalOpen] = useState(false);
   const [isPOSModalOpen, setIsPOSModalOpen] = useState(false);
@@ -27,8 +29,10 @@ export default function SupermarketDashboardPage() {
   const [isCreateProductModalOpen, setIsCreateProductModalOpen] = useState(false);
   const [isEditProductModalOpen, setIsEditProductModalOpen] = useState(false);
   const [isDeleteProductModalOpen, setIsDeleteProductModalOpen] = useState(false);
+  const [isCategoriesModalOpen, setIsCategoriesModalOpen] = useState(false);
   const [selectedProductForEdit, setSelectedProductForEdit] = useState<SupermarketProductRow | null>(null);
   const [selectedProductForDelete, setSelectedProductForDelete] = useState<SupermarketProductRow | null>(null);
+  const [selectedProductForShrinkage, setSelectedProductForShrinkage] = useState<SupermarketProductRow | null>(null);
   const [loading, setLoading] = useState(true);
 
   // Cargar productos del inventario
@@ -46,8 +50,22 @@ export default function SupermarketDashboardPage() {
     }
   };
 
+  // Cargar categorías y departamentos
+  const fetchCategories = async () => {
+    try {
+      const res = await fetch('/api/categories');
+      const json = await res.json();
+      if (json.success && Array.isArray(json.data)) {
+        setAvailableDepartments(json.data.map((c: any) => c.name));
+      }
+    } catch (err) {
+      console.error('Error al cargar departamentos:', err);
+    }
+  };
+
   useEffect(() => {
     fetchProducts();
+    fetchCategories();
   }, []);
 
   // Tarjetas principales de inventario
@@ -69,9 +87,9 @@ export default function SupermarketDashboardPage() {
     {
       id: 'm-optimal',
       title: 'Stock Disponible',
-      subtitle: 'En fecha y para venta',
+      subtitle: 'Existencias vigentes para venta',
       value: loading ? '...' : `${optimalCount} artículos`,
-      badgeText: 'Al día',
+      badgeText: 'Vigente',
       variant: 'good',
       icon: 'barcode',
     },
@@ -87,9 +105,9 @@ export default function SupermarketDashboardPage() {
     {
       id: 'm-fefo',
       title: 'Productos Vencidos',
-      subtitle: 'Retiro obligatorio',
+      subtitle: 'Lotes no aptos para venta',
       value: loading ? '...' : `${expiredCount} artículos`,
-      badgeText: expiredCount > 0 ? 'Por retirar' : 'Sin alertas',
+      badgeText: expiredCount > 0 ? 'Por retirar' : 'En regla',
       variant: expiredCount > 0 ? 'danger' : 'good',
       icon: 'expiry-alert',
     },
@@ -100,6 +118,7 @@ export default function SupermarketDashboardPage() {
     product: SupermarketProductRow
   ) => {
     if (action === 'MARK_MERMA') {
+      setSelectedProductForShrinkage(product);
       setIsShrinkageModalOpen(true);
     } else if (action === 'ADJUST_STOCK') {
       setToastMessage(`Conteo físico registrado para "${product.name}".`);
@@ -110,12 +129,16 @@ export default function SupermarketDashboardPage() {
     <AppLayout
       storeBranchName="Sucursal Centro"
       onOpenCreateProduct={() => setIsCreateProductModalOpen(true)}
+      onOpenCategories={() => setIsCategoriesModalOpen(true)}
       onQuickReceiveStock={() => setIsReceiveModalOpen(true)}
       onOpenPOSSimulator={() => setIsPOSModalOpen(true)}
       onOpenKardex={() => setIsKardexModalOpen(true)}
       onOpenPriceTags={() => setIsPriceTagsModalOpen(true)}
       onOpenAuditReport={() => setIsAuditModalOpen(true)}
-      onOpenShrinkage={() => setIsShrinkageModalOpen(true)}
+      onOpenShrinkage={() => {
+        setSelectedProductForShrinkage(null);
+        setIsShrinkageModalOpen(true);
+      }}
     >
       {/* Mensaje de Confirmación */}
       {toastMessage && (
@@ -140,6 +163,8 @@ export default function SupermarketDashboardPage() {
       {/* Tabla con los Productos */}
       <SupermarketInventoryTable
         products={products}
+        availableDepartments={availableDepartments}
+        onOpenCategories={() => setIsCategoriesModalOpen(true)}
         onActionSelect={handleTableAction}
         onCreateProduct={() => setIsCreateProductModalOpen(true)}
         onEditProduct={(product) => {
@@ -159,6 +184,7 @@ export default function SupermarketDashboardPage() {
         onProductCreated={(msg) => {
           setToastMessage(msg);
           fetchProducts();
+          fetchCategories();
         }}
       />
 
@@ -172,6 +198,7 @@ export default function SupermarketDashboardPage() {
         onProductUpdated={(msg) => {
           setToastMessage(msg);
           fetchProducts();
+          fetchCategories();
         }}
       />
 
@@ -185,6 +212,16 @@ export default function SupermarketDashboardPage() {
         onProductDeleted={(msg) => {
           setToastMessage(msg);
           fetchProducts();
+          fetchCategories();
+        }}
+      />
+
+      <ManageCategoriesModal
+        isOpen={isCategoriesModalOpen}
+        onClose={() => setIsCategoriesModalOpen(false)}
+        onCategoriesChanged={() => {
+          fetchProducts();
+          fetchCategories();
         }}
       />
 
@@ -226,8 +263,12 @@ export default function SupermarketDashboardPage() {
 
       <ShrinkageFormModal
         isOpen={isShrinkageModalOpen}
-        onClose={() => setIsShrinkageModalOpen(false)}
+        onClose={() => {
+          setIsShrinkageModalOpen(false);
+          setSelectedProductForShrinkage(null);
+        }}
         products={products}
+        initialBatchNumber={selectedProductForShrinkage?.batchNumber}
         onShrinkageRecorded={(msg) => {
           setToastMessage(msg);
           fetchProducts();

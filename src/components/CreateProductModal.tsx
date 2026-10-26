@@ -1,7 +1,7 @@
 'use client';
 
-import React, { useState } from 'react';
-import { X, Sparkles, PlusCircle } from 'lucide-react';
+import React, { useState, useEffect } from 'react';
+import { X, Barcode, PlusCircle, Plus, Check } from 'lucide-react';
 import { CustomSelect, SelectOption } from './ui/CustomSelect';
 import { CustomDatePicker } from './ui/CustomDatePicker';
 
@@ -11,26 +11,28 @@ interface CreateProductModalProps {
   onProductCreated: (message: string) => void;
 }
 
-const DEPARTMENT_OPTIONS: SelectOption[] = [
-  { value: 'Abarrotes y Despensa', label: 'Abarrotes y Despensa', sublabel: 'Arroz, pastas, latas, aceites y harinas' },
-  { value: 'Lácteos y Refrigerados', label: 'Lácteos y Refrigerados', sublabel: 'Leche, quesos, cremas y yogures' },
-  { value: 'Carnicería y Salchichonería', label: 'Carnicería y Salchichonería', sublabel: 'Carnes, jamones, salchichas y embutidos' },
-  { value: 'Frutas y Verduras', label: 'Frutas y Verduras', sublabel: 'Frescos, verduras, legumbres e islas' },
-  { value: 'Bebidas y Licores', label: 'Bebidas y Licores', sublabel: 'Refrescos, jugos, aguas y licores' },
-  { value: 'Panadería', label: 'Panadería', sublabel: 'Pan dulce, pan de caja, galletas y bolillos' },
+const DEFAULT_DEPARTMENTS = [
+  'Abarrotes y Despensa',
+  'Lácteos y Refrigerados',
+  'Carnicería y Salchichonería',
+  'Frutas y Verduras',
+  'Bebidas y Licores',
+  'Panadería',
+  'Cuidado Personal y Farmacia',
+  'Limpieza y Hogar',
 ];
 
 const UOM_OPTIONS: SelectOption[] = [
-  { value: 'Pza', label: 'Pieza (Pza)', sublabel: 'Unidad individual por paquete o envase' },
-  { value: 'Kg', label: 'Kilos (Kg)', sublabel: 'Venta pesada en báscula' },
-  { value: 'Litro', label: 'Litro (L)', sublabel: 'Líquidos a granel o botellas' },
-  { value: 'Paq', label: 'Paquete (Paq)', sublabel: 'Charolas o paquetes multi-artículo' },
+  { value: 'Pza', label: 'Pieza (Pza)' },
+  { value: 'Kg', label: 'Kilogramo (Kg)' },
+  { value: 'Litro', label: 'Litro (L)' },
+  { value: 'Paq', label: 'Paquete (Paq)' },
 ];
 
 const TEMP_OPTIONS: SelectOption[] = [
-  { value: 'Ambiente (Seco)', label: 'Temperatura Ambiente (Seco)', sublabel: 'No requiere refrigeración' },
-  { value: 'Refrigerado (2°C a 6°C)', label: 'Refrigerador (2°C a 6°C)', sublabel: 'Vitrina fría o refrigerador' },
-  { value: 'Congelado (-18°C)', label: 'Congelador (-18°C)', sublabel: 'Nevera o vitrina congelada' },
+  { value: 'Ambiente (Seco)', label: 'Temperatura Ambiente (Seco)' },
+  { value: 'Refrigerado (2°C a 6°C)', label: 'Refrigerado (2°C a 6°C)' },
+  { value: 'Congelado (-18°C)', label: 'Congelador (-18°C)' },
 ];
 
 export const CreateProductModal: React.FC<CreateProductModalProps> = ({
@@ -42,6 +44,10 @@ export const CreateProductModal: React.FC<CreateProductModalProps> = ({
   const [barcode, setBarcode] = useState('');
   const [brand, setBrand] = useState('');
   const [department, setDepartment] = useState('Abarrotes y Despensa');
+  const [departmentList, setDepartmentList] = useState<string[]>(DEFAULT_DEPARTMENTS);
+  const [isAddingNewDept, setIsAddingNewDept] = useState(false);
+  const [newDeptInput, setNewDeptInput] = useState('');
+
   const [baseUom, setBaseUom] = useState('Pza');
   const [storageTemp, setStorageTemp] = useState('Ambiente (Seco)');
   const [aisleLocation, setAisleLocation] = useState('Pasillo 01');
@@ -58,6 +64,22 @@ export const CreateProductModal: React.FC<CreateProductModalProps> = ({
   const [loading, setLoading] = useState(false);
   const [errorMsg, setErrorMsg] = useState<string | null>(null);
 
+  // Cargar departamentos dinámicos
+  useEffect(() => {
+    if (isOpen) {
+      fetch('/api/categories')
+        .then((res) => res.json())
+        .then((json) => {
+          if (json.success && Array.isArray(json.data) && json.data.length > 0) {
+            const names = json.data.map((c: any) => c.name);
+            setDepartmentList(names);
+            setDepartment((curr) => (names.includes(curr) ? curr : names[0]));
+          }
+        })
+        .catch(() => {});
+    }
+  }, [isOpen]);
+
   if (!isOpen) return null;
 
   // Generador de código de barras aleatorio si no se tiene lector
@@ -66,17 +88,35 @@ export const CreateProductModal: React.FC<CreateProductModalProps> = ({
     setBarcode(randomEan);
   };
 
+  const handleAddNewDepartment = () => {
+    const trimmed = newDeptInput.trim();
+    if (!trimmed) return;
+    if (!departmentList.includes(trimmed)) {
+      setDepartmentList((prev) => [...prev, trimmed]);
+    }
+    setDepartment(trimmed);
+    setNewDeptInput('');
+    setIsAddingNewDept(false);
+  };
+
+  const departmentOptions: SelectOption[] = departmentList.map((dept) => ({
+    value: dept,
+    label: dept,
+  }));
+
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setLoading(true);
     setErrorMsg(null);
+
+    const activeDepartment = isAddingNewDept && newDeptInput.trim() ? newDeptInput.trim() : department;
 
     try {
       const payload = {
         name: name.trim(),
         barcodeEan13: barcode.trim() || undefined,
         brand: brand.trim() || 'Genérico',
-        department,
+        department: activeDepartment,
         baseUom,
         storageTemp,
         aisleLocation: aisleLocation.trim() || 'Pasillo Principal',
@@ -99,13 +139,15 @@ export const CreateProductModal: React.FC<CreateProductModalProps> = ({
         throw new Error(data.error || 'No se pudo dar de alta el producto');
       }
 
-      onProductCreated(`Producto "${name}" agregado con éxito.`);
+      onProductCreated(`Producto "${name}" registrado en el catálogo.`);
       onClose();
       // Limpiar formulario
       setName('');
       setBarcode('');
       setBrand('');
       setExpirationDate('');
+      setIsAddingNewDept(false);
+      setNewDeptInput('');
     } catch (err: any) {
       setErrorMsg(err.message);
     } finally {
@@ -193,9 +235,9 @@ export const CreateProductModal: React.FC<CreateProductModalProps> = ({
                 type="button"
                 onClick={handleGenerateBarcode}
                 className="cursor-pointer px-3.5 py-2.5 rounded-xl bg-slate-100 dark:bg-slate-800 hover:bg-slate-200 dark:hover:bg-slate-700 text-slate-700 dark:text-slate-200 text-xs font-semibold border border-slate-200 dark:border-slate-700 transition-colors flex items-center gap-1.5 shrink-0"
-                title="Genera un código de barras automático"
+                title="Generar código EAN-13"
               >
-                <Sparkles className="w-3.5 h-3.5 text-amber-500" />
+                <Barcode className="w-3.5 h-3.5 text-slate-600 dark:text-slate-300" />
                 <span>Generar</span>
               </button>
             </div>
@@ -204,15 +246,48 @@ export const CreateProductModal: React.FC<CreateProductModalProps> = ({
           {/* Departamento y Unidad de Medida */}
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
             <div>
-              <label className="block text-xs font-bold uppercase tracking-wider text-slate-500 dark:text-slate-400 mb-1.5">
-                Departamento *
-              </label>
-              <CustomSelect
-                value={department}
-                onChange={setDepartment}
-                options={DEPARTMENT_OPTIONS}
-              />
+              <div className="flex items-center justify-between mb-1.5">
+                <label className="block text-xs font-bold uppercase tracking-wider text-slate-500 dark:text-slate-400">
+                  Departamento *
+                </label>
+                <button
+                  type="button"
+                  onClick={() => setIsAddingNewDept(!isAddingNewDept)}
+                  className="cursor-pointer text-[11px] text-[#008767] dark:text-emerald-400 hover:underline font-semibold flex items-center gap-0.5"
+                >
+                  <Plus className="w-3 h-3" />
+                  <span>{isAddingNewDept ? 'Elegir existente' : 'Nuevo'}</span>
+                </button>
+              </div>
+
+              {isAddingNewDept ? (
+                <div className="flex gap-1.5">
+                  <input
+                    type="text"
+                    placeholder="Nuevo departamento (ej: Mascotas)"
+                    value={newDeptInput}
+                    onChange={(e) => setNewDeptInput(e.target.value)}
+                    className="flex-1 px-3 py-2 text-sm bg-white dark:bg-[#0F172A] border border-[#008767] dark:border-emerald-500 rounded-xl text-[#0F172A] dark:text-white focus:outline-none"
+                    autoFocus
+                  />
+                  <button
+                    type="button"
+                    onClick={handleAddNewDepartment}
+                    className="cursor-pointer p-2 rounded-xl bg-[#008767] text-white hover:bg-[#006e54] transition-colors"
+                    title="Confirmar departamento"
+                  >
+                    <Check className="w-4 h-4" />
+                  </button>
+                </div>
+              ) : (
+                <CustomSelect
+                  value={department}
+                  onChange={setDepartment}
+                  options={departmentOptions}
+                />
+              )}
             </div>
+
             <div>
               <label className="block text-xs font-bold uppercase tracking-wider text-slate-500 dark:text-slate-400 mb-1.5">
                 Unidad de Medida

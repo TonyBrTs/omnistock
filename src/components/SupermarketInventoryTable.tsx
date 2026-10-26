@@ -17,11 +17,14 @@ import {
   PlusCircle,
   Pencil,
   Trash2,
+  Tags,
 } from 'lucide-react';
 import { CustomSelect, SelectOption } from './ui/CustomSelect';
 
 interface SupermarketInventoryTableProps {
   products: SupermarketProductRow[];
+  availableDepartments?: string[];
+  onOpenCategories?: () => void;
   onActionSelect?: (
     action: 'MARK_MERMA' | 'ADJUST_STOCK',
     product: SupermarketProductRow
@@ -34,20 +37,22 @@ interface SupermarketInventoryTableProps {
 const STATUS_STYLES: Record<BatchHealthStatus, { classes: string; label: string }> = {
   GOOD: {
     classes: 'bg-[#DCFCE7] dark:bg-emerald-950/70 text-[#166534] dark:text-emerald-300 border border-transparent dark:border-emerald-800/60',
-    label: 'Todo Bien',
+    label: 'Óptimo',
   },
   LOW_STOCK: {
     classes: 'bg-[#FEF9C3] dark:bg-amber-950/70 text-[#854D0E] dark:text-amber-300 border border-transparent dark:border-amber-800/60',
-    label: 'Por Vencer / Queda Poco',
+    label: 'Stock Bajo / Por Vencer',
   },
   EXPIRED: {
     classes: 'bg-[#FEE2E2] dark:bg-red-950/70 text-[#991B1B] dark:text-red-300 border border-transparent dark:border-red-800/60',
-    label: 'Vencido (No vender)',
+    label: 'Caducado',
   },
 };
 
 export const SupermarketInventoryTable: React.FC<SupermarketInventoryTableProps> = ({
   products,
+  availableDepartments,
+  onOpenCategories,
   onActionSelect,
   onCreateProduct,
   onEditProduct,
@@ -80,8 +85,10 @@ export const SupermarketInventoryTable: React.FC<SupermarketInventoryTableProps>
   }, [activeMenuId]);
 
   const departments = useMemo(() => {
-    return ['ALL', ...Array.from(new Set(products.map((p) => p.department)))];
-  }, [products]);
+    const productDepts = products.map((p) => p.department);
+    const combined = Array.from(new Set([...(availableDepartments || []), ...productDepts]));
+    return ['ALL', ...combined];
+  }, [products, availableDepartments]);
 
   const departmentOptions: SelectOption[] = useMemo(() => {
     return departments.map((dept) => ({
@@ -94,14 +101,14 @@ export const SupermarketInventoryTable: React.FC<SupermarketInventoryTableProps>
     { value: 'ALL', label: 'Todo Tipo de Conservación' },
     { value: 'Ambiente (Seco)', label: 'Ambiente (Seco)' },
     { value: 'Refrigerado (2°C a 6°C)', label: 'Refrigerado' },
-    { value: 'Congelado (-18°C)', label: 'Congelador' },
+    { value: 'Congelado (-18°C)', label: 'Congelado' },
   ];
 
   const statusOptions: SelectOption[] = [
     { value: 'ALL', label: 'Todos los Estados' },
-    { value: 'GOOD', label: 'Todo Bien', badge: 'En regla', badgeColor: 'bg-emerald-50 dark:bg-emerald-950/60 text-emerald-700 dark:text-emerald-300 border border-transparent dark:border-emerald-800/60' },
-    { value: 'LOW_STOCK', label: 'Por Vencer / Queda Poco', badge: 'Atención', badgeColor: 'bg-amber-50 dark:bg-amber-950/60 text-amber-700 dark:text-amber-300 border border-transparent dark:border-amber-800/60' },
-    { value: 'EXPIRED', label: 'Vencidos', badge: 'No vender', badgeColor: 'bg-red-50 dark:bg-red-950/60 text-red-700 dark:text-red-300 border border-transparent dark:border-red-800/60' },
+    { value: 'GOOD', label: 'Óptimo', badge: 'Vigente', badgeColor: 'bg-emerald-50 dark:bg-emerald-950/60 text-emerald-700 dark:text-emerald-300 border border-transparent dark:border-emerald-800/60' },
+    { value: 'LOW_STOCK', label: 'Stock Bajo / Por Vencer', badge: 'Alerta', badgeColor: 'bg-amber-50 dark:bg-amber-950/60 text-amber-700 dark:text-amber-300 border border-transparent dark:border-amber-800/60' },
+    { value: 'EXPIRED', label: 'Caducado', badge: 'Bloqueado', badgeColor: 'bg-red-50 dark:bg-red-950/60 text-red-700 dark:text-red-300 border border-transparent dark:border-red-800/60' },
   ];
 
   const filteredProducts = useMemo(() => {
@@ -127,6 +134,22 @@ export const SupermarketInventoryTable: React.FC<SupermarketInventoryTableProps>
   }, [products, searchQuery, departmentFilter, tempFilter, statusFilter]);
 
   const totalPages = Math.max(1, Math.ceil(filteredProducts.length / pageSize));
+
+  // Si se elimina un departamento seleccionado, reajustar el filtro a ALL
+  useEffect(() => {
+    if (departmentFilter !== 'ALL' && !departments.includes(departmentFilter)) {
+      setDepartmentFilter('ALL');
+      setCurrentPage(1);
+    }
+  }, [departments, departmentFilter]);
+
+  // Si la página actual excede el total de páginas tras filtrar o eliminar, retroceder
+  useEffect(() => {
+    if (currentPage > totalPages) {
+      setCurrentPage(totalPages);
+    }
+  }, [currentPage, totalPages]);
+
   const paginatedRows = useMemo(() => {
     const start = (currentPage - 1) * pageSize;
     return filteredProducts.slice(start, start + pageSize);
@@ -191,6 +214,18 @@ export const SupermarketInventoryTable: React.FC<SupermarketInventoryTableProps>
             ariaLabel="Filtrar por Estado"
           />
 
+          {onOpenCategories && (
+            <button
+              type="button"
+              onClick={onOpenCategories}
+              className="cursor-pointer px-3 py-2 rounded-xl bg-slate-100 dark:bg-slate-800 hover:bg-slate-200 dark:hover:bg-slate-700 text-slate-700 dark:text-slate-200 text-xs font-semibold border border-slate-200 dark:border-slate-700 transition-all flex items-center gap-1.5 shrink-0"
+              title="Gestionar departamentos y categorías"
+            >
+              <Tags className="w-3.5 h-3.5 text-[#008767] dark:text-emerald-400" />
+              <span>Categorías</span>
+            </button>
+          )}
+
           {onCreateProduct && (
             <button
               type="button"
@@ -244,7 +279,7 @@ export const SupermarketInventoryTable: React.FC<SupermarketInventoryTableProps>
                   colSpan={8}
                   className="py-12 px-6 text-center text-sm font-medium text-[#64748B] dark:text-slate-400"
                 >
-                  No encontramos ningún producto con esa búsqueda.
+                  No se encontraron productos coincidentes con los filtros seleccionados.
                 </td>
               </tr>
             ) : (

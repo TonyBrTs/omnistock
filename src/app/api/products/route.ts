@@ -88,6 +88,7 @@ export async function POST(request: Request) {
       status: initialStatus,
     };
 
+    repo.ensureCategoryExists(department, aisleLocation);
     repo.products.unshift(newProduct);
 
     // Si viene cantidad inicial, creamos también el lote y el movimiento en el kardex

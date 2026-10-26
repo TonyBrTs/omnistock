@@ -17,11 +17,13 @@ import {
   Sun,
   Moon,
   PlusCircle,
+  Tags,
 } from 'lucide-react';
 
 interface AppLayoutProps {
   storeBranchName: string;
   onOpenCreateProduct?: () => void;
+  onOpenCategories?: () => void;
   onQuickReceiveStock?: () => void;
   onOpenPOSSimulator?: () => void;
   onOpenKardex?: () => void;
@@ -34,6 +36,7 @@ interface AppLayoutProps {
 export const AppLayout: React.FC<AppLayoutProps> = ({
   storeBranchName,
   onOpenCreateProduct,
+  onOpenCategories,
   onQuickReceiveStock,
   onOpenPOSSimulator,
   onOpenKardex,
@@ -135,6 +138,19 @@ export const AppLayout: React.FC<AppLayoutProps> = ({
                 <li>
                   <button
                     type="button"
+                    onClick={onOpenCategories}
+                    title="Gestionar departamentos y categorías"
+                    className={`cursor-pointer w-full flex items-center ${
+                      collapsed ? 'justify-center px-0' : 'gap-3 px-3'
+                    } py-2.5 rounded-xl text-sm font-medium text-slate-300 hover:bg-[#1E293B] hover:text-white transition-colors`}
+                  >
+                    <Tags className="w-5 h-5 text-amber-400 shrink-0" />
+                    {!collapsed && <span className="truncate">Categorías</span>}
+                  </button>
+                </li>
+                <li>
+                  <button
+                    type="button"
                     onClick={onQuickReceiveStock}
                     title="Registrar entrada de mercancía"
                     className={`cursor-pointer w-full flex items-center ${
@@ -142,7 +158,7 @@ export const AppLayout: React.FC<AppLayoutProps> = ({
                     } py-2.5 rounded-xl text-sm font-medium text-slate-300 hover:bg-[#1E293B] hover:text-white transition-colors`}
                   >
                     <PackagePlus className="w-5 h-5 text-emerald-400 shrink-0" />
-                    {!collapsed && <span className="truncate">Meter Mercancía</span>}
+                    {!collapsed && <span className="truncate">Entrada de Mercancía</span>}
                   </button>
                 </li>
                 <li>
@@ -246,8 +262,8 @@ export const AppLayout: React.FC<AppLayoutProps> = ({
               <div className="w-2.5 h-2.5 rounded-full bg-emerald-400 shrink-0" />
               {!collapsed && (
                 <div className="overflow-hidden">
-                  <p className="text-xs font-bold text-white truncate">Inventario al Día</p>
-                  <p className="text-[11px] text-slate-400 truncate">Sucursal Centro</p>
+                  <p className="text-xs font-bold text-white truncate">Inventario Activo</p>
+                  <p className="text-[11px] text-slate-400 truncate">{storeBranchName}</p>
                 </div>
               )}
             </div>

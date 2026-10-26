@@ -1,11 +1,12 @@
 import { v4 as uuidv4 } from 'uuid';
-import {
+import type {
   ReceiveBatchInput,
   DispatchStockInput,
 } from '@/lib/validators/supermarket.schema';
-import {
+import type {
   SupermarketProductRow,
   BatchHealthStatus,
+  StoreCategory,
 } from '@/types/supermarket';
 
 export interface BatchEntity {
@@ -42,6 +43,7 @@ export class SupermarketRepository {
   public products: SupermarketProductRow[] = [];
   public batches: BatchEntity[] = [];
   public movements: StockMovementEntity[] = [];
+  public categories: StoreCategory[] = [];
 
   private constructor() {
     this.seedInitialData();
@@ -87,6 +89,17 @@ export class SupermarketRepository {
     const b3Id = uuidv4();
     const p4Id = uuidv4();
     const b4Id = uuidv4();
+
+    this.categories = [
+      { id: uuidv4(), name: 'Abarrotes y Despensa', code: 'ABAR', defaultAisle: 'Pasillo 01', requiresColdChain: false },
+      { id: uuidv4(), name: 'Lácteos y Refrigerados', code: 'LACT', defaultAisle: 'Pasillo 02 · Vitrina Fría', requiresColdChain: true },
+      { id: uuidv4(), name: 'Carnicería y Salchichonería', code: 'CARN', defaultAisle: 'Vitrina Salchichonería #2', requiresColdChain: true },
+      { id: uuidv4(), name: 'Frutas y Verduras', code: 'FRUT', defaultAisle: 'Isla Frutas #1', requiresColdChain: false },
+      { id: uuidv4(), name: 'Bebidas y Licores', code: 'BEB', defaultAisle: 'Pasillo 04', requiresColdChain: false },
+      { id: uuidv4(), name: 'Panadería', code: 'PAN', defaultAisle: 'Área Panadería', requiresColdChain: false },
+      { id: uuidv4(), name: 'Cuidado Personal y Farmacia', code: 'FARM', defaultAisle: 'Pasillo 05', requiresColdChain: false },
+      { id: uuidv4(), name: 'Limpieza y Hogar', code: 'LIMP', defaultAisle: 'Pasillo 06', requiresColdChain: false },
+    ];
 
     // 1. Leche: 48 en estante exhibidor + 96 en bodega = 144 Total Tienda
     this.batches.push({
@@ -412,6 +425,10 @@ export class SupermarketRepository {
     const index = this.products.findIndex((p) => p.id === id);
     if (index === -1) return null;
 
+    if (updates.department) {
+      this.ensureCategoryExists(updates.department, updates.aisleLocation);
+    }
+
     const current = this.products[index];
     const updated: SupermarketProductRow = {
       ...current,
@@ -443,6 +460,140 @@ export class SupermarketRepository {
     this.products.splice(index, 1);
     // Remover sus lotes
     this.batches = this.batches.filter((b) => b.productId !== id);
+    return true;
+  }
+
+  // === GESTIÓN DE DEPARTAMENTOS Y CATEGORÍAS PERSONALIZABLES ===
+
+  public getCategories(): StoreCategory[] {
+    return this.categories.map((cat) => ({
+      ...cat,
+      productCount: this.products.filter(
+        (p) => p.department.trim().toLowerCase() === cat.name.trim().toLowerCase()
+      ).length,
+    }));
+  }
+
+  public ensureCategoryExists(departmentName: string, defaultAisle?: string): StoreCategory {
+    const trimmed = departmentName.trim();
+    if (!trimmed) return this.categories[0];
+
+    const found = this.categories.find(
+      (c) => c.name.toLowerCase() === trimmed.toLowerCase()
+    );
+    if (found) return found;
+
+    return this.addCategory({
+      name: trimmed,
+      code: trimmed.slice(0, 4).toUpperCase(),
+      defaultAisle: defaultAisle || 'Pasillo General',
+    });
+  }
+
+  public addCategory(input: {
+    name: string;
+    code?: string;
+    defaultAisle?: string;
+    requiresColdChain?: boolean;
+  }): StoreCategory {
+    const trimmedName = input.name.trim();
+    if (!trimmedName) throw new Error('El nombre de la categoría es obligatorio');
+
+    const existing = this.categories.find(
+      (c) => c.name.toLowerCase() === trimmedName.toLowerCase()
+    );
+    if (existing) {
+      return {
+        ...existing,
+        productCount: this.products.filter(
+          (p) => p.department.trim().toLowerCase() === existing.name.trim().toLowerCase()
+        ).length,
+      };
+    }
+
+    const newCat: StoreCategory = {
+      id: uuidv4(),
+      name: trimmedName,
+      code: input.code?.trim().toUpperCase() || trimmedName.slice(0, 4).toUpperCase(),
+      defaultAisle: input.defaultAisle?.trim() || 'Pasillo General',
+      requiresColdChain: !!input.requiresColdChain,
+    };
+
+    this.categories.push(newCat);
+    return { ...newCat, productCount: 0 };
+  }
+
+  public updateCategory(
+    id: string,
+    updates: {
+      name?: string;
+      code?: string;
+      defaultAisle?: string;
+      requiresColdChain?: boolean;
+    }
+  ): StoreCategory | null {
+    const catIndex = this.categories.findIndex((c) => c.id === id);
+    if (catIndex === -1) return null;
+
+    const oldCat = this.categories[catIndex];
+    const newName = updates.name?.trim() || oldCat.name;
+
+    // Si cambió el nombre del departamento, verificar duplicados y actualizarlo en todos los productos asociados
+    if (newName.toLowerCase() !== oldCat.name.toLowerCase()) {
+      const duplicate = this.categories.find(
+        (c) => c.id !== id && c.name.toLowerCase() === newName.toLowerCase()
+      );
+      if (duplicate) {
+        throw new Error(`Ya existe una categoría con el nombre "${newName}"`);
+      }
+      this.products.forEach((p) => {
+        if (p.department.trim().toLowerCase() === oldCat.name.trim().toLowerCase()) {
+          p.department = newName;
+        }
+      });
+    }
+
+    this.categories[catIndex] = {
+      ...oldCat,
+      name: newName,
+      code: updates.code ? updates.code.trim().toUpperCase() : oldCat.code,
+      defaultAisle: updates.defaultAisle !== undefined ? updates.defaultAisle.trim() : oldCat.defaultAisle,
+      requiresColdChain: updates.requiresColdChain !== undefined ? updates.requiresColdChain : oldCat.requiresColdChain,
+    };
+
+    return {
+      ...this.categories[catIndex],
+      productCount: this.products.filter(
+        (p) => p.department.trim().toLowerCase() === newName.toLowerCase()
+      ).length,
+    };
+  }
+
+  public deleteCategory(id: string, reassignToDepartment?: string): boolean {
+    if (this.categories.length <= 1) {
+      return false; // No se puede eliminar la única categoría existente
+    }
+
+    const catIndex = this.categories.findIndex((c) => c.id === id);
+    if (catIndex === -1) return false;
+
+    const deletedCat = this.categories[catIndex];
+    const remaining = this.categories.filter((c) => c.id !== id);
+
+    let targetDept = reassignToDepartment?.trim();
+    // Si el destino está vacío o coincide con la categoría que se va a eliminar, usar la primera restante
+    if (!targetDept || targetDept.toLowerCase() === deletedCat.name.toLowerCase()) {
+      targetDept = remaining[0]?.name || 'General';
+    }
+
+    // Reasignar productos que pertenecían a la categoría eliminada
+    this.products.forEach((p) => {
+      if (p.department.trim().toLowerCase() === deletedCat.name.trim().toLowerCase()) {
+        p.department = targetDept;
+      }
+    });
+
+    this.categories.splice(catIndex, 1);
     return true;
   }
 }

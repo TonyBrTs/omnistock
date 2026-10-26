@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { SupermarketProductRow } from '@/types/supermarket';
 import { X } from 'lucide-react';
 import { CustomSelect, SelectOption } from './ui/CustomSelect';
@@ -29,6 +29,15 @@ export const ReceiveBatchModal: React.FC<ReceiveBatchModalProps> = ({
   const [loading, setLoading] = useState(false);
   const [errorMsg, setErrorMsg] = useState<string | null>(null);
 
+  useEffect(() => {
+    if (isOpen && products.length > 0) {
+      if (!selectedProductId || !products.some((p) => p.id === selectedProductId)) {
+        setSelectedProductId(products[0].id);
+      }
+      setErrorMsg(null);
+    }
+  }, [isOpen, products, selectedProductId]);
+
   const productOptions: SelectOption[] = products.map((p) => ({
     value: p.id,
     label: p.name,
@@ -37,8 +46,8 @@ export const ReceiveBatchModal: React.FC<ReceiveBatchModalProps> = ({
   }));
 
   const locationOptions: SelectOption[] = [
-    { value: 'loc-main', label: 'Área General / Secos', sublabel: 'Abarrotes, harinas y productos a temperatura ambiente' },
-    { value: 'loc-cold', label: 'Refrigeración / Frescos', sublabel: 'Lácteos, carnes, embutidos y perecederos' },
+    { value: 'loc-main', label: 'Área General / Almacén Seco' },
+    { value: 'loc-cold', label: 'Cámara de Refrigeración' },
   ];
 
   if (!isOpen) return null;
@@ -69,7 +78,7 @@ export const ReceiveBatchModal: React.FC<ReceiveBatchModalProps> = ({
         throw new Error(data.error ? JSON.stringify(data.error) : 'Hubo un error al guardar');
       }
 
-      onBatchReceived('¡Listo! Se guardó la mercancía nueva.');
+      onBatchReceived('Recepción de mercancía registrada exitosamente.');
       onClose();
     } catch (err: any) {
       setErrorMsg(err.message);

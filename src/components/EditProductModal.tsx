@@ -2,7 +2,7 @@
 
 import React, { useState, useEffect } from 'react';
 import { SupermarketProductRow } from '@/types/supermarket';
-import { X, Pencil } from 'lucide-react';
+import { X, Pencil, Plus, Check } from 'lucide-react';
 import { CustomSelect, SelectOption } from './ui/CustomSelect';
 
 interface EditProductModalProps {
@@ -12,26 +12,28 @@ interface EditProductModalProps {
   onProductUpdated: (message: string) => void;
 }
 
-const DEPARTMENT_OPTIONS: SelectOption[] = [
-  { value: 'Abarrotes y Despensa', label: 'Abarrotes y Despensa', sublabel: 'Arroz, pastas, latas, aceites y harinas' },
-  { value: 'Lácteos y Refrigerados', label: 'Lácteos y Refrigerados', sublabel: 'Leche, quesos, cremas y yogures' },
-  { value: 'Carnicería y Salchichonería', label: 'Carnicería y Salchichonería', sublabel: 'Carnes, jamones, salchichas y embutidos' },
-  { value: 'Frutas y Verduras', label: 'Frutas y Verduras', sublabel: 'Frescos, verduras, legumbres e islas' },
-  { value: 'Bebidas y Licores', label: 'Bebidas y Licores', sublabel: 'Refrescos, jugos, aguas y licores' },
-  { value: 'Panadería', label: 'Panadería', sublabel: 'Pan dulce, pan de caja, galletas y bolillos' },
+const DEFAULT_DEPARTMENTS = [
+  'Abarrotes y Despensa',
+  'Lácteos y Refrigerados',
+  'Carnicería y Salchichonería',
+  'Frutas y Verduras',
+  'Bebidas y Licores',
+  'Panadería',
+  'Cuidado Personal y Farmacia',
+  'Limpieza y Hogar',
 ];
 
 const UOM_OPTIONS: SelectOption[] = [
-  { value: 'Pza', label: 'Pieza (Pza)', sublabel: 'Unidad individual por paquete o envase' },
-  { value: 'Kg', label: 'Kilos (Kg)', sublabel: 'Venta pesada en báscula' },
-  { value: 'Litro', label: 'Litro (L)', sublabel: 'Líquidos a granel o botellas' },
-  { value: 'Paq', label: 'Paquete (Paq)', sublabel: 'Charolas o paquetes multi-artículo' },
+  { value: 'Pza', label: 'Pieza (Pza)' },
+  { value: 'Kg', label: 'Kilogramo (Kg)' },
+  { value: 'Litro', label: 'Litro (L)' },
+  { value: 'Paq', label: 'Paquete (Paq)' },
 ];
 
 const TEMP_OPTIONS: SelectOption[] = [
-  { value: 'Ambiente (Seco)', label: 'Temperatura Ambiente (Seco)', sublabel: 'No requiere refrigeración' },
-  { value: 'Refrigerado (2°C a 6°C)', label: 'Refrigerador (2°C a 6°C)', sublabel: 'Vitrina fría o refrigerador' },
-  { value: 'Congelado (-18°C)', label: 'Congelador (-18°C)', sublabel: 'Nevera o vitrina congelada' },
+  { value: 'Ambiente (Seco)', label: 'Temperatura Ambiente (Seco)' },
+  { value: 'Refrigerado (2°C a 6°C)', label: 'Refrigerado (2°C a 6°C)' },
+  { value: 'Congelado (-18°C)', label: 'Congelador (-18°C)' },
 ];
 
 export const EditProductModal: React.FC<EditProductModalProps> = ({
@@ -43,6 +45,10 @@ export const EditProductModal: React.FC<EditProductModalProps> = ({
   const [name, setName] = useState('');
   const [brand, setBrand] = useState('');
   const [department, setDepartment] = useState('Abarrotes y Despensa');
+  const [departmentList, setDepartmentList] = useState<string[]>(DEFAULT_DEPARTMENTS);
+  const [isAddingNewDept, setIsAddingNewDept] = useState(false);
+  const [newDeptInput, setNewDeptInput] = useState('');
+
   const [baseUom, setBaseUom] = useState('Pza');
   const [storageTemp, setStorageTemp] = useState('Ambiente (Seco)');
   const [aisleLocation, setAisleLocation] = useState('');
@@ -53,11 +59,31 @@ export const EditProductModal: React.FC<EditProductModalProps> = ({
   const [loading, setLoading] = useState(false);
   const [errorMsg, setErrorMsg] = useState<string | null>(null);
 
+  // Cargar lista dinámica de departamentos
+  useEffect(() => {
+    if (isOpen) {
+      fetch('/api/categories')
+        .then((res) => res.json())
+        .then((json) => {
+          if (json.success && Array.isArray(json.data) && json.data.length > 0) {
+            const names = json.data.map((c: any) => c.name);
+            setDepartmentList(() => {
+              const currentProdDept = product?.department ? [product.department] : [];
+              return Array.from(new Set([...names, ...currentProdDept]));
+            });
+          }
+        })
+        .catch(() => {});
+    }
+  }, [isOpen, product]);
+
   useEffect(() => {
     if (product) {
       setName(product.name || '');
       setBrand(product.brand || '');
-      setDepartment(product.department || 'Abarrotes y Despensa');
+      const prodDept = product.department || 'Abarrotes y Despensa';
+      setDepartment(prodDept);
+      setDepartmentList((prev) => (prev.includes(prodDept) ? prev : [...prev, prodDept]));
       setBaseUom(product.baseUom || 'Pza');
       setStorageTemp(product.storageTemp || 'Ambiente (Seco)');
       setAisleLocation(product.aisleLocation || '');
@@ -65,21 +91,41 @@ export const EditProductModal: React.FC<EditProductModalProps> = ({
       setUnitCost(product.unitCost ?? 0);
       setMinStockAlert(product.minStockAlert ?? 5);
       setErrorMsg(null);
+      setIsAddingNewDept(false);
+      setNewDeptInput('');
     }
   }, [product]);
 
   if (!isOpen || !product) return null;
+
+  const handleAddNewDepartment = () => {
+    const trimmed = newDeptInput.trim();
+    if (!trimmed) return;
+    if (!departmentList.includes(trimmed)) {
+      setDepartmentList((prev) => [...prev, trimmed]);
+    }
+    setDepartment(trimmed);
+    setNewDeptInput('');
+    setIsAddingNewDept(false);
+  };
+
+  const departmentOptions: SelectOption[] = departmentList.map((dept) => ({
+    value: dept,
+    label: dept,
+  }));
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setLoading(true);
     setErrorMsg(null);
 
+    const activeDepartment = isAddingNewDept && newDeptInput.trim() ? newDeptInput.trim() : department;
+
     try {
       const payload = {
         name: name.trim(),
         brand: brand.trim(),
-        department,
+        department: activeDepartment,
         baseUom,
         storageTemp,
         aisleLocation: aisleLocation.trim() || 'Pasillo Principal',
@@ -192,15 +238,48 @@ export const EditProductModal: React.FC<EditProductModalProps> = ({
           {/* Departamento y Unidad */}
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
             <div>
-              <label className="block text-xs font-bold uppercase tracking-wider text-slate-500 dark:text-slate-400 mb-1.5">
-                Departamento *
-              </label>
-              <CustomSelect
-                value={department}
-                onChange={setDepartment}
-                options={DEPARTMENT_OPTIONS}
-              />
+              <div className="flex items-center justify-between mb-1.5">
+                <label className="block text-xs font-bold uppercase tracking-wider text-slate-500 dark:text-slate-400">
+                  Departamento *
+                </label>
+                <button
+                  type="button"
+                  onClick={() => setIsAddingNewDept(!isAddingNewDept)}
+                  className="cursor-pointer text-[11px] text-[#008767] dark:text-emerald-400 hover:underline font-semibold flex items-center gap-0.5"
+                >
+                  <Plus className="w-3 h-3" />
+                  <span>{isAddingNewDept ? 'Elegir existente' : 'Nuevo'}</span>
+                </button>
+              </div>
+
+              {isAddingNewDept ? (
+                <div className="flex gap-1.5">
+                  <input
+                    type="text"
+                    placeholder="Nuevo departamento (ej: Gourmet)"
+                    value={newDeptInput}
+                    onChange={(e) => setNewDeptInput(e.target.value)}
+                    className="flex-1 px-3 py-2 text-sm bg-white dark:bg-[#0F172A] border border-[#008767] dark:border-emerald-500 rounded-xl text-[#0F172A] dark:text-white focus:outline-none"
+                    autoFocus
+                  />
+                  <button
+                    type="button"
+                    onClick={handleAddNewDepartment}
+                    className="cursor-pointer p-2 rounded-xl bg-[#008767] text-white hover:bg-[#006e54] transition-colors"
+                    title="Confirmar departamento"
+                  >
+                    <Check className="w-4 h-4" />
+                  </button>
+                </div>
+              ) : (
+                <CustomSelect
+                  value={department}
+                  onChange={setDepartment}
+                  options={departmentOptions}
+                />
+              )}
             </div>
+
             <div>
               <label className="block text-xs font-bold uppercase tracking-wider text-slate-500 dark:text-slate-400 mb-1.5">
                 Unidad de Medida

@@ -1,13 +1,14 @@
 import { z } from 'zod';
 
-export const DepartmentEnum = z.enum([
-  'Lácteos y Refrigerados',
-  'Frutas y Verduras',
-  'Carnicería y Salchichonería',
-  'Abarrotes y Despensa',
-  'Bebidas y Licores',
-  'Panadería',
-]);
+export const DepartmentSchema = z.string().min(1, 'El departamento es obligatorio').max(100);
+export const DepartmentEnum = DepartmentSchema;
+
+export const CategorySchema = z.object({
+  name: z.string().min(2, 'El nombre del departamento debe tener al menos 2 caracteres').max(100),
+  code: z.string().max(20).optional(),
+  defaultAisle: z.string().max(60).optional(),
+  requiresColdChain: z.boolean().optional(),
+});
 
 export const StorageTemperatureEnum = z.enum([
   'Ambiente (Seco)',

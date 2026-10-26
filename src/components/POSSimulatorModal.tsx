@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { SupermarketProductRow } from '@/types/supermarket';
 import { AlertCircle, X } from 'lucide-react';
 import { CustomSelect, SelectOption } from './ui/CustomSelect';
@@ -26,6 +26,15 @@ export const POSSimulatorModal: React.FC<POSSimulatorModalProps> = ({
   const [alertError, setAlertError] = useState<{ message: string; errorCode?: string } | null>(
     null
   );
+
+  useEffect(() => {
+    if (isOpen && products.length > 0) {
+      if (!selectedBarcode || !products.some((p) => p.barcodeEan13 === selectedBarcode)) {
+        setSelectedBarcode(products[0].barcodeEan13);
+      }
+      setAlertError(null);
+    }
+  }, [isOpen, products, selectedBarcode]);
 
   const productOptions: SelectOption[] = products.map((p) => ({
     value: p.barcodeEan13,
@@ -67,15 +76,15 @@ export const POSSimulatorModal: React.FC<POSSimulatorModalProps> = ({
         setAlertError({
           message:
             data.errorCode === 'POS_EXPIRY_BLOCK'
-              ? `ALERTA: El producto "${currentProduct?.name}" está VENCIDO (${currentProduct?.expirationDate}). La caja no permite venderlo. Tienes que retirarlo a merma.`
-              : data.message || 'No se pudo cobrar',
+              ? `Bloqueo FEFO: El producto "${currentProduct?.name}" está caducado (${currentProduct?.expirationDate}). Venta no autorizada. Retirar lote a merma.`
+              : data.message || 'No se pudo procesar la venta',
           errorCode: data.errorCode,
         });
         return;
       }
 
       onSaleCompleted(
-        `Cobro Listo: ${data.saleDetails.productName} (${data.saleDetails.quantitySold} ${currentProduct?.baseUom}) - Total: $${data.saleDetails.totalAmount.toFixed(2)}`
+        `Venta registrada: ${data.saleDetails.productName} (${data.saleDetails.quantitySold} ${currentProduct?.baseUom}) - Total: $${data.saleDetails.totalAmount.toFixed(2)}`
       );
       onClose();
     } catch (err: any) {
