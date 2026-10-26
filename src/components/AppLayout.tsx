@@ -16,10 +16,12 @@ import {
   UserCheck,
   Sun,
   Moon,
+  PlusCircle,
 } from 'lucide-react';
 
 interface AppLayoutProps {
   storeBranchName: string;
+  onOpenCreateProduct?: () => void;
   onQuickReceiveStock?: () => void;
   onOpenPOSSimulator?: () => void;
   onOpenKardex?: () => void;
@@ -31,6 +33,7 @@ interface AppLayoutProps {
 
 export const AppLayout: React.FC<AppLayoutProps> = ({
   storeBranchName,
+  onOpenCreateProduct,
   onQuickReceiveStock,
   onOpenPOSSimulator,
   onOpenKardex,
@@ -121,6 +124,19 @@ export const AppLayout: React.FC<AppLayoutProps> = ({
                         Activo
                       </span>
                     )}
+                  </button>
+                </li>
+                <li>
+                  <button
+                    type="button"
+                    onClick={onOpenCreateProduct}
+                    title="Dar de alta un producto nuevo en el catálogo"
+                    className={`cursor-pointer w-full flex items-center ${
+                      collapsed ? 'justify-center px-0' : 'gap-3 px-3'
+                    } py-2.5 rounded-xl text-sm font-medium text-slate-300 hover:bg-[#1E293B] hover:text-white transition-colors`}
+                  >
+                    <PlusCircle className="w-5 h-5 text-emerald-400 shrink-0" />
+                    {!collapsed && <span className="truncate">+ Nuevo Producto</span>}
                   </button>
                 </li>
                 <li>

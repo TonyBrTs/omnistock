@@ -10,6 +10,9 @@ import { KardexAuditModal } from '@/components/KardexAuditModal';
 import { PriceTagGeneratorModal } from '@/components/PriceTagGeneratorModal';
 import { AuditReportModal } from '@/components/AuditReportModal';
 import { ShrinkageFormModal } from '@/components/ShrinkageFormModal';
+import { CreateProductModal } from '@/components/CreateProductModal';
+import { EditProductModal } from '@/components/EditProductModal';
+import { DeleteProductModal } from '@/components/DeleteProductModal';
 import { StoreMetricCard, SupermarketProductRow } from '@/types/supermarket';
 
 export default function SupermarketDashboardPage() {
@@ -21,6 +24,11 @@ export default function SupermarketDashboardPage() {
   const [isPriceTagsModalOpen, setIsPriceTagsModalOpen] = useState(false);
   const [isAuditModalOpen, setIsAuditModalOpen] = useState(false);
   const [isShrinkageModalOpen, setIsShrinkageModalOpen] = useState(false);
+  const [isCreateProductModalOpen, setIsCreateProductModalOpen] = useState(false);
+  const [isEditProductModalOpen, setIsEditProductModalOpen] = useState(false);
+  const [isDeleteProductModalOpen, setIsDeleteProductModalOpen] = useState(false);
+  const [selectedProductForEdit, setSelectedProductForEdit] = useState<SupermarketProductRow | null>(null);
+  const [selectedProductForDelete, setSelectedProductForDelete] = useState<SupermarketProductRow | null>(null);
   const [loading, setLoading] = useState(true);
 
   // Cargar productos del inventario
@@ -126,6 +134,7 @@ export default function SupermarketDashboardPage() {
   return (
     <AppLayout
       storeBranchName="Sucursal Centro"
+      onOpenCreateProduct={() => setIsCreateProductModalOpen(true)}
       onQuickReceiveStock={() => setIsReceiveModalOpen(true)}
       onOpenPOSSimulator={() => setIsPOSModalOpen(true)}
       onOpenKardex={() => setIsKardexModalOpen(true)}
@@ -135,15 +144,15 @@ export default function SupermarketDashboardPage() {
     >
       {/* Mensaje de Confirmación */}
       {toastMessage && (
-        <div className="bg-[#FFFFFF] border border-[#008767] rounded-2xl px-5 py-3.5 shadow-sm flex items-center justify-between gap-4 animate-in fade-in w-full overflow-hidden">
+        <div className="bg-[#FFFFFF] dark:bg-[#1E293B] border border-[#008767] dark:border-emerald-500 rounded-2xl px-5 py-3.5 shadow-sm flex items-center justify-between gap-4 animate-in fade-in w-full overflow-hidden">
           <div className="flex items-center gap-3 min-w-0">
-            <span className="w-2.5 h-2.5 rounded-full bg-[#008767] shrink-0" />
-            <p className="text-xs font-bold text-[#0F172A] truncate">{toastMessage}</p>
+            <span className="w-2.5 h-2.5 rounded-full bg-[#008767] dark:bg-emerald-400 shrink-0" />
+            <p className="text-xs font-bold text-[#0F172A] dark:text-white truncate">{toastMessage}</p>
           </div>
           <button
             type="button"
             onClick={() => setToastMessage(null)}
-            className="cursor-pointer text-xs font-bold text-[#64748B] hover:text-[#0F172A] shrink-0"
+            className="cursor-pointer text-xs font-bold text-[#64748B] dark:text-slate-400 hover:text-[#0F172A] dark:hover:text-white shrink-0"
           >
             Cerrar aviso
           </button>
@@ -157,9 +166,53 @@ export default function SupermarketDashboardPage() {
       <SupermarketInventoryTable
         products={products}
         onActionSelect={handleTableAction}
+        onCreateProduct={() => setIsCreateProductModalOpen(true)}
+        onEditProduct={(product) => {
+          setSelectedProductForEdit(product);
+          setIsEditProductModalOpen(true);
+        }}
+        onDeleteProduct={(product) => {
+          setSelectedProductForDelete(product);
+          setIsDeleteProductModalOpen(true);
+        }}
       />
 
       {/* Modales del Gestor de Inventario */}
+      <CreateProductModal
+        isOpen={isCreateProductModalOpen}
+        onClose={() => setIsCreateProductModalOpen(false)}
+        onProductCreated={(msg) => {
+          setToastMessage(msg);
+          fetchProducts();
+        }}
+      />
+
+      <EditProductModal
+        isOpen={isEditProductModalOpen}
+        onClose={() => {
+          setIsEditProductModalOpen(false);
+          setSelectedProductForEdit(null);
+        }}
+        product={selectedProductForEdit}
+        onProductUpdated={(msg) => {
+          setToastMessage(msg);
+          fetchProducts();
+        }}
+      />
+
+      <DeleteProductModal
+        isOpen={isDeleteProductModalOpen}
+        onClose={() => {
+          setIsDeleteProductModalOpen(false);
+          setSelectedProductForDelete(null);
+        }}
+        product={selectedProductForDelete}
+        onProductDeleted={(msg) => {
+          setToastMessage(msg);
+          fetchProducts();
+        }}
+      />
+
       <ReceiveBatchModal
         isOpen={isReceiveModalOpen}
         onClose={() => setIsReceiveModalOpen(false)}

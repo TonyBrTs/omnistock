@@ -15,6 +15,9 @@ import {
   ChevronLeft,
   ChevronRight,
   Store,
+  PlusCircle,
+  Pencil,
+  Trash2,
 } from 'lucide-react';
 import { CustomSelect, SelectOption } from './ui/CustomSelect';
 
@@ -24,6 +27,9 @@ interface SupermarketInventoryTableProps {
     action: 'REPLENISH_AISLE' | 'MARK_MERMA' | 'ADJUST_STOCK',
     product: SupermarketProductRow
   ) => void;
+  onCreateProduct?: () => void;
+  onEditProduct?: (product: SupermarketProductRow) => void;
+  onDeleteProduct?: (product: SupermarketProductRow) => void;
 }
 
 const STATUS_STYLES: Record<BatchHealthStatus, { classes: string; label: string }> = {
@@ -44,6 +50,9 @@ const STATUS_STYLES: Record<BatchHealthStatus, { classes: string; label: string 
 export const SupermarketInventoryTable: React.FC<SupermarketInventoryTableProps> = ({
   products,
   onActionSelect,
+  onCreateProduct,
+  onEditProduct,
+  onDeleteProduct,
 }) => {
   const [searchQuery, setSearchQuery] = useState('');
   const [departmentFilter, setDepartmentFilter] = useState<string>('ALL');
@@ -142,7 +151,7 @@ export const SupermarketInventoryTable: React.FC<SupermarketInventoryTableProps>
           />
         </div>
 
-        {/* Filtros */}
+        {/* Filtros y Botón Nuevo Producto */}
         <div className="flex flex-wrap items-center gap-2 sm:gap-3">
           <CustomSelect
             value={departmentFilter}
@@ -182,6 +191,18 @@ export const SupermarketInventoryTable: React.FC<SupermarketInventoryTableProps>
             align="right"
             ariaLabel="Filtrar por Estado"
           />
+
+          {onCreateProduct && (
+            <button
+              type="button"
+              onClick={onCreateProduct}
+              className="cursor-pointer px-3.5 py-2 rounded-xl bg-[#008767] hover:bg-[#006e54] text-white text-xs font-bold tracking-wide shadow-xs flex items-center gap-1.5 active:scale-95 transition-all shrink-0"
+              title="Registrar un producto nuevo en el catálogo"
+            >
+              <PlusCircle className="w-3.5 h-3.5" />
+              <span>+ Nuevo Producto</span>
+            </button>
+          )}
         </div>
       </div>
 
@@ -372,6 +393,18 @@ export const SupermarketInventoryTable: React.FC<SupermarketInventoryTableProps>
                             Contar a mano cuántos hay
                           </button>
 
+                          <button
+                            type="button"
+                            onClick={() => {
+                              setActiveMenuId(null);
+                              onEditProduct?.(row);
+                            }}
+                            className="cursor-pointer w-full px-4 py-2.5 text-xs font-semibold text-slate-700 dark:text-slate-200 hover:bg-[#F4F6F9] dark:hover:bg-slate-800/90 flex items-center gap-2 transition-colors"
+                          >
+                            <Pencil className="w-3.5 h-3.5 text-blue-500 dark:text-blue-400" />
+                            Editar datos del producto
+                          </button>
+
                           <div className="my-1 border-t border-slate-100 dark:border-slate-800" />
 
                           <button
@@ -380,10 +413,22 @@ export const SupermarketInventoryTable: React.FC<SupermarketInventoryTableProps>
                               setActiveMenuId(null);
                               onActionSelect?.('MARK_MERMA', row);
                             }}
-                            className="cursor-pointer w-full px-4 py-2.5 text-xs font-bold text-[#991B1B] dark:text-red-400 hover:bg-[#FEE2E2]/50 dark:hover:bg-red-950/50 flex items-center gap-2 transition-colors"
+                            className="cursor-pointer w-full px-4 py-2.5 text-xs font-semibold text-[#854D0E] dark:text-amber-400 hover:bg-amber-50 dark:hover:bg-amber-950/40 flex items-center gap-2 transition-colors"
                           >
-                            <AlertOctagon className="w-3.5 h-3.5" />
-                            Tirar / Dar de baja
+                            <AlertOctagon className="w-3.5 h-3.5 text-amber-600 dark:text-amber-400" />
+                            Tirar / Mandar a merma
+                          </button>
+
+                          <button
+                            type="button"
+                            onClick={() => {
+                              setActiveMenuId(null);
+                              onDeleteProduct?.(row);
+                            }}
+                            className="cursor-pointer w-full px-4 py-2.5 text-xs font-bold text-[#991B1B] dark:text-red-400 hover:bg-red-50 dark:hover:bg-red-950/50 flex items-center gap-2 transition-colors"
+                          >
+                            <Trash2 className="w-3.5 h-3.5 text-red-600 dark:text-red-400" />
+                            Eliminar del catálogo
                           </button>
                         </div>
                       )}

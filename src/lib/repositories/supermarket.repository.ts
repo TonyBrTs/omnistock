@@ -406,4 +406,43 @@ export class SupermarketRepository {
     this.refreshProductView(batch.productId);
     return movement;
   }
+
+  // Actualizar datos de un producto
+  public updateProduct(id: string, updates: Partial<SupermarketProductRow>): SupermarketProductRow | null {
+    const index = this.products.findIndex((p) => p.id === id);
+    if (index === -1) return null;
+
+    const current = this.products[index];
+    const updated: SupermarketProductRow = {
+      ...current,
+      ...updates,
+      // Aseguramos que id y claves esenciales no se corrompan
+      id: current.id,
+    };
+
+    // Si cambió el precio o costo, actualizar snapshots en batches activos
+    if (updates.unitCost !== undefined) {
+      this.batches
+        .filter((b) => b.productId === id)
+        .forEach((b) => {
+          b.unitCost = updates.unitCost!;
+        });
+    }
+
+    this.products[index] = updated;
+    this.refreshProductView(id);
+    return this.products[index];
+  }
+
+  // Eliminar producto y sus lotes
+  public deleteProduct(id: string): boolean {
+    const index = this.products.findIndex((p) => p.id === id);
+    if (index === -1) return false;
+
+    // Remover producto
+    this.products.splice(index, 1);
+    // Remover sus lotes
+    this.batches = this.batches.filter((b) => b.productId !== id);
+    return true;
+  }
 }
