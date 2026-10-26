@@ -90,9 +90,9 @@ export const POSSimulatorModal: React.FC<POSSimulatorModalProps> = ({
       <div className="bg-[#FFFFFF] dark:bg-[#1E293B] border border-[#E2E8F0] dark:border-slate-700 rounded-2xl w-full max-w-lg shadow-xl overflow-visible animate-in fade-in zoom-in-95 duration-200 my-auto">
         <div className="px-6 py-4 border-b border-[#E2E8F0] dark:border-slate-700 flex items-center justify-between rounded-t-2xl bg-white dark:bg-[#1E293B]">
           <div>
-            <h2 className="text-base font-bold text-[#0F172A] dark:text-white">Cobrar en la Caja Registradora</h2>
+            <h2 className="text-base font-bold text-[#0F172A] dark:text-white">Cobro en Caja</h2>
             <p className="text-xs text-[#64748B] dark:text-slate-400">
-              Elige el producto para vender. Si ya venció, la caja te avisará y no te dejará cobrarlo.
+              Simulador de punto de venta. Valida inventario y bloquea artículos vencidos.
             </p>
           </div>
           <button
@@ -121,7 +121,7 @@ export const POSSimulatorModal: React.FC<POSSimulatorModalProps> = ({
 
           <div>
             <label className="block text-xs font-bold uppercase tracking-wider text-slate-500 dark:text-slate-400 mb-1.5">
-              ¿Qué producto vas a cobrar?
+              Producto o Código
             </label>
             <CustomSelect
               value={selectedBarcode}
@@ -137,7 +137,7 @@ export const POSSimulatorModal: React.FC<POSSimulatorModalProps> = ({
           {currentProduct && (
             <div className="p-3 bg-[#F4F6F9] dark:bg-[#0F172A] rounded-xl border border-[#E2E8F0] dark:border-slate-700 text-xs space-y-1">
               <div className="flex justify-between">
-                <span className="text-slate-500 dark:text-slate-400">Lote que se entrega:</span>
+                <span className="text-slate-500 dark:text-slate-400">Lote a entregar:</span>
                 <span className="font-mono font-bold text-slate-800 dark:text-slate-200">
                   {currentProduct.batchNumber}
                 </span>
@@ -153,7 +153,7 @@ export const POSSimulatorModal: React.FC<POSSimulatorModalProps> = ({
                 </span>
               </div>
               <div className="flex justify-between">
-                <span className="text-slate-500 dark:text-slate-400">Precio de venta:</span>
+                <span className="text-slate-500 dark:text-slate-400">Precio Unitario:</span>
                 <span className="font-extrabold text-[#008767] dark:text-emerald-400">
                   ${currentProduct.salePrice.toFixed(2)}
                 </span>
@@ -164,7 +164,7 @@ export const POSSimulatorModal: React.FC<POSSimulatorModalProps> = ({
           <div className="grid grid-cols-3 gap-3">
             <div>
               <label className="block text-xs font-bold uppercase tracking-wider text-slate-500 dark:text-slate-400 mb-1">
-                ¿Cuántos lleva?
+                Cantidad
               </label>
               <input
                 type="number"
@@ -214,7 +214,7 @@ export const POSSimulatorModal: React.FC<POSSimulatorModalProps> = ({
               disabled={loading}
               className="cursor-pointer px-5 py-2.5 rounded-xl bg-[#008767] hover:bg-[#006e54] dark:bg-emerald-600 dark:hover:bg-emerald-500 text-white text-xs font-bold tracking-wide shadow-sm transition-all disabled:opacity-50 active:scale-95"
             >
-              {loading ? 'Cobrando...' : 'Cobrar Producto'}
+              {loading ? 'Procesando...' : 'Registrar Cobro'}
             </button>
           </div>
         </form>

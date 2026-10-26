@@ -25,11 +25,11 @@ interface KardexAuditModalProps {
 }
 
 const TYPE_TRANSLATIONS: Record<string, { label: string; badge: string }> = {
-  PURCHASE_RECEIPT: { label: 'Entró de Proveedor', badge: 'bg-[#DCFCE7] dark:bg-emerald-950/70 text-[#166534] dark:text-emerald-300' },
-  POS_SALE: { label: 'Se Vendió en Caja', badge: 'bg-blue-50 dark:bg-blue-950/70 text-blue-700 dark:text-blue-300' },
-  SHELF_REPLENISHMENT: { label: 'Se Puso en Estante', badge: 'bg-[#FEF9C3] dark:bg-amber-950/70 text-[#854D0E] dark:text-amber-300' },
-  SHRINKAGE_EXPIRED: { label: 'Se Tiró (Merma)', badge: 'bg-[#FEE2E2] dark:bg-red-950/70 text-[#991B1B] dark:text-red-300' },
-  INVENTORY_COUNT_ADJ: { label: 'Conteo Físico', badge: 'bg-purple-50 dark:bg-purple-950/70 text-purple-700 dark:text-purple-300' },
+  PURCHASE_RECEIPT: { label: 'Recepción Proveedor', badge: 'bg-[#DCFCE7] dark:bg-emerald-950/70 text-[#166534] dark:text-emerald-300' },
+  POS_SALE: { label: 'Venta en Caja', badge: 'bg-blue-50 dark:bg-blue-950/70 text-blue-700 dark:text-blue-300' },
+  SHELF_REPLENISHMENT: { label: 'Reposición a Piso', badge: 'bg-[#FEF9C3] dark:bg-amber-950/70 text-[#854D0E] dark:text-amber-300' },
+  SHRINKAGE_EXPIRED: { label: 'Merma / Baja', badge: 'bg-[#FEE2E2] dark:bg-red-950/70 text-[#991B1B] dark:text-red-300' },
+  INVENTORY_COUNT_ADJ: { label: 'Ajuste de Conteo', badge: 'bg-purple-50 dark:bg-purple-950/70 text-purple-700 dark:text-purple-300' },
 };
 
 export const KardexAuditModal: React.FC<KardexAuditModalProps> = ({ isOpen, onClose }) => {
@@ -59,10 +59,10 @@ export const KardexAuditModal: React.FC<KardexAuditModalProps> = ({ isOpen, onCl
         <div className="px-6 py-4 border-b border-[#E2E8F0] dark:border-slate-700 flex items-center justify-between">
           <div>
             <h2 className="text-base font-bold text-[#0F172A] dark:text-white">
-              Historial de Entradas y Salidas de la Tienda
+              Historial de Movimientos (Kardex)
             </h2>
             <p className="text-xs text-[#64748B] dark:text-slate-400">
-              Aquí queda anotado todo lo que se vende, lo que llega y lo que se tira.
+              Auditoría y trazabilidad de entradas, ventas y mermas en inventario.
             </p>
           </div>
           <button
@@ -78,17 +78,17 @@ export const KardexAuditModal: React.FC<KardexAuditModalProps> = ({ isOpen, onCl
           {loading ? (
             <p className="text-center py-8 text-xs text-[#64748B] dark:text-slate-400">Cargando historial...</p>
           ) : movements.length === 0 ? (
-            <p className="text-center py-8 text-xs text-[#64748B] dark:text-slate-400">Aún no hay movimientos registrados hoy.</p>
+            <p className="text-center py-8 text-xs text-[#64748B] dark:text-slate-400">No hay movimientos registrados.</p>
           ) : (
             <table className="w-full text-left border-collapse">
               <thead>
                 <tr className="border-b border-[#E2E8F0] dark:border-slate-700 bg-[#F4F6F9]/60 dark:bg-slate-900/60">
-                  <th className="py-3 px-4 text-xs font-bold uppercase text-slate-500 dark:text-slate-400">¿Cuándo pasó?</th>
-                  <th className="py-3 px-4 text-xs font-bold uppercase text-slate-500 dark:text-slate-400">¿Qué se hizo?</th>
-                  <th className="py-3 px-4 text-xs font-bold uppercase text-slate-500 dark:text-slate-400">Ticket o Factura</th>
-                  <th className="py-3 px-4 text-xs font-bold uppercase text-slate-500 dark:text-slate-400">¿Quién lo hizo?</th>
-                  <th className="py-3 px-4 text-xs font-bold uppercase text-slate-500 dark:text-slate-400 text-right">¿Cuántos entraron/salieron?</th>
-                  <th className="py-3 px-4 text-xs font-bold uppercase text-slate-500 dark:text-slate-400 text-right">¿Cuántos quedaron?</th>
+                  <th className="py-3 px-4 text-xs font-bold uppercase text-slate-500 dark:text-slate-400">Fecha y Hora</th>
+                  <th className="py-3 px-4 text-xs font-bold uppercase text-slate-500 dark:text-slate-400">Movimiento</th>
+                  <th className="py-3 px-4 text-xs font-bold uppercase text-slate-500 dark:text-slate-400">Documento / Ref</th>
+                  <th className="py-3 px-4 text-xs font-bold uppercase text-slate-500 dark:text-slate-400">Operador</th>
+                  <th className="py-3 px-4 text-xs font-bold uppercase text-slate-500 dark:text-slate-400 text-right">Variación</th>
+                  <th className="py-3 px-4 text-xs font-bold uppercase text-slate-500 dark:text-slate-400 text-right">Saldo Final</th>
                 </tr>
               </thead>
               <tbody className="divide-y divide-[#E2E8F0] dark:divide-slate-800">
@@ -134,7 +134,7 @@ export const KardexAuditModal: React.FC<KardexAuditModalProps> = ({ isOpen, onCl
 
         {/* Pie */}
         <div className="px-6 py-3 border-t border-[#E2E8F0] dark:border-slate-700 bg-[#F4F6F9]/40 dark:bg-slate-900/40 flex justify-between items-center text-xs text-[#64748B] dark:text-slate-400">
-          <span>Total de registros anotados: {movements.length}</span>
+          <span>Total de movimientos: {movements.length}</span>
           <button
             onClick={onClose}
             className="cursor-pointer px-4 py-1.5 rounded-xl bg-slate-200 dark:bg-slate-800 hover:bg-slate-300 dark:hover:bg-slate-700 text-[#0F172A] dark:text-white font-bold transition-colors"

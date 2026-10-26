@@ -28,10 +28,10 @@ export const PriceTagGeneratorModal: React.FC<PriceTagGeneratorModalProps> = ({
         <div className="px-6 py-4 border-b border-[#E2E8F0] dark:border-slate-700 flex items-center justify-between no-print">
           <div>
             <h2 className="text-base font-bold text-[#0F172A] dark:text-white">
-              Etiquetas de Precios para los Estantes
+              Etiquetas de Precios
             </h2>
             <p className="text-xs text-[#64748B] dark:text-slate-400">
-              Imprime las tarjetas con el precio y código de barras para pegarlas frente al producto.
+              Formato de etiquetas para anaquel y exhibición de mercancía.
             </p>
           </div>
           <div className="flex items-center gap-2">
@@ -40,7 +40,7 @@ export const PriceTagGeneratorModal: React.FC<PriceTagGeneratorModalProps> = ({
               className="cursor-pointer px-4 py-2 rounded-xl bg-[#008767] hover:bg-[#006e54] dark:bg-emerald-600 dark:hover:bg-emerald-500 text-white text-xs font-bold shadow-sm transition-all flex items-center gap-2 active:scale-95"
             >
               <Printer className="w-4 h-4" />
-              <span>Mandar a Imprimir</span>
+              <span>Imprimir Etiquetas</span>
             </button>
             <button
               onClick={onClose}
@@ -78,7 +78,7 @@ export const PriceTagGeneratorModal: React.FC<PriceTagGeneratorModalProps> = ({
                     <span>Presentación: <strong className="text-slate-800 dark:text-slate-200">{product.packEquivalence}</strong></span>
                     {product.pluCode && (
                       <span className="px-1.5 py-0.2 bg-emerald-50 dark:bg-emerald-950/70 text-emerald-800 dark:text-emerald-300 font-bold rounded">
-                        Código Báscula: {product.pluCode}
+                        PLU: {product.pluCode}
                       </span>
                     )}
                   </div>
@@ -113,7 +113,7 @@ export const PriceTagGeneratorModal: React.FC<PriceTagGeneratorModalProps> = ({
 
         {/* Pie */}
         <div className="px-6 py-3 border-t border-[#E2E8F0] dark:border-slate-700 bg-[#FFFFFF] dark:bg-[#1E293B] flex justify-between items-center text-xs text-[#64748B] dark:text-slate-400 no-print">
-          <span>{products.length} etiquetas listas para imprimir</span>
+          <span>{products.length} etiquetas generadas</span>
           <button
             onClick={onClose}
             className="cursor-pointer px-4 py-1.5 rounded-xl bg-slate-200 dark:bg-slate-800 hover:bg-slate-300 dark:hover:bg-slate-700 text-[#0F172A] dark:text-white font-bold transition-colors"

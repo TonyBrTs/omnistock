@@ -99,7 +99,7 @@ export const CreateProductModal: React.FC<CreateProductModalProps> = ({
         throw new Error(data.error || 'No se pudo dar de alta el producto');
       }
 
-      onProductCreated(`¡Listo! Se dio de alta el producto "${name}".`);
+      onProductCreated(`Producto "${name}" agregado con éxito.`);
       onClose();
       // Limpiar formulario
       setName('');
@@ -124,10 +124,10 @@ export const CreateProductModal: React.FC<CreateProductModalProps> = ({
             </div>
             <div>
               <h2 className="text-base font-bold text-[#0F172A] dark:text-white">
-                Dar de Alta un Producto Nuevo
+                Nuevo Producto
               </h2>
               <p className="text-xs text-[#64748B] dark:text-slate-400">
-                Agrégalo al catálogo del supermercado con su precio, pasillo y existencia inicial.
+                Alta de artículo en el catálogo con precio, ubicación y stock inicial.
               </p>
             </div>
           </div>
@@ -215,7 +215,7 @@ export const CreateProductModal: React.FC<CreateProductModalProps> = ({
             </div>
             <div>
               <label className="block text-xs font-bold uppercase tracking-wider text-slate-500 dark:text-slate-400 mb-1.5">
-                ¿Cómo se vende? (Unidad)
+                Unidad de Medida
               </label>
               <CustomSelect
                 value={baseUom}
@@ -229,7 +229,7 @@ export const CreateProductModal: React.FC<CreateProductModalProps> = ({
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
             <div>
               <label className="block text-xs font-bold uppercase tracking-wider text-slate-500 dark:text-slate-400 mb-1.5">
-                Pasillo o Estante en Tienda
+                Ubicación en Tienda
               </label>
               <input
                 type="text"
@@ -284,7 +284,7 @@ export const CreateProductModal: React.FC<CreateProductModalProps> = ({
             </div>
             <div>
               <label className="block text-xs font-bold uppercase tracking-wider text-slate-500 dark:text-slate-400 mb-1.5">
-                Avisar si quedan menos de:
+                Stock Mínimo (Alerta)
               </label>
               <input
                 type="number"
@@ -307,7 +307,7 @@ export const CreateProductModal: React.FC<CreateProductModalProps> = ({
                   onChange={(e) => setHasInitialStock(e.target.checked)}
                   className="rounded text-[#008767] focus:ring-[#008767] w-4 h-4 cursor-pointer"
                 />
-                ¿Ya llegó mercancía de este producto? (Ingresar primer lote)
+                Registrar lote de entrada inicial
               </label>
             </div>
 
@@ -316,7 +316,7 @@ export const CreateProductModal: React.FC<CreateProductModalProps> = ({
                 <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
                   <div>
                     <label className="block text-[11px] font-bold uppercase text-slate-500 dark:text-slate-400 mb-1">
-                      ¿Cuántos llegaron?
+                      Cantidad Inicial
                     </label>
                     <input
                       type="number"
@@ -370,7 +370,7 @@ export const CreateProductModal: React.FC<CreateProductModalProps> = ({
               className="cursor-pointer px-5 py-2.5 rounded-xl bg-[#008767] hover:bg-[#006e54] dark:bg-emerald-600 dark:hover:bg-emerald-500 text-white text-xs font-bold tracking-wide shadow-sm transition-all disabled:opacity-50 active:scale-95 flex items-center gap-1.5"
             >
               <PlusCircle className="w-4 h-4" />
-              <span>{loading ? 'Guardando...' : 'Guardar Producto en Tienda'}</span>
+              <span>{loading ? 'Guardando...' : 'Guardar Producto'}</span>
             </button>
           </div>
         </form>

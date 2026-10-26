@@ -146,7 +146,7 @@ export const SupermarketInventoryTable: React.FC<SupermarketInventoryTableProps>
               setSearchQuery(e.target.value);
               setCurrentPage(1);
             }}
-            placeholder="Buscar por código de barras, lote o nombre de producto..."
+            placeholder="Buscar por nombre, código de barras o lote..."
             className="w-full pl-10 pr-4 py-2.5 text-sm bg-[#F4F6F9] dark:bg-[#0F172A] border border-[#E2E8F0] dark:border-slate-700 rounded-xl text-[#0F172A] dark:text-white placeholder-[#64748B] dark:placeholder-slate-500 focus:outline-none focus:ring-2 focus:ring-[#008767]/25 focus:border-[#008767] transition-all"
           />
         </div>
@@ -200,7 +200,7 @@ export const SupermarketInventoryTable: React.FC<SupermarketInventoryTableProps>
               title="Registrar un producto nuevo en el catálogo"
             >
               <PlusCircle className="w-3.5 h-3.5" />
-              <span>+ Nuevo Producto</span>
+              <span>Nuevo Producto</span>
             </button>
           )}
         </div>
@@ -224,7 +224,7 @@ export const SupermarketInventoryTable: React.FC<SupermarketInventoryTableProps>
                 Lote y Vencimiento
               </th>
               <th className="py-4 px-6 text-xs font-bold uppercase tracking-wider text-slate-500 dark:text-slate-400">
-                TOTAL EN TIENDA
+                Stock Total
               </th>
               <th className="py-4 px-6 text-xs font-bold uppercase tracking-wider text-slate-500 dark:text-slate-400">
                 Precio
@@ -272,7 +272,7 @@ export const SupermarketInventoryTable: React.FC<SupermarketInventoryTableProps>
                     <td className="py-4 px-6 max-w-xs">
                       <p className="text-sm font-bold text-[#0F172A] dark:text-white truncate">{row.name}</p>
                       <p className="text-xs text-[#64748B] dark:text-slate-400 truncate">
-                        Marca: {row.brand} · <span className="font-medium text-slate-600 dark:text-slate-300">{row.department}</span>
+                        {row.brand} · <span className="font-medium text-slate-600 dark:text-slate-300">{row.department}</span>
                       </p>
                     </td>
 
@@ -304,7 +304,7 @@ export const SupermarketInventoryTable: React.FC<SupermarketInventoryTableProps>
                             }`}
                           >
                             ({row.daysToExpire <= 0
-                              ? '¡Vencido!'
+                              ? 'Vencido'
                               : `${row.daysToExpire} días`})
                           </span>
                         )}
@@ -313,14 +313,9 @@ export const SupermarketInventoryTable: React.FC<SupermarketInventoryTableProps>
 
                     {/* TOTAL EN TIENDA (Estante + Bodega) */}
                     <td className="py-4 px-6 whitespace-nowrap">
-                      <div className="flex items-baseline gap-1.5">
-                        <span className="text-base font-black text-[#0F172A] dark:text-white">
-                          {row.stockQuantity} {row.baseUom}
-                        </span>
-                        <span className="text-[10px] uppercase font-bold text-[#008767] dark:text-emerald-400 bg-emerald-50 dark:bg-emerald-950/60 px-1.5 py-0.2 rounded">
-                          Total
-                        </span>
-                      </div>
+                      <span className="text-base font-black text-[#0F172A] dark:text-white block">
+                        {row.stockQuantity} {row.baseUom}
+                      </span>
                       <div className="text-[11px] text-[#64748B] dark:text-slate-400 flex items-center gap-2 mt-0.5">
                         <span>Estante: <strong className="text-slate-800 dark:text-slate-200">{row.shelfStock}</strong></span>
                         <span>·</span>
@@ -374,7 +369,7 @@ export const SupermarketInventoryTable: React.FC<SupermarketInventoryTableProps>
                           >
                             <span className="flex items-center gap-2">
                               <ArrowUpRight className="w-3.5 h-3.5 text-[#008767] dark:text-emerald-400" />
-                              Mover al estante (+12)
+                              Mover a estante (12 pzas)
                             </span>
                             <span className="text-[10px] font-bold text-[#008767] dark:text-emerald-400 bg-emerald-50 dark:bg-emerald-950/60 px-1.5 py-0.5 rounded">
                               Bodega
@@ -390,7 +385,7 @@ export const SupermarketInventoryTable: React.FC<SupermarketInventoryTableProps>
                             className="cursor-pointer w-full px-4 py-2.5 text-xs font-medium text-slate-700 dark:text-slate-200 hover:bg-[#F4F6F9] dark:hover:bg-slate-800/90 flex items-center gap-2 transition-colors"
                           >
                             <ClipboardList className="w-3.5 h-3.5 text-slate-500 dark:text-slate-400" />
-                            Contar a mano cuántos hay
+                            Ajustar conteo físico
                           </button>
 
                           <button
@@ -402,7 +397,7 @@ export const SupermarketInventoryTable: React.FC<SupermarketInventoryTableProps>
                             className="cursor-pointer w-full px-4 py-2.5 text-xs font-semibold text-slate-700 dark:text-slate-200 hover:bg-[#F4F6F9] dark:hover:bg-slate-800/90 flex items-center gap-2 transition-colors"
                           >
                             <Pencil className="w-3.5 h-3.5 text-blue-500 dark:text-blue-400" />
-                            Editar datos del producto
+                            Editar producto
                           </button>
 
                           <div className="my-1 border-t border-slate-100 dark:border-slate-800" />
@@ -416,7 +411,7 @@ export const SupermarketInventoryTable: React.FC<SupermarketInventoryTableProps>
                             className="cursor-pointer w-full px-4 py-2.5 text-xs font-semibold text-[#854D0E] dark:text-amber-400 hover:bg-amber-50 dark:hover:bg-amber-950/40 flex items-center gap-2 transition-colors"
                           >
                             <AlertOctagon className="w-3.5 h-3.5 text-amber-600 dark:text-amber-400" />
-                            Tirar / Mandar a merma
+                            Registrar merma
                           </button>
 
                           <button
@@ -428,7 +423,7 @@ export const SupermarketInventoryTable: React.FC<SupermarketInventoryTableProps>
                             className="cursor-pointer w-full px-4 py-2.5 text-xs font-bold text-[#991B1B] dark:text-red-400 hover:bg-red-50 dark:hover:bg-red-950/50 flex items-center gap-2 transition-colors"
                           >
                             <Trash2 className="w-3.5 h-3.5 text-red-600 dark:text-red-400" />
-                            Eliminar del catálogo
+                            Eliminar producto
                           </button>
                         </div>
                       )}
@@ -447,7 +442,7 @@ export const SupermarketInventoryTable: React.FC<SupermarketInventoryTableProps>
           Mostrando{' '}
           <span className="font-bold text-[#0F172A] dark:text-white">{paginatedRows.length}</span> de{' '}
           <span className="font-bold text-[#0F172A] dark:text-white">{filteredProducts.length}</span>{' '}
-          artículos en toda la tienda
+          productos
         </div>
 
         <div className="flex items-center gap-2">

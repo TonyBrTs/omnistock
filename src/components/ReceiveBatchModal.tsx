@@ -83,8 +83,8 @@ export const ReceiveBatchModal: React.FC<ReceiveBatchModalProps> = ({
       <div className="bg-[#FFFFFF] dark:bg-[#1E293B] border border-[#E2E8F0] dark:border-slate-700 rounded-2xl w-full max-w-lg shadow-xl overflow-visible animate-in fade-in zoom-in-95 duration-200 my-auto">
         <div className="px-6 py-4 border-b border-[#E2E8F0] dark:border-slate-700 flex items-center justify-between rounded-t-2xl bg-white dark:bg-[#1E293B]">
           <div>
-            <h2 className="text-base font-bold text-[#0F172A] dark:text-white">Meter Mercancía Nueva a la Tienda</h2>
-            <p className="text-xs text-[#64748B] dark:text-slate-400">Registra lo que llegó del proveedor con su fecha de vencimiento</p>
+            <h2 className="text-base font-bold text-[#0F172A] dark:text-white">Recepción de Mercancía</h2>
+            <p className="text-xs text-[#64748B] dark:text-slate-400">Ingreso de producto con número de lote y caducidad.</p>
           </div>
           <button
             onClick={onClose}
@@ -103,7 +103,7 @@ export const ReceiveBatchModal: React.FC<ReceiveBatchModalProps> = ({
 
           <div>
             <label className="block text-xs font-bold uppercase tracking-wider text-slate-500 dark:text-slate-400 mb-1.5">
-              ¿Qué producto llegó?
+              Producto
             </label>
             <CustomSelect
               value={selectedProductId}
@@ -129,12 +129,12 @@ export const ReceiveBatchModal: React.FC<ReceiveBatchModalProps> = ({
             </div>
             <div>
               <label className="block text-xs font-bold uppercase tracking-wider text-slate-500 dark:text-slate-400 mb-1.5">
-                ¿Cuándo Vence? (Calendario)
+                Fecha de Vencimiento
               </label>
               <CustomDatePicker
                 value={expirationDate}
                 onChange={setExpirationDate}
-                placeholder="Elegir fecha de vencimiento..."
+                placeholder="Elegir fecha..."
                 align="right"
               />
             </div>
@@ -143,7 +143,7 @@ export const ReceiveBatchModal: React.FC<ReceiveBatchModalProps> = ({
           <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
             <div>
               <label className="block text-xs font-bold uppercase tracking-wider text-slate-500 dark:text-slate-400 mb-1.5">
-                ¿Cuántos llegaron?
+                Cantidad
               </label>
               <input
                 type="number"
@@ -156,7 +156,7 @@ export const ReceiveBatchModal: React.FC<ReceiveBatchModalProps> = ({
             </div>
             <div>
               <label className="block text-xs font-bold uppercase tracking-wider text-slate-500 dark:text-slate-400 mb-1.5">
-                Costo por pieza ($)
+                Costo Unitario ($)
               </label>
               <input
                 type="number"
@@ -169,7 +169,7 @@ export const ReceiveBatchModal: React.FC<ReceiveBatchModalProps> = ({
             </div>
             <div>
               <label className="block text-xs font-bold uppercase tracking-wider text-slate-500 dark:text-slate-400 mb-1.5">
-                ¿Dónde se guarda?
+                Ubicación
               </label>
               <CustomSelect
                 value={locationId}
@@ -183,7 +183,7 @@ export const ReceiveBatchModal: React.FC<ReceiveBatchModalProps> = ({
 
           <div>
             <label className="block text-xs font-bold uppercase tracking-wider text-slate-500 dark:text-slate-400 mb-1">
-              Nota o Factura del Proveedor
+              Folio de Factura o Remisión
             </label>
             <input
               type="text"
@@ -208,7 +208,7 @@ export const ReceiveBatchModal: React.FC<ReceiveBatchModalProps> = ({
               disabled={loading}
               className="cursor-pointer px-5 py-2.5 rounded-xl bg-[#008767] hover:bg-[#006e54] dark:bg-emerald-600 dark:hover:bg-emerald-500 text-white text-xs font-bold tracking-wide shadow-sm transition-all disabled:opacity-50 active:scale-95"
             >
-              {loading ? 'Guardando...' : 'Guardar en Inventario'}
+              {loading ? 'Guardando...' : 'Guardar Entrada'}
             </button>
           </div>
         </form>

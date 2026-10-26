@@ -95,13 +95,13 @@ export const AppLayout: React.FC<AppLayoutProps> = ({
             </div>
           )}
 
-          {/* Opciones del Gestor de Inventario */}
+          {/* Opciones del Menú */}
           <nav className="flex-1 overflow-y-auto p-3 space-y-5">
-            {/* Sección: Inventario y Almacén */}
+            {/* Sección: Inventario */}
             <div>
               {!collapsed ? (
                 <p className="px-3 mb-2 text-[11px] font-bold uppercase tracking-wider text-slate-400">
-                  Gestión de Inventario
+                  Inventario
                 </p>
               ) : (
                 <div className="my-2 border-t border-slate-800" />
@@ -110,40 +110,33 @@ export const AppLayout: React.FC<AppLayoutProps> = ({
                 <li>
                   <button
                     type="button"
-                    title="Ver Productos y Lotes"
+                    title="Ver catálogo y productos"
                     className={`cursor-pointer w-full flex items-center ${
-                      collapsed ? 'justify-center px-0' : 'justify-between px-3'
+                      collapsed ? 'justify-center px-0' : 'gap-3 px-3'
                     } py-2.5 rounded-xl text-sm font-semibold bg-[#008767] text-white shadow-xs transition-all hover:brightness-105`}
                   >
-                    <div className={`flex items-center ${collapsed ? 'justify-center' : 'gap-3'} truncate`}>
-                      <Boxes className="w-5 h-5 shrink-0" />
-                      {!collapsed && <span className="truncate">Mis Productos</span>}
-                    </div>
-                    {!collapsed && (
-                      <span className="px-2 py-0.5 text-[10px] font-bold rounded-full bg-white/20 shrink-0">
-                        Activo
-                      </span>
-                    )}
+                    <Boxes className="w-5 h-5 shrink-0" />
+                    {!collapsed && <span className="truncate">Productos</span>}
                   </button>
                 </li>
                 <li>
                   <button
                     type="button"
                     onClick={onOpenCreateProduct}
-                    title="Dar de alta un producto nuevo en el catálogo"
+                    title="Dar de alta un producto en el catálogo"
                     className={`cursor-pointer w-full flex items-center ${
                       collapsed ? 'justify-center px-0' : 'gap-3 px-3'
                     } py-2.5 rounded-xl text-sm font-medium text-slate-300 hover:bg-[#1E293B] hover:text-white transition-colors`}
                   >
                     <PlusCircle className="w-5 h-5 text-emerald-400 shrink-0" />
-                    {!collapsed && <span className="truncate">+ Nuevo Producto</span>}
+                    {!collapsed && <span className="truncate">Nuevo Producto</span>}
                   </button>
                 </li>
                 <li>
                   <button
                     type="button"
                     onClick={onQuickReceiveStock}
-                    title="Dar entrada a mercancía nueva"
+                    title="Registrar entrada de mercancía"
                     className={`cursor-pointer w-full flex items-center ${
                       collapsed ? 'justify-center px-0' : 'gap-3 px-3'
                     } py-2.5 rounded-xl text-sm font-medium text-slate-300 hover:bg-[#1E293B] hover:text-white transition-colors`}
@@ -162,17 +155,17 @@ export const AppLayout: React.FC<AppLayoutProps> = ({
                     } py-2.5 rounded-xl text-sm font-medium text-slate-300 hover:bg-[#1E293B] hover:text-white transition-colors`}
                   >
                     <Trash2 className="w-5 h-5 text-red-400 shrink-0" />
-                    {!collapsed && <span className="truncate">Dar de Baja Merma</span>}
+                    {!collapsed && <span className="truncate">Registrar Merma</span>}
                   </button>
                 </li>
               </ul>
             </div>
 
-            {/* Sección: Piso de Venta y Precios */}
+            {/* Sección: Operación */}
             <div>
               {!collapsed ? (
                 <p className="px-3 mb-2 text-[11px] font-bold uppercase tracking-wider text-slate-400">
-                  Piso de Venta
+                  Operación
                 </p>
               ) : (
                 <div className="my-2 border-t border-slate-800" />
@@ -188,30 +181,30 @@ export const AppLayout: React.FC<AppLayoutProps> = ({
                     } py-2.5 rounded-xl text-sm font-medium text-slate-300 hover:bg-[#1E293B] hover:text-white transition-colors`}
                   >
                     <ShoppingCart className="w-5 h-5 text-blue-400 shrink-0" />
-                    {!collapsed && <span className="truncate">Cobrar en Caja</span>}
+                    {!collapsed && <span className="truncate">Cobro en Caja</span>}
                   </button>
                 </li>
                 <li>
                   <button
                     type="button"
                     onClick={onOpenPriceTags}
-                    title="Imprimir etiquetas de precio para estantes"
+                    title="Imprimir etiquetas para estantes"
                     className={`cursor-pointer w-full flex items-center ${
                       collapsed ? 'justify-center px-0' : 'gap-3 px-3'
                     } py-2.5 rounded-xl text-sm font-medium text-slate-300 hover:bg-[#1E293B] hover:text-white transition-colors`}
                   >
                     <Tag className="w-5 h-5 text-amber-400 shrink-0" />
-                    {!collapsed && <span className="truncate">Etiquetas de Precios</span>}
+                    {!collapsed && <span className="truncate">Etiquetas de Precio</span>}
                   </button>
                 </li>
               </ul>
             </div>
 
-            {/* Sección: Historial y Cuentas */}
+            {/* Sección: Auditoría y Reportes */}
             <div>
               {!collapsed ? (
                 <p className="px-3 mb-2 text-[11px] font-bold uppercase tracking-wider text-slate-400">
-                  Control y Cuentas
+                  Auditoría y Reportes
                 </p>
               ) : (
                 <div className="my-2 border-t border-slate-800" />
@@ -221,20 +214,20 @@ export const AppLayout: React.FC<AppLayoutProps> = ({
                   <button
                     type="button"
                     onClick={onOpenKardex}
-                    title="Ver historial de movimientos"
+                    title="Consultar historial de movimientos"
                     className={`cursor-pointer w-full flex items-center ${
                       collapsed ? 'justify-center px-0' : 'gap-3 px-3'
                     } py-2.5 rounded-xl text-sm font-medium text-slate-300 hover:bg-[#1E293B] hover:text-white transition-colors`}
                   >
                     <History className="w-5 h-5 text-purple-400 shrink-0" />
-                    {!collapsed && <span className="truncate">Historial de Salidas</span>}
+                    {!collapsed && <span className="truncate">Historial (Kardex)</span>}
                   </button>
                 </li>
                 <li>
                   <button
                     type="button"
                     onClick={onOpenAuditReport}
-                    title="Descargar reporte con lo que vale el inventario"
+                    title="Descargar reporte de valuación de inventario"
                     className={`cursor-pointer w-full flex items-center ${
                       collapsed ? 'justify-center px-0' : 'gap-3 px-3'
                     } py-2.5 rounded-xl text-sm font-medium text-slate-300 hover:bg-[#1E293B] hover:text-white transition-colors`}
@@ -250,11 +243,11 @@ export const AppLayout: React.FC<AppLayoutProps> = ({
           {/* Pie del Menú */}
           <div className="p-3 border-t border-slate-800/80 shrink-0">
             <div className={`p-3 rounded-2xl bg-[#1E293B] flex items-center ${collapsed ? 'justify-center' : 'gap-3'}`}>
-              <div className="w-2.5 h-2.5 rounded-full bg-emerald-400 shrink-0" title="Inventario al Día" />
+              <div className="w-2.5 h-2.5 rounded-full bg-emerald-400 shrink-0" />
               {!collapsed && (
                 <div className="overflow-hidden">
                   <p className="text-xs font-bold text-white truncate">Inventario al Día</p>
-                  <p className="text-[11px] text-slate-400 truncate">Modo Gestor Activo</p>
+                  <p className="text-[11px] text-slate-400 truncate">Sucursal Centro</p>
                 </div>
               )}
             </div>
@@ -269,14 +262,14 @@ export const AppLayout: React.FC<AppLayoutProps> = ({
           <div className="min-w-0">
             <div className="flex items-center gap-2.5">
               <h1 className="text-xl font-extrabold tracking-tight text-slate-900 dark:text-white truncate">
-                Control de Inventario y Fechas de Vencimiento
+                Control de Inventario y Caducidades
               </h1>
               <span className="px-2.5 py-0.5 text-xs font-bold rounded-full bg-[#DCFCE7] dark:bg-emerald-950/80 text-[#166534] dark:text-emerald-300 border border-transparent dark:border-emerald-800/60 shrink-0">
                 {storeBranchName}
               </span>
             </div>
             <p className="text-xs text-[#64748B] dark:text-slate-400 mt-0.5 truncate">
-              Administra existencias, registra entradas, imprime precios y evita que se venzan productos.
+              Monitoreo de existencias, rotación de mercancía y catálogo comercial.
             </p>
           </div>
 
@@ -306,7 +299,7 @@ export const AppLayout: React.FC<AppLayoutProps> = ({
               className="cursor-pointer px-3.5 py-2 rounded-xl bg-indigo-50 dark:bg-indigo-950/40 hover:bg-indigo-100 dark:hover:bg-indigo-900/40 text-indigo-700 dark:text-indigo-400 text-xs font-bold tracking-wide border border-indigo-200 dark:border-indigo-800/60 transition-colors flex items-center gap-1.5 active:scale-95"
             >
               <ShoppingCart className="w-3.5 h-3.5" />
-              <span>Cobrar en Caja</span>
+              <span>Cobro en Caja</span>
             </button>
 
             <button
@@ -324,7 +317,7 @@ export const AppLayout: React.FC<AppLayoutProps> = ({
               className="cursor-pointer px-4 py-2 rounded-xl bg-[#008767] hover:bg-[#006e54] text-white text-xs font-bold tracking-wide shadow-sm transition-all flex items-center gap-1.5 hover:shadow-md active:scale-95"
             >
               <PackagePlus className="w-4 h-4" />
-              <span>+ Meter Mercancía</span>
+              <span>Meter Mercancía</span>
             </button>
 
             {/* Selector de Modo Oscuro / Claro */}

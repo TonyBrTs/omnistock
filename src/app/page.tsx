@@ -50,7 +50,7 @@ export default function SupermarketDashboardPage() {
     fetchProducts();
   }, []);
 
-  // Tarjetas principales 100% de inventario
+  // Tarjetas principales de inventario
   const totalStockCount = products.reduce((sum, p) => sum + p.stockQuantity, 0);
   const lowStockCount = products.filter((p) => p.status === 'LOW_STOCK').length;
   const expiredCount = products.filter((p) => p.status === 'EXPIRED').length;
@@ -59,37 +59,37 @@ export default function SupermarketDashboardPage() {
   const dynamicMetrics: StoreMetricCard[] = [
     {
       id: 'm-skus',
-      title: 'Total de Mercancía',
-      subtitle: 'En tienda y bodega',
+      title: 'Total en Catálogo',
+      subtitle: 'Existencias globales',
       value: loading ? '...' : `${products.length} productos (${totalStockCount} pzas)`,
-      badgeText: 'En Tienda',
+      badgeText: 'Catálogo',
       variant: 'good',
       icon: 'barcode',
     },
     {
       id: 'm-optimal',
-      title: 'Inventario Disponible',
-      subtitle: 'Listos para la venta',
-      value: loading ? '...' : `${optimalCount} en buen estado`,
-      badgeText: 'Al 100%',
+      title: 'Stock Disponible',
+      subtitle: 'En fecha y para venta',
+      value: loading ? '...' : `${optimalCount} artículos`,
+      badgeText: 'Al día',
       variant: 'good',
       icon: 'barcode',
     },
     {
       id: 'm-low',
-      title: 'Queda Muy Poco',
-      subtitle: 'Hay que surtir el estante',
-      value: loading ? '...' : `${lowStockCount} por acabarse`,
-      badgeText: 'Por Surtir',
+      title: 'Stock Bajo',
+      subtitle: 'Próximos a agotarse',
+      value: loading ? '...' : `${lowStockCount} artículos`,
+      badgeText: 'Atención',
       variant: 'warning',
       icon: 'low-stock',
     },
     {
       id: 'm-fefo',
       title: 'Productos Vencidos',
-      subtitle: 'Bloqueados en caja',
-      value: loading ? '...' : `${expiredCount} vencidos`,
-      badgeText: expiredCount > 0 ? 'Para Tirar' : 'Sin Vencidos',
+      subtitle: 'Retiro obligatorio',
+      value: loading ? '...' : `${expiredCount} artículos`,
+      badgeText: expiredCount > 0 ? 'Por retirar' : 'Sin alertas',
       variant: expiredCount > 0 ? 'danger' : 'good',
       icon: 'expiry-alert',
     },
@@ -116,10 +116,10 @@ export default function SupermarketDashboardPage() {
 
         const data = await res.json();
         if (res.ok) {
-          setToastMessage(`Listo: Se pusieron 12 piezas más en el estante de "${product.name}".`);
+          setToastMessage(`Se reabastecieron 12 piezas en piso de venta para "${product.name}".`);
           fetchProducts();
         } else {
-          setToastMessage(`No se pudo: ${JSON.stringify(data.error)}`);
+          setToastMessage(`No se pudo reabastecer: ${JSON.stringify(data.error)}`);
         }
       } catch (err: any) {
         setToastMessage(`Error: ${err.message}`);
@@ -127,7 +127,7 @@ export default function SupermarketDashboardPage() {
     } else if (action === 'MARK_MERMA') {
       setIsShrinkageModalOpen(true);
     } else if (action === 'ADJUST_STOCK') {
-      setToastMessage(`Se anotó el conteo a mano para "${product.name}".`);
+      setToastMessage(`Conteo físico registrado para "${product.name}".`);
     }
   };
 

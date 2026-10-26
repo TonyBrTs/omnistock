@@ -55,7 +55,7 @@ export const DeleteProductModal: React.FC<DeleteProductModalProps> = ({
               <Trash2 className="w-4 h-4" />
             </div>
             <h2 className="text-base font-bold text-[#0F172A] dark:text-white">
-              ¿Eliminar este producto?
+              Eliminar Producto
             </h2>
           </div>
           <button
@@ -116,7 +116,7 @@ export const DeleteProductModal: React.FC<DeleteProductModalProps> = ({
               className="cursor-pointer px-5 py-2.5 rounded-xl bg-[#991B1B] hover:bg-[#7f1d1d] text-white text-xs font-bold tracking-wide shadow-sm transition-all disabled:opacity-50 active:scale-95 flex items-center gap-1.5"
             >
               <Trash2 className="w-4 h-4" />
-              <span>{loading ? 'Eliminando...' : 'Sí, Eliminar Producto'}</span>
+              <span>{loading ? 'Eliminando...' : 'Eliminar Producto'}</span>
             </button>
           </div>
         </div>

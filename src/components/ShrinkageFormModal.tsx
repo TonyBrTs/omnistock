@@ -83,9 +83,9 @@ export const ShrinkageFormModal: React.FC<ShrinkageFormModalProps> = ({
       <div className="bg-[#FFFFFF] dark:bg-[#1E293B] border border-[#E2E8F0] dark:border-slate-700 rounded-2xl w-full max-w-lg shadow-xl overflow-visible animate-in fade-in zoom-in-95 duration-200 my-auto">
         <div className="px-6 py-4 border-b border-[#E2E8F0] dark:border-slate-700 flex items-center justify-between rounded-t-2xl bg-white dark:bg-[#1E293B]">
           <div>
-            <h2 className="text-base font-bold text-[#0F172A] dark:text-white">Tirar Producto Dañado o Vencido</h2>
+            <h2 className="text-base font-bold text-[#0F172A] dark:text-white">Registro de Merma</h2>
             <p className="text-xs text-[#64748B] dark:text-slate-400">
-              Saca de la tienda la mercancía que ya no sirve para que nadie la venda por error.
+              Retiro de mercancía no apta para venta por daño o caducidad.
             </p>
           </div>
           <button
@@ -105,26 +105,26 @@ export const ShrinkageFormModal: React.FC<ShrinkageFormModalProps> = ({
 
           <div>
             <label className="block text-xs font-bold uppercase tracking-wider text-slate-500 dark:text-slate-400 mb-1.5">
-              ¿Qué producto vas a tirar?
+              Producto y Lote
             </label>
             <CustomSelect
               value={selectedBatchNumber}
               onChange={setSelectedBatchNumber}
               options={productOptions}
-              placeholder="Seleccionar producto a tirar..."
+              placeholder="Seleccionar producto a dar de baja..."
             />
           </div>
 
           {currentProduct && (
             <div className="p-3.5 rounded-xl bg-red-50/60 dark:bg-red-950/40 border border-red-200 dark:border-red-900/50 text-xs space-y-1">
               <div className="flex justify-between">
-                <span className="text-slate-600 dark:text-slate-300">¿Cuántos se van a la basura?</span>
+                <span className="text-slate-600 dark:text-slate-300">Cantidad a retirar:</span>
                 <span className="font-bold text-[#991B1B] dark:text-red-400">
                   {currentProduct.stockQuantity} {currentProduct.baseUom}
                 </span>
               </div>
               <div className="flex justify-between">
-                <span className="text-slate-600 dark:text-slate-300">Dinero que se perdió:</span>
+                <span className="text-slate-600 dark:text-slate-300">Pérdida calculada:</span>
                 <span className="font-extrabold text-[#991B1B] dark:text-red-400">
                   ${(currentProduct.stockQuantity * currentProduct.unitCost).toFixed(2)}
                 </span>
@@ -134,7 +134,7 @@ export const ShrinkageFormModal: React.FC<ShrinkageFormModalProps> = ({
 
           <div>
             <label className="block text-xs font-bold uppercase tracking-wider text-slate-500 dark:text-slate-400 mb-1.5">
-              ¿Por qué se tira?
+              Motivo del Retiro
             </label>
             <CustomSelect
               value={reason}
@@ -146,13 +146,13 @@ export const ShrinkageFormModal: React.FC<ShrinkageFormModalProps> = ({
 
           <div>
             <label className="block text-xs font-bold uppercase tracking-wider text-slate-500 dark:text-slate-400 mb-1">
-              ¿Qué le pasó exactamente?
+              Observaciones
             </label>
             <textarea
               rows={2}
               value={notes}
               onChange={(e) => setNotes(e.target.value)}
-              placeholder="Ej: Se cayó de la caja y se reventó el envase."
+              placeholder="Ej: Empaque roto durante maniobra de acomodo."
               className="w-full px-3.5 py-2 text-sm bg-[#F4F6F9] dark:bg-[#0F172A] border border-[#E2E8F0] dark:border-slate-700 rounded-xl text-[#0F172A] dark:text-white focus:outline-none focus:border-[#008767] dark:focus:border-emerald-500 placeholder:text-slate-400 dark:placeholder:text-slate-500"
               required
             />
@@ -160,7 +160,7 @@ export const ShrinkageFormModal: React.FC<ShrinkageFormModalProps> = ({
 
           <div>
             <label className="block text-xs font-bold uppercase tracking-wider text-slate-500 dark:text-slate-400 mb-1">
-              ¿Quién autoriza?
+              Autorizado por
             </label>
             <input
               type="text"
@@ -184,7 +184,7 @@ export const ShrinkageFormModal: React.FC<ShrinkageFormModalProps> = ({
               disabled={loading}
               className="cursor-pointer px-5 py-2.5 rounded-xl bg-[#991B1B] hover:bg-[#7f1d1d] dark:bg-red-600 dark:hover:bg-red-700 text-white text-xs font-bold tracking-wide shadow-sm transition-all disabled:opacity-50 active:scale-95"
             >
-              {loading ? 'Sacando de la tienda...' : 'Confirmar y Tirar'}
+              {loading ? 'Procesando...' : 'Registrar Merma'}
             </button>
           </div>
         </form>

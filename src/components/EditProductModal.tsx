@@ -99,7 +99,7 @@ export const EditProductModal: React.FC<EditProductModalProps> = ({
         throw new Error(data.error || 'No se pudo actualizar el producto');
       }
 
-      onProductUpdated(`Listo: Se actualizaron los datos de "${name}".`);
+      onProductUpdated(`Producto "${name}" actualizado con éxito.`);
       onClose();
     } catch (err: any) {
       setErrorMsg(err.message);
@@ -119,10 +119,10 @@ export const EditProductModal: React.FC<EditProductModalProps> = ({
             </div>
             <div>
               <h2 className="text-base font-bold text-[#0F172A] dark:text-white">
-                Editar Datos del Producto
+                Editar Producto
               </h2>
               <p className="text-xs text-[#64748B] dark:text-slate-400">
-                Cambia el precio, costo, ubicación o departamento en el catálogo.
+                Actualiza la información comercial y operativa del artículo en catálogo.
               </p>
             </div>
           </div>
@@ -217,7 +217,7 @@ export const EditProductModal: React.FC<EditProductModalProps> = ({
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
             <div>
               <label className="block text-xs font-bold uppercase tracking-wider text-slate-500 dark:text-slate-400 mb-1.5">
-                Pasillo o Estante en Tienda
+                Ubicación en Tienda
               </label>
               <input
                 type="text"
@@ -269,7 +269,7 @@ export const EditProductModal: React.FC<EditProductModalProps> = ({
             </div>
             <div>
               <label className="block text-xs font-bold uppercase tracking-wider text-slate-500 dark:text-slate-400 mb-1.5">
-                Avisar si quedan menos de:
+                Stock Mínimo (Alerta)
               </label>
               <input
                 type="number"
